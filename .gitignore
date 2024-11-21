@@ -5,3 +5,6 @@
 /STD/STD/.vs
 /STD/STD/bin
 /STD/STUserDefine/obj
+STD/.vs/ST_Addon/v16/.suo
+STD/Common/PN-Libraries/DLLs/4.6/PN.SmartLib.dll
+STD/Common/PN-Libraries/DLLs/4.6/SAPCore.dll
