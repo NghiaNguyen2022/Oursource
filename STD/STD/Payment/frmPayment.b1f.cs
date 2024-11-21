@@ -84,7 +84,7 @@ namespace STDApp.Payment
             get
             {
                 // if(cbbBank)
-                return UIHelper.GetComboValue(cbbBank);
+                return UIHelper.GetComboValue(cbbBankAccount);
             }
         }
 
@@ -126,9 +126,9 @@ namespace STDApp.Payment
         {
             get
             {
-                if (cbbMeth != null && cbbMeth.Selected != null)
+                if (cbbFeeType != null && cbbFeeType.Selected != null)
                 {
-                    var type = cbbMeth.Selected.Value.GetEnumValueByDescription<PaymentMethod>();
+                    var type = cbbFeeType.Selected.Value.GetEnumValueByDescription<PaymentMethod>();
                     return type;// cbbMeth.Selected.Value == "C" ? PaymentMethod.Cash : PaymentMethod.Bank;
                 }
 
@@ -275,9 +275,9 @@ namespace STDApp.Payment
             this.btnCreate.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnCreate_ClickBefore);
             this.lblBr = ((SAPbouiCOM.StaticText)(this.GetItem("lblBr").Specific));
             this.cbbBr = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbBr").Specific));
-            this.lblMth = ((SAPbouiCOM.StaticText)(this.GetItem("lblMth").Specific));
-            this.cbbMeth = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbMeth").Specific));
-            this.cbbMeth.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cbbMeth_ComboSelectAfter);
+            this.lblFeeType = ((SAPbouiCOM.StaticText)(this.GetItem("lblFeeT").Specific));
+            this.cbbFeeType = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbFeeT").Specific));
+            this.cbbFeeType.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cbbFeeT_ComboSelectAfter);
             this.lblPmTyp = ((SAPbouiCOM.StaticText)(this.GetItem("lblPT").Specific));
             this.cbbPmTyp = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbPT").Specific));
             this.lblFDateL = ((SAPbouiCOM.StaticText)(this.GetItem("lblFDaL").Specific));
@@ -299,8 +299,8 @@ namespace STDApp.Payment
             this.btnRem.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnRem_ClickBefore);
             this.ckbGr = ((SAPbouiCOM.CheckBox)(this.GetItem("ckbGr").Specific));
             this.ckbGr.PressedAfter += new SAPbouiCOM._ICheckBoxEvents_PressedAfterEventHandler(this.CheckBox0_PressedAfter);
-            this.lblBank = ((SAPbouiCOM.StaticText)(this.GetItem("lblBank").Specific));
-            this.cbbBank = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbBank").Specific));
+            this.lblBankAccount = ((SAPbouiCOM.StaticText)(this.GetItem("lblBank").Specific));
+            this.cbbBankAccount = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbBank").Specific));
             this.lblCFlow = ((SAPbouiCOM.StaticText)(this.GetItem("lblCF").Specific));
             this.cbbCFlow = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbCF").Specific));
             this.txtRate = ((SAPbouiCOM.EditText)(this.GetItem("txtRate").Specific));
@@ -403,134 +403,82 @@ namespace STDApp.Payment
             this.lblFDate.Item.Left = this.folderCreate.Item.Left + CoreSetting.UF_HorMargin;
 
             this.txtFDate.Item.Top = this.lblFDate.Item.Top;
-            this.txtFDate.Item.Left = this.lblFDate.Item.Left + this.lblFDate.Item.Width + 20;
+            this.txtFDate.Item.Left = this.lblFDate.Item.Left + this.lblFDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.lblTDate.Item.Top = this.lblFDate.Item.Top;
-            this.lblTDate.Item.Left = this.txtFDate.Item.Left + this.txtFDate.Item.Width + 20;
+            this.lblTDate.Item.Left = this.txtFDate.Item.Left + this.txtFDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.txtTDate.Item.Top = this.lblFDate.Item.Top;
-            this.txtTDate.Item.Left = this.lblTDate.Item.Left + this.lblTDate.Item.Width + 20;
+            this.txtTDate.Item.Left = this.lblTDate.Item.Left + this.lblTDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
-            this.lblType.Item.Top = this.lblFDate.Item.Top;
-            this.lblType.Item.Left = this.txtTDate.Item.Left + this.txtTDate.Item.Width + 20;
+            this.lblBankAccount.Item.Left = this.txtTDate.Item.Left + this.txtTDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.lblBankAccount.Item.Top = this.lblFDate.Item.Top;
 
-            this.cbbType.Item.Top = this.lblFDate.Item.Top;
-            this.cbbType.Item.Left = this.lblType.Item.Left + this.lblType.Item.Width + 20;
+            this.cbbBankAccount.Item.Top = this.lblFDate.Item.Top;
+            this.cbbBankAccount.Item.Left = this.lblBankAccount.Item.Left + this.lblBankAccount.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
-            this.lblBr.Item.Top = this.lblFDate.Item.Top;
-            this.lblBr.Item.Left = this.cbbType.Item.Left + this.cbbType.Item.Width + 20;
+            this.lblFeeType.Item.Left = this.cbbBankAccount.Item.Left + this.cbbBankAccount.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.lblFeeType.Item.Top = this.lblFDate.Item.Top;
 
-            this.cbbBr.Item.Top = this.lblFDate.Item.Top;
-            this.cbbBr.Item.Left = this.lblBr.Item.Left + this.lblBr.Item.Width + 20;
-
-
-            lblPmTyp.Item.Top = lblFDate.Item.Top + lblFDate.Item.Height + 10;
-            lblPmTyp.Item.Left = lblFDate.Item.Left;
-            lblPmTyp.Item.Width = lblTDate.Item.Left - lblPmTyp.Item.Left - 20;
-
-            cbbPmTyp.Item.Top = lblPmTyp.Item.Top;
-            cbbPmTyp.Item.Left = lblTDate.Item.Left;
-            cbbPmTyp.Item.Width = lblType.Item.Left - cbbMeth.Item.Left - 20;
-
-            this.lblCFlow.Item.Top = this.cbbPmTyp.Item.Top;
-            this.lblCFlow.Item.Left = this.lblType.Item.Left;
-            this.lblCFlow.Item.Width = lblType.Item.Width + cbbType.Item.Width + 20;
-
-            this.cbbCFlow.Item.Top = this.lblCFlow.Item.Top;
-            this.cbbCFlow.Item.Left = this.lblBr.Item.Left;
-            this.cbbCFlow.Item.Width = this.lblBr.Item.Width + this.cbbBr.Item.Width + 20;
-
-            this.lblCusVen.Item.Left = this.cbbBr.Item.Left + this.cbbBr.Item.Width + 30;
-            this.lblCusVen.Item.Top = this.lblFDate.Item.Top;
-
-            this.lblPosDa.Item.Top = this.cbbCFlow.Item.Top;// this.txtPosDa.Item.Top;
-            this.lblPosDa.Item.Left = this.lblCusVen.Item.Left;// - this.lblPosDa.Item.Width;
-
-            this.txtPosDa.Item.Top = this.cbbCFlow.Item.Top;// this.grData.Item.Top - this.txtPosDa.Item.Height - 10;
-            this.txtPosDa.Item.Left = this.lblPosDa.Item.Left + this.lblPosDa.Item.Width + 10;// maxw - this.txtPosDa.Item.Width - 20;
-
-            this.txtCusVen.Item.Left = this.txtPosDa.Item.Left;// + this.lblCusVen.Item.Width + 20;
-            this.txtCusVen.Item.Top = this.lblFDate.Item.Top;
+            this.cbbFeeType.Item.Top = this.lblFDate.Item.Top;
+            this.cbbFeeType.Item.Left = this.lblFeeType.Item.Left + this.lblFeeType.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             var labBottom = this.lblFDate.Item.Top + this.lblFDate.Item.Height;
             var bttTop = labBottom - this.btnFind.Item.Height;
             this.btnFind.Item.Top = bttTop;
-            this.btnFind.Item.Left = maxw - btnFind.Item.Width - 20;// this.txtCusVen.Item.Left + this.txtCusVen.Item.Width + 10;
-            //this.btnFind.Item.Width = maxw - btnFind.Item.Left - 20;
+            this.btnFind.Item.Left = maxw - btnFind.Item.Width - CoreSetting.UF_HorMargin;// this.txtCusVen.Item.Left + this.txtCusVen.Item.Width + 10;
 
+            this.lblPmTyp.Item.Top = this.lblFDate.Item.Top + this.lblFDate.Item.Height + CoreSetting.UF_VerticallySpaced;
+            this.lblPmTyp.Item.Left = this.lblFDate.Item.Left;
+            this.lblPmTyp.Item.Width = this.lblTDate.Item.Width + this.txtFDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
+
+            this.cbbPmTyp.Item.Top = this.lblPmTyp.Item.Top;
+            this.cbbPmTyp.Item.Left = this.lblTDate.Item.Left;
+            this.cbbPmTyp.Item.Width = this.lblTDate.Item.Width + this.txtTDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
+
+            this.lblCFlow.Item.Top = this.cbbPmTyp.Item.Top;
+            this.lblCFlow.Item.Left = this.lblBankAccount.Item.Left;
+            this.lblCFlow.Item.Width = this.lblBankAccount.Item.Width;// + cbbType.Item.Width + 20;
+
+            this.cbbCFlow.Item.Top = this.lblCFlow.Item.Top;
+            this.cbbCFlow.Item.Left = this.cbbBankAccount.Item.Left;
+            this.cbbCFlow.Item.Width = this.cbbBankAccount.Item.Width;// + this.cbbBr.Item.Width + 20;
+                        
+            this.lblPosDa.Item.Top = this.cbbCFlow.Item.Top;// this.txtPosDa.Item.Top;
+            this.lblPosDa.Item.Left = this.lblFeeType.Item.Left;// - this.lblPosDa.Item.Width;
+            this.lblPosDa.Item.Width = this.lblFeeType.Item.Width;
+
+            this.txtPosDa.Item.Top = this.cbbCFlow.Item.Top;// this.grData.Item.Top - this.txtPosDa.Item.Height - 10;
+            this.txtPosDa.Item.Left = this.lblPosDa.Item.Left + this.lblPosDa.Item.Width + 10;// maxw - this.txtPosDa.Item.Width - 20;
+            
             this.btnCreate.Item.Left = this.btnFind.Item.Left;// this.txtPosDa.Item.Left + this.txtPosDa.Item.Width + 10;
             var labBottom1 = this.lblPmTyp.Item.Top + this.lblPmTyp.Item.Height;
             var bttTop1 = labBottom1 - this.btnCreate.Item.Height;
             this.btnCreate.Item.Top = bttTop1;
             this.btnCreate.Item.Width = btnFind.Item.Width;
+            
+            this.lblNote.Item.Left = this.txtFDate.Item.Left;
+            this.lblNote.Item.Top = this.lblPmTyp.Item.Top + this.lblPmTyp.Item.Height + CoreSetting.UF_VerticallySpaced;
 
-            this.txtCusVen.Item.Width = this.btnFind.Item.Left - this.txtCusVen.Item.Left - 20;
-            this.txtPosDa.Item.Width = this.txtCusVen.Item.Width;
-
-            this.lblMth.Item.Left = lblPmTyp.Item.Left;
-            this.lblMth.Item.Top = lblPmTyp.Item.Top + lblPmTyp.Item.Height + 10;
-            lblMth.Item.Width = lblPmTyp.Item.Width;// - lblMth.Item.Left - 20;
-
-            this.lblNote.Item.Left = this.lblPosDa.Item.Left;
-            this.lblNote.Item.Top = this.lblMth.Item.Top;
-
-            this.txtNote.Item.Left = this.txtPosDa.Item.Left;
+            this.txtNote.Item.Left = this.lblTDate.Item.Left;
             this.txtNote.Item.Top = this.lblNote.Item.Top;
-            var lblNoteWidth = (this.btnCreate.Item.Left + this.btnCreate.Item.Width) - this.txtPosDa.Item.Left;
-            var lblNoteHeight = (this.cbbAccCa.Item.Top + this.cbbAccCa.Item.Height) - this.cbbBank.Item.Top;
-            this.txtNote.Item.Width = lblNoteWidth;
-            this.txtNote.Item.Height = lblNoteHeight;
-
-            cbbMeth.Item.Top = lblMth.Item.Top;
-            cbbMeth.Item.Left = lblTDate.Item.Left;
-            cbbMeth.Item.Width = lblType.Item.Left - cbbMeth.Item.Left - 20;
-
-
-            this.lblBank.Item.Left = this.lblCFlow.Item.Left;
-            this.lblBank.Item.Width = this.lblCFlow.Item.Width;
-            this.lblBank.Item.Top = lblMth.Item.Top;// + lblMth.Item.Height + 10;
-
-            this.cbbBank.Item.Top = this.lblBank.Item.Top;
-            this.cbbBank.Item.Left = this.cbbCFlow.Item.Left;
-            this.cbbBank.Item.Width = this.cbbCFlow.Item.Width;// - cbbMeth.Item.Left - 20;
-
-            this.lblAccCa.Item.Left = this.lblCFlow.Item.Left;
-            this.lblAccCa.Item.Width = this.lblCFlow.Item.Width;
-            this.lblAccCa.Item.Top = lblBank.Item.Top + lblBank.Item.Height + 10;
-
-            this.cbbAccCa.Item.Top = this.lblAccCa.Item.Top;
-            this.cbbAccCa.Item.Left = this.cbbBank.Item.Left;
-            this.cbbAccCa.Item.Width = this.cbbBank.Item.Width;// - cbbMeth.Item.Left - 20;
+            var lblNoteWidth = (this.btnCreate.Item.Left + this.btnCreate.Item.Width) - this.lblTDate.Item.Left;
+            this.txtNote.Item.Width = lblNoteWidth;                      
 
             this.btnAddL.Item.Left = this.lblFDate.Item.Left;
-            this.btnAddL.Item.Top = lblAccCa.Item.Top + lblAccCa.Item.Height + 20;
-
-            this.btnRem.Item.Top = this.btnAddL.Item.Top;
-            this.btnRem.Item.Left = this.btnAddL.Item.Left + this.btnAddL.Item.Width + 20;
-
+            this.btnAddL.Item.Top = this.txtNote.Item.Top + this.txtNote.Item.Height + CoreSetting.UF_VerticallySpaced;
+                       
             this.btnChAl.Item.Top = this.btnAddL.Item.Top;
-            this.btnChAl.Item.Left = this.btnAddL.Item.Left + this.btnAddL.Item.Width + 20;
+            this.btnChAl.Item.Left = this.btnAddL.Item.Left + this.btnAddL.Item.Width + CoreSetting.UF_VerticallySpaced;
 
             this.btnUnck.Item.Top = this.btnAddL.Item.Top;
-            this.btnUnck.Item.Left = this.btnChAl.Item.Left + this.btnChAl.Item.Width + 20;
-
-            this.btnHis.Item.Top = this.btnUnck.Item.Top;
-            this.btnHis.Item.Left = this.btnUnck.Item.Left + this.btnUnck.Item.Width + 20;
-
-
-            //this.ckbGr.Item.Left = this.btnRem.Item.Left + this.btnRem.Item.Width + 20;
-            //this.ckbGr.Item.Top = this.btnAddL.Item.Top;
+            this.btnUnck.Item.Left = this.btnChAl.Item.Left + this.btnChAl.Item.Width + CoreSetting.UF_VerticallySpaced;
 
             this.grData.Item.Left = this.lblFDate.Item.Left;
             this.grData.Item.Top = btnAddL.Item.Top + btnAddL.Item.Height + 10;
             this.grData.Item.Width = maxw - grData.Item.Left - 20;
             this.grData.Item.Height = max - grData.Item.Top - 20;
 
-            //this.txtPosDa.Item.Top = this.grData.Item.Top - this.txtPosDa.Item.Height - 10;
-            //this.txtPosDa.Item.Left = maxw - this.txtPosDa.Item.Width - 20;
-
-            //this.lblPosDa.Item.Top = this.txtPosDa.Item.Top;
-            //this.lblPosDa.Item.Left = this.txtPosDa.Item.Left - 10 - this.lblPosDa.Item.Width;
         }
 
 
@@ -547,8 +495,8 @@ namespace STDApp.Payment
         private SAPbouiCOM.Button btnCreate;
         private SAPbouiCOM.StaticText lblBr;
         private SAPbouiCOM.ComboBox cbbBr;
-        private SAPbouiCOM.StaticText lblMth;
-        private SAPbouiCOM.ComboBox cbbMeth;
+        private SAPbouiCOM.StaticText lblFeeType;
+        private SAPbouiCOM.ComboBox cbbFeeType;
         private SAPbouiCOM.StaticText lblPmTyp;
         private SAPbouiCOM.ComboBox cbbPmTyp;
         private SAPbouiCOM.StaticText lblFDateL;
@@ -564,8 +512,8 @@ namespace STDApp.Payment
         private SAPbouiCOM.Grid grDt;
         private SAPbouiCOM.Button btnAddL;
         private SAPbouiCOM.Button btnRem;
-        private StaticText lblBank;
-        private ComboBox cbbBank;
+        private StaticText lblBankAccount;
+        private ComboBox cbbBankAccount;
         private StaticText lblCFlow;
         private ComboBox cbbCFlow;
 
@@ -591,7 +539,7 @@ namespace STDApp.Payment
             this.folderCreate.Select();
 
             UIHelper.ComboboxSelectDefault(this.cbbType);
-            UIHelper.ComboboxSelectDefault(this.cbbMeth);
+            UIHelper.ComboboxSelectDefault(this.cbbFeeType);
 
             LoadBranchestoCombobox();
             LoadPaymentTypeCombobox();
@@ -639,17 +587,17 @@ namespace STDApp.Payment
             //    this.Freeze(false);
             //}
 
-            UIHelper.ClearSelectValidValues(cbbBank);
+            UIHelper.ClearSelectValidValues(cbbBankAccount);
             UIHelper.ClearSelectValidValues(cbbAccCa);
             var values = DataHelper.ListBanks;
             if (values != null && values.Count() > 0)
             {
                 foreach (var data in values)
                 {
-                    this.cbbBank.ValidValues.Add(data["Code"].ToString(), data["Name"].ToString());
+                    this.cbbBankAccount.ValidValues.Add(data["Code"].ToString(), data["Name"].ToString());
                     this.cbbAccCa.ValidValues.Add(data["Code"].ToString(), data["Name"].ToString());
                 }
-                UIHelper.ComboboxSelectDefault(cbbBank);
+                UIHelper.ComboboxSelectDefault(cbbBankAccount);
                 UIHelper.ComboboxSelectDefault(cbbAccCa);
             }
         }
@@ -1941,24 +1889,24 @@ namespace STDApp.Payment
             }
         }
 
-        private void cbbMeth_ComboSelectAfter(object sboObject, SBOItemEventArg pVal)
+        private void cbbFeeT_ComboSelectAfter(object sboObject, SBOItemEventArg pVal)
         {
             AutoFillData();
             if (_PaymentMethod == PaymentMethod.CashBank)
             {
-                this.cbbBank.Item.Enabled = true;
+                this.cbbBankAccount.Item.Enabled = true;
                 this.cbbAccCa.Item.Enabled = true;
             }
             else if (_PaymentMethod == PaymentMethod.Cash)
             {
 
-                this.cbbBank.Item.Enabled = false;
+                this.cbbBankAccount.Item.Enabled = false;
                 this.cbbAccCa.Item.Enabled = true;
             }
             else
             {
 
-                this.cbbBank.Item.Enabled = true;
+                this.cbbBankAccount.Item.Enabled = true;
                 this.cbbAccCa.Item.Enabled = false;
             }
             //ChangePaymentMethod();
