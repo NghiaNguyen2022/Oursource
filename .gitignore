@@ -23,3 +23,11 @@ STD/Common/PN-Libraries/DLLs/4.6/SAPCore.dll
 /STD/Common/PN-Libraries/DLLs/4.6/PN.SmartLib.dll.REMOTE.dll
 /STD/Common/STD_Libs/.vs/STDLibs.csproj.dtbcache.json
 /STD/Common/PN-Libraries/DLLs
+/Service/Common/PN-Libraries/PN.Libs/.vs
+/Service/Common/PN-Libraries/PN.Libs/bin
+/Service/Common/PN-Libraries/PN.Libs/obj
+/Service/Common/PN-Libraries/SAPCore/obj
+/Service/Common/PN-Libraries/SAPCore/.vs
+/Service/Common/PN-Libraries/SAPCore/bin
+/Service/ERPService/obj
+/Service/ERPService/.vs
