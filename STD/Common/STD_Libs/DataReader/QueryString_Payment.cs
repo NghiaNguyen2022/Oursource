@@ -100,13 +100,7 @@ namespace STD.DataReader
                 return CallStoreBySystem("usp_GeneratePaymentKey", "'{0}', '{1}', '{2}'");
             }
         }
-        //public static string GetApproveRequestCodeQuery
-        //{
-        //    get
-        //    {
-        //        return CallStoreBySystem("usp_GetRequestCode", "'{0}'");
-        //    }
-        //}
+
         public static string BanksLoad
         {
             get
@@ -120,7 +114,7 @@ namespace STD.DataReader
             get
             {
                 var schema = DBName; //ConfigurationManager.AppSettings["Schema"];
-                return "SELECT \"CFWId\", \"CFWName\" FROM \"" + schema + "\".\"OCFW\" WHERE \"Postable\" = 'Y' ";
+                return "SELECT * FROM  \"" + schema + "\".\"vw_Bank_vwCashFlow\"";
             }
         }
         public static string AccountsLoad

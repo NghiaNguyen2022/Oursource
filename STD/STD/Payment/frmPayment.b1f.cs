@@ -221,7 +221,8 @@ namespace STDApp.Payment
         {
             get
             {
-                return UIHelper.GetComboValue(cbbBrL, "0");
+                return "";
+                //return UIHelper.GetComboValue(cbbStt, "0");
             }
         }
         private PaymentDocumentType _PaymentDocumentTypeReport
@@ -276,8 +277,8 @@ namespace STDApp.Payment
             this.txtTDateL = ((SAPbouiCOM.EditText)(this.GetItem("txtTDaL").Specific));
             this.btnFindL = ((SAPbouiCOM.Button)(this.GetItem("btnFindL").Specific));
             this.btnFindL.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnFindL_ClickBefore);
-            this.lblBrL = ((SAPbouiCOM.StaticText)(this.GetItem("lblBrL").Specific));
-            this.cbbBrL = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbBrL").Specific));
+            this.lblStt = ((SAPbouiCOM.StaticText)(this.GetItem("lblStt").Specific));
+            this.cbbStt = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbStt").Specific));
             this.lblPmTyL = ((SAPbouiCOM.StaticText)(this.GetItem("lblPTL").Specific));
             this.cbbPmTyL = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbPTL").Specific));
             this.grHdr = ((SAPbouiCOM.Grid)(this.GetItem("grHdr").Specific));
@@ -361,16 +362,16 @@ namespace STDApp.Payment
             this.cbbPmTyL.Item.Top = this.lblFDateL.Item.Top;
             this.cbbPmTyL.Item.Left = this.lblPmTyL.Item.Left + this.lblPmTyL.Item.Width + 20;
 
-            this.lblBrL.Item.Top = this.lblFDateL.Item.Top;
-            this.lblBrL.Item.Left = this.cbbPmTyL.Item.Left + this.cbbPmTyL.Item.Width + 20;
+            this.lblStt.Item.Top = this.lblFDateL.Item.Top;
+            this.lblStt.Item.Left = this.cbbPmTyL.Item.Left + this.cbbPmTyL.Item.Width + 20;
 
-            this.cbbBrL.Item.Top = this.lblFDateL.Item.Top;
-            this.cbbBrL.Item.Left = this.lblBrL.Item.Left + this.lblBrL.Item.Width + 20;
+            this.cbbStt.Item.Top = this.lblFDateL.Item.Top;
+            this.cbbStt.Item.Left = this.lblStt.Item.Left + this.lblStt.Item.Width + 20;
 
             var labBottom = this.lblFDateL.Item.Top + this.lblFDateL.Item.Height;
             var bttTop = labBottom - this.btnFindL.Item.Height;
             this.btnFindL.Item.Top = bttTop;
-            this.btnFindL.Item.Left = this.cbbBrL.Item.Left + this.cbbBrL.Item.Width + 30;
+            this.btnFindL.Item.Left = this.cbbStt.Item.Left + this.cbbStt.Item.Width + 30;
 
             this.grHdr.Item.Left = this.lblFDateL.Item.Left;
             this.grHdr.Item.Width = maxw - grHdr.Item.Left - 20;
@@ -494,8 +495,8 @@ namespace STDApp.Payment
         private SAPbouiCOM.EditText txtFDateL;
         private SAPbouiCOM.EditText txtTDateL;
         private SAPbouiCOM.Button btnFindL;
-        private SAPbouiCOM.StaticText lblBrL;
-        private SAPbouiCOM.ComboBox cbbBrL;
+        private SAPbouiCOM.StaticText lblStt;
+        private SAPbouiCOM.ComboBox cbbStt;
         private SAPbouiCOM.StaticText lblPmTyL;
         private SAPbouiCOM.ComboBox cbbPmTyL;
         private SAPbouiCOM.Grid grHdr;
