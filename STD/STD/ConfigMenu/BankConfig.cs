@@ -8,6 +8,7 @@ namespace STDApp.ConfigMenu
         { }
 
         public AddonUserForm InquiryForm { get; set; }
+        public AddonUserForm PaymentForm { get; set; }
 
 
         protected override void AddFolder(string mainParentID, int index = 0)
@@ -34,6 +35,17 @@ namespace STDApp.ConfigMenu
             };
 
             AddForms(InquiryForm, 0);
+
+            PaymentForm = new AddonUserForm()
+            {
+                FormID = "Payment_F",
+                MenuID = "PM_Payment_M",
+                MenuName = "Thanh toán NCC qua ngân hàng",
+                ParentID = FolderInfomation.MenuID,
+                FormType = "frmPayment"
+            };
+
+            AddForms(PaymentForm, 1);
         }
     }
 }

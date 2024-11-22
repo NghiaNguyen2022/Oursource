@@ -1,0 +1,12 @@
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\bin\x64\Debug\PN.SmartLib.dll
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\bin\x64\Debug\PN.SmartLib.pdb
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\obj\x64\Debug\PN.SmartLib.csprojAssemblyReference.cache
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\obj\x64\Debug\PN.SmartLib.csproj.CoreCompileInputs.cache
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\obj\x64\Debug\PN.SmartLib.dll
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\obj\x64\Debug\PN.SmartLib.pdb
+C:\Data\GITHUB\Demo\Standard\DemoExtension\Common\PN-Libraries\PN.Libs\bin\x64\Debug\PN.SmartLib.dll
+C:\Data\GITHUB\Demo\Standard\DemoExtension\Common\PN-Libraries\PN.Libs\bin\x64\Debug\PN.SmartLib.pdb
+C:\Data\GITHUB\Demo\Standard\DemoExtension\Common\PN-Libraries\PN.Libs\obj\x64\Debug\PN.SmartLib.csproj.CoreCompileInputs.cache
+C:\Data\GITHUB\Demo\Standard\DemoExtension\Common\PN-Libraries\PN.Libs\obj\x64\Debug\PN.SmartLib.dll
+C:\Data\GITHUB\Demo\Standard\DemoExtension\Common\PN-Libraries\PN.Libs\obj\x64\Debug\PN.SmartLib.pdb
+C:\Data\GITHUB\Demo\Standard\DemoExtension\Common\PN-Libraries\PN.Libs\obj\x64\Debug\PN.SmartLib.csprojAssemblyReference.cache

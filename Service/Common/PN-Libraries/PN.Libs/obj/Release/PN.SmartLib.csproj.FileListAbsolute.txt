@@ -1,0 +1,5 @@
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\bin\Release\PN.SmartLib.dll
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\bin\Release\PN.SmartLib.pdb
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\obj\Release\PN.SmartLib.csproj.CoreCompileInputs.cache
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\obj\Release\PN.SmartLib.dll
+C:\Data\GITHUB\Demo\Standard\GT.Extension\Common\PN-Libraries\PN.Libs\obj\Release\PN.SmartLib.pdb

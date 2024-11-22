@@ -1,8 +1,4 @@
-﻿using STD.DataReader;
-using STDApp.AccessSAP;
-using STDApp.DataReader;
-using STDApp.Models;
-using PN.SmartLib.Helper;
+﻿using PN.SmartLib.Helper;
 using SAPbouiCOM;
 using SAPbouiCOM.Framework;
 using SAPCore;
@@ -10,6 +6,10 @@ using SAPCore.Config;
 using SAPCore.Helper;
 using SAPCore.SAP;
 using SAPCore.SAP.DIAPI;
+using STD.DataReader;
+using STDApp.AccessSAP;
+using STDApp.DataReader;
+using STDApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
@@ -57,13 +57,13 @@ namespace STDApp.Payment
             }
         }
 
-        private string CardCode
-        {
-            get
-            {
-                return UIHelper.GetTextboxValue(txtCusVen);
-            }
-        }
+        //private string CardCode
+        //{
+        //    get
+        //    {
+        //        return UIHelper.GetTextboxValue(txtCusVen);
+        //    }
+        //}
         private string CardCodeFilter { get; set; } = string.Empty;
         private string CardTypeSelect { get; set; } = string.Empty;
         private PaymentType _PaymentType
@@ -112,16 +112,6 @@ namespace STDApp.Payment
             }
         }
 
-        private decimal Rate
-        {
-            get
-            {
-                decimal rate = 0;
-                decimal.TryParse(txtRate.Value, out rate);
-                return rate;
-            }
-        }
-
         private PaymentMethod _PaymentMethod
         {
             get
@@ -162,62 +152,62 @@ namespace STDApp.Payment
         ChooseFromList oCFL;
         Conditions oConCustomers = null;
         Conditions oConVendors = null;
-        private void ConfigCFL()
-        {
-            ChooseFromListCollection oCFLs = null;
-            oCFLs = this.UIAPIRawForm.ChooseFromLists;
-            oCFL = oCFLs.Item("CFL_BP");
-            oConCustomers = null;
-            // Condition oCon = null;
-            oConCustomers = oCFL.GetConditions();
+        //private void ConfigCFL()
+        //{
+        //    ChooseFromListCollection oCFLs = null;
+        //    oCFLs = this.UIAPIRawForm.ChooseFromLists;
+        //    oCFL = oCFLs.Item("CFL_BP");
+        //    oConCustomers = null;
+        //    // Condition oCon = null;
+        //    oConCustomers = oCFL.GetConditions();
 
-            var oConCustomer = oConCustomers.Add();
-            oConCustomer.Alias = "CardType";
+        //    var oConCustomer = oConCustomers.Add();
+        //    oConCustomer.Alias = "CardType";
 
-            oConCustomer.Operation = BoConditionOperation.co_EQUAL;
-            oConCustomer.CondVal = "C";
+        //    oConCustomer.Operation = BoConditionOperation.co_EQUAL;
+        //    oConCustomer.CondVal = "C";
 
-            oConVendors = null;
-            oConVendors = oCFL.GetConditions();
+        //    oConVendors = null;
+        //    oConVendors = oCFL.GetConditions();
 
-            var oConVendor = oConVendors.Add();
-            oConVendor.Alias = "CardType";
+        //    var oConVendor = oConVendors.Add();
+        //    oConVendor.Alias = "CardType";
 
-            oConVendor.Operation = BoConditionOperation.co_EQUAL;
-            oConVendor.CondVal = "S";
-            SetCondition();
-        }
+        //    oConVendor.Operation = BoConditionOperation.co_EQUAL;
+        //    oConVendor.CondVal = "S";
+        //    SetCondition();
+        //}
 
-        private void SetCondition(string type = "C")
-        {
-            if (oCFL != null)
-            {
-                if (type == "C" && oConCustomers != null)
-                {
-                    oCFL.SetConditions(oConCustomers);
-                }
-                else
-                {
-                    if (oConVendors != null)
-                        oCFL.SetConditions(oConVendors);
-                }
-            }
-        }
+        //private void SetCondition(string type = "C")
+        //{
+        //    if (oCFL != null)
+        //    {
+        //        if (type == "C" && oConCustomers != null)
+        //        {
+        //            oCFL.SetConditions(oConCustomers);
+        //        }
+        //        else
+        //        {
+        //            if (oConVendors != null)
+        //                oCFL.SetConditions(oConVendors);
+        //        }
+        //    }
+        //}
 
-        private void SelectType(string type = "C")
-        {
-            if (type == "C")
-            {
-                this.lblCusVen.Caption = STRING_CONTRANTS.Title_Customer;
-                //this.lblName.Caption = STRING_CONTRANTS.Title_CustomerName;// "Tên Khách hàng";
-            }
-            else
-            {
-                this.lblCusVen.Caption = STRING_CONTRANTS.Title_Vendor;
-                //this.lblName.Caption = STRING_CONTRANTS.Title_VendorName;// "Tên Nhà Cung cấp";
-            }
-            SetCondition(type);
-        }
+        //private void SelectType(string type = "C")
+        //{
+        //    if (type == "C")
+        //    {
+        //        this.lblCusVen.Caption = STRING_CONTRANTS.Title_Customer;
+        //        //this.lblName.Caption = STRING_CONTRANTS.Title_CustomerName;// "Tên Khách hàng";
+        //    }
+        //    else
+        //    {
+        //        this.lblCusVen.Caption = STRING_CONTRANTS.Title_Vendor;
+        //        //this.lblName.Caption = STRING_CONTRANTS.Title_VendorName;// "Tên Nhà Cung cấp";
+        //    }
+        //    SetCondition(type);
+        //}
 
         private string ToDateReport
         {
@@ -538,86 +528,31 @@ namespace STDApp.Payment
         {
             this.folderCreate.Select();
 
-            UIHelper.ComboboxSelectDefault(this.cbbType);
             UIHelper.ComboboxSelectDefault(this.cbbFeeType);
-
-            LoadBranchestoCombobox();
-            LoadPaymentTypeCombobox();
-            LoadBankCombobox();
+            
+            LoadBankAccountCombobox();
             LoadCashflowCombobox();
-            ConfigCFL();
-            this.txtRate.Item.Enabled = false;
-            this.btnRem.Item.Enabled = false;
 
             this.txtPosDa.Value = DateTime.Now.ToString("yyyyMMdd");
 
         }
-        private void LoadBranchestoCombobox()
+        
+        private void LoadBankAccountCombobox()
         {
-            try
-            {
-                this.Freeze(true);
-                UIHelper.LoadComboboxFromDataSource(cbbBr, DataTableCbb, QueryString.BranchesLoad, "BPLId", "BPLName");
-                UIHelper.LoadComboboxFromDataSource(cbbBrL, DataTableCbb, QueryString.BranchesLoad, "BPLId", "BPLName");
-            }
-            catch (Exception ex)
-            {
-                UIHelper.LogMessage("Error GetBranch : " + ex.Message, UIHelper.MsgType.StatusBar, true);
-            }
-            finally
-            {
-                this.Freeze(false);
-            }
-        }
-
-        private void LoadBankCombobox()
-        {
-            //try
-            //{
-            //    this.Freeze(true);
-            //    UIHelper.LoadComboboxFromDataSource(cbbBank, DataTableCbb, QueryString.BanksLoad, "Code", "Name");
-            //    UIHelper.LoadComboboxFromDataSource(cbbAccCa, DataTableCbb, QueryString.BanksLoad, "Code", "Name");
-            //}
-            //catch (Exception ex)
-            //{
-            //    UIHelper.LogMessage("Error GetBank : " + ex.Message, UIHelper.MsgType.StatusBar, true);
-            //}
-            //finally
-            //{
-            //    this.Freeze(false);
-            //}
-
             UIHelper.ClearSelectValidValues(cbbBankAccount);
-            UIHelper.ClearSelectValidValues(cbbAccCa);
             var values = DataHelper.ListBanks;
             if (values != null && values.Count() > 0)
             {
                 foreach (var data in values)
                 {
                     this.cbbBankAccount.ValidValues.Add(data["Code"].ToString(), data["Name"].ToString());
-                    this.cbbAccCa.ValidValues.Add(data["Code"].ToString(), data["Name"].ToString());
                 }
                 UIHelper.ComboboxSelectDefault(cbbBankAccount);
-                UIHelper.ComboboxSelectDefault(cbbAccCa);
             }
         }
 
         private void LoadCashflowCombobox()
         {
-            //try
-            //{
-            //    this.Freeze(true);
-            //    UIHelper.LoadComboboxFromDataSource(cbbCFlow, DataTableCbb, QueryString.CflowsLoad, "CFWId", "CFWName", 0, "-", STRING_CONTRANTS.NoChooseCashFlow);
-            //}
-            //catch (Exception ex)
-            //{
-            //    UIHelper.LogMessage("Error Get Cashflow : " + ex.Message, UIHelper.MsgType.StatusBar, true);
-            //}
-            //finally
-            //{
-            //    this.Freeze(false);
-            //}
-
             UIHelper.ClearSelectValidValues(cbbCFlow);
             var values = DataHelper.ListCashFlows;
             this.cbbCFlow.ValidValues.Add("-", STRING_CONTRANTS.NoChooseCashFlow);
@@ -633,26 +568,25 @@ namespace STDApp.Payment
 
         private void LoadPaymentTypeCombobox()
         {
-            UIHelper.ClearSelectValidValues(cbbPmTyp);
-            this.txtCusVen.Value = string.Empty;
-            if (_PaymentType == PaymentType.T)
-            {
-                cbbPmTyp.ValidValues.Add("PT", STRING_CONTRANTS.PaymentType_PT);
-                SelectType("C");
-            }
-            else
-            {
-                cbbPmTyp.ValidValues.Add("PC", STRING_CONTRANTS.PaymentType_PC);
-                cbbPmTyp.ValidValues.Add("UC", STRING_CONTRANTS.PaymentType_UC);
-                SelectType("V");
-            }
-            UIHelper.ComboboxSelectDefault(cbbPmTyp);
+            //UIHelper.ClearSelectValidValues(cbbPmTyp);
+            //if (_PaymentType == PaymentType.T)
+            //{
+            //    cbbPmTyp.ValidValues.Add("PT", STRING_CONTRANTS.PaymentType_PT);
+            //    SelectType("C");
+            //}
+            //else
+            //{
+            //    cbbPmTyp.ValidValues.Add("PC", STRING_CONTRANTS.PaymentType_PC);
+            //    cbbPmTyp.ValidValues.Add("UC", STRING_CONTRANTS.PaymentType_UC);
+            //    SelectType("V");
+            //}
+            //UIHelper.ComboboxSelectDefault(cbbPmTyp);
 
-            UIHelper.ClearSelectValidValues(cbbPmTyL);
-            cbbPmTyL.ValidValues.Add("PT", STRING_CONTRANTS.PaymentType_PT);
-            cbbPmTyL.ValidValues.Add("PC", STRING_CONTRANTS.PaymentType_PC);
-            cbbPmTyL.ValidValues.Add("UC", STRING_CONTRANTS.PaymentType_UC);
-            UIHelper.ComboboxSelectDefault(cbbPmTyL);
+            //UIHelper.ClearSelectValidValues(cbbPmTyL);
+            //cbbPmTyL.ValidValues.Add("PT", STRING_CONTRANTS.PaymentType_PT);
+            //cbbPmTyL.ValidValues.Add("PC", STRING_CONTRANTS.PaymentType_PC);
+            //cbbPmTyL.ValidValues.Add("UC", STRING_CONTRANTS.PaymentType_UC);
+            //UIHelper.ComboboxSelectDefault(cbbPmTyL);
         }
 
         private void LoadDataGridReportDetail(string docnum)
@@ -823,7 +757,7 @@ namespace STDApp.Payment
         }
         private void LoadDataGridCreate(bool isAfter = false, bool isHistory = false, string keylog = "")
         {
-            this.UIAPIRawForm.DataSources.UserDataSources.Item("UD_Cod").ValueEx = CardCode;
+            //this.UIAPIRawForm.DataSources.UserDataSources.Item("UD_Cod").ValueEx = CardCode;
 
             if (this.grData != null)
             {

@@ -3,6 +3,13 @@ using System.ComponentModel;
 
 namespace STDApp.Models
 {
+    public enum FeeType
+    {
+        [Description("BEN")]
+        BEN,
+        [Description("OUR")]
+        OUR
+    }
     public enum PaymentType
     {
         [Description("T")] T, // phieu thu

@@ -2,6 +2,7 @@
 using SAPCore;
 using STDApp.Bank;
 using STDApp.ConfigMenu;
+using STDApp.Payment;
 using System;
 
 namespace STDApp
@@ -16,17 +17,6 @@ namespace STDApp
 
             bankConfig = new BankConfig();
             bankConfig.LoadMenu(GlobalsConfig.Instance.CusPMFolderID, 0);
-
-            //UIHelper.AddMenuFolder(GlobalsConfig.Instance.CusPMFolderID, GlobalsConfig.Instance.CusPMFolderDesc, GlobalsConfig.Instance.ParentMenuID);
-
-            //if(DataHelper.CheckUser(GlobalsConfig.Instance.UserName, UserRole.Requester))
-            //    UIHelper.AddMenuItem(GlobalsConfig.Instance.PaymentFormInfo, 0);
-
-            //if (DataHelper.CheckUser(GlobalsConfig.Instance.UserName, UserRole.Reviewer))
-            //    UIHelper.AddMenuItem(GlobalsConfig.Instance.PaymentReviewFormInfo, 1);
-
-            //if (DataHelper.CheckUser(GlobalsConfig.Instance.UserName, UserRole.Approver))
-            //    UIHelper.AddMenuItem(GlobalsConfig.Instance.PaymentApproveFormInfo, 2);
         }
 
         public void SBO_Application_MenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent)
@@ -42,10 +32,10 @@ namespace STDApp
                     {
                         frmInquiry.ShowForm();
                     }
-                    //else if (pVal.MenuUID == GlobalsConfig.Instance.PaymentApproveFormInfo.MenuID)
-                    //{
-                    //    frmApprovePayment.ShowForm();
-                    //}
+                    else if (pVal.MenuUID == bankConfig.PaymentForm.MenuID)
+                    {
+                        frmPayment.ShowForm();
+                    }
                     //else if (pVal.MenuUID == GlobalsConfig.Instance.PaymentReviewFormInfo.MenuID)
                     //{
                     //    frmPaymentReview.ShowForm();

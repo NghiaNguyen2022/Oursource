@@ -112,7 +112,7 @@ namespace STD.DataReader
             get
             {
                 var schema = DBName; //ConfigurationManager.AppSettings["Schema"];
-                return "SELECT ROW_NUMBER() OVER (ORDER BY \"Code\") AS \"RowNum\", \"Code\", \"Name\", \"U_Account\" FROM \"" + schema + "\".\"@V_BANK\" ";
+                return "SELECT * FROM  \"" + schema + "\".\"vw_Bank_BankAccount\"";
             }
         }
         public static string CflowsLoad
