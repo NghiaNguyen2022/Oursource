@@ -1,4 +1,4 @@
-﻿CREATE TABLE "InquiryHeader"
+﻿CREATE TABLE "tb_Bank_InquiryHeader"
 (
     "requestId" NVARCHAR(30),
     "providerId" NVARCHAR(30),
@@ -16,7 +16,7 @@
     "creditTransNo" INT,
     "totalDebit" DECIMAL(19,2),
     "debitTransNo" INT,
-    "toDate" DECIMAL(30),
+    "toDate" NVARCHAR(30),
     "fromTime" NVARCHAR(30), 
-    "toTime" DECIMAL(30),
+    "toTime" NVARCHAR(30),
 )

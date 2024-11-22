@@ -47,3 +47,9 @@ E:\Source\Service\Common\PN-Libraries\PN.Libs\obj\Debug\PN.SmartLib.csproj.Assem
 E:\Source\Service\Common\PN-Libraries\PN.Libs\obj\Debug\PN.SmartLib.csproj.CoreCompileInputs.cache
 E:\Source\Service\Common\PN-Libraries\PN.Libs\obj\Debug\PN.SmartLib.dll
 E:\Source\Service\Common\PN-Libraries\PN.Libs\obj\Debug\PN.SmartLib.pdb
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\DLLs\4.8\PN.SmartLib.dll
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\DLLs\4.8\PN.SmartLib.pdb
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\PN.Libs\obj\Debug\PN.SmartLib.csproj.AssemblyReference.cache
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\PN.Libs\obj\Debug\PN.SmartLib.csproj.CoreCompileInputs.cache
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\PN.Libs\obj\Debug\PN.SmartLib.dll
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\PN.Libs\obj\Debug\PN.SmartLib.pdb

@@ -119,3 +119,11 @@ E:\Source\Service\Common\PN-Libraries\SAPCore\obj\Debug\SAPCore.pdb
 E:\Source\Service\Common\PN-Libraries\DLLs\4.6\SAPCore.dll.config
 E:\Source\Service\Common\PN-Libraries\DLLs\4.6\SAPCore.dll
 E:\Source\Service\Common\PN-Libraries\DLLs\4.6\SAPCore.pdb
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\DLLs\4.6\SAPCore.dll.config
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\DLLs\4.6\SAPCore.dll
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\DLLs\4.6\SAPCore.pdb
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\SAPCore\obj\Debug\SAPCore.csproj.AssemblyReference.cache
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\SAPCore\obj\Debug\SAPCore.csproj.CoreCompileInputs.cache
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\SAPCore\obj\Debug\SAPCore.csproj.Up2Date
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\SAPCore\obj\Debug\SAPCore.dll
+E:\Source\Git\Oursource\Service\Common\PN-Libraries\SAPCore\obj\Debug\SAPCore.pdb

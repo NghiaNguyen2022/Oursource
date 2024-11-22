@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ERPService.Models
+﻿namespace ERPService.Models
 {
     public class InquiryRequest
     {

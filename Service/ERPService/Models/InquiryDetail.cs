@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ERPService.DataReader;
+using SAPCore.SAP.DIAPI;
 
 namespace ERPService.Models
 {
@@ -17,12 +15,43 @@ namespace ERPService.Models
         public string transactionNumber { get; set; }
         public string corresponsiveAccount { get; set; }
         public string corresponsiveAccountName { get; set; }
-        public object agency { get; set; }
-        public object virtualAccount { get; set; }
+        public string agency { get; set; }
+        public string virtualAccount { get; set; }
         public string corresponsiveBankName { get; set; }
         public string corresponsiveBankId { get; set; }
         public string serviceBranchId { get; set; }
         public object serviceBankName { get; set; }
         public string channel { get; set; }
+
+        public bool InsertData(string requestId, string providerId, string merchantId)
+        {
+            try
+            {
+                var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_InquiryDetail\" VALUES ( ";
+                query += $"'{requestId}',";
+                query += $"'{providerId}',";
+                query += $"'{merchantId}',";
+                query += $"'{transactionDate}',";
+                query += $"'{transactionContent}',";
+                query += $"{debit},";
+                query += $"{credit},";
+                query += $"{accountBal},";
+                query += $"'{transactionNumber}',";
+                query += $"'{corresponsiveAccount}',";
+                query += $"'{corresponsiveAccountName}',";
+                query += $"'{agency}',";
+                query += $"'{virtualAccount}',";
+                query += $"'{corresponsiveBankName}',";
+                query += $"'{corresponsiveBankId}',";
+                query += $"'{channel}'";
+                query += ")";
+
+                var ret1 = dbProvider.ExecuteNonQuery(query);
+            }
+            catch (Exception ex)
+            {
+            }
+            return true;
+        }
     }
 }

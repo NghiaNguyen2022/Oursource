@@ -89,12 +89,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DataReader\DataProvider.cs" />
     <Compile Include="DataReader\QueryString.cs" />
     <Compile Include="Models\ERPDocument.cs" />
     <Compile Include="Models\InquiryDetail.cs" />
     <Compile Include="Models\InquiryHeader.cs" />
     <Compile Include="Models\InquiryRequest.cs" />
-    <Compile Include="Models\ServiceConnection.cs" />
     <Compile Include="ServiceInstaller.cs">
       <SubType>Component</SubType>
     </Compile>

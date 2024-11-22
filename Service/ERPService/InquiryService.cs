@@ -135,7 +135,7 @@ namespace ERPService
         }
         private void DisConnect()
         {
-            DIServiceConnection.Instance.DIDisconnect();
+           // DIServiceConnection.Instance.DIDisconnect();
         }
         private void Process()
         {
@@ -145,7 +145,7 @@ namespace ERPService
 
             if (!hasData)
             {
-                WriteToFile(StringConstrants.NotHaveData + DateTime.Now);
+               // WriteToFile(StringConstrants.NotHaveData + DateTime.Now);
                 return;
             }
 
@@ -180,7 +180,8 @@ namespace ERPService
 
         private bool ConvertDrafToDocument(ERPDocument document, ref string message)
         {
-            return DIServiceConnection.Instance.ConvertDraft(document.DocEntry, document.Objtype, ref message);
+            return false;
+           // return DIServiceConnection.Instance.ConvertDraft(document.DocEntry, document.Objtype, ref message);
           
         }
       
@@ -192,17 +193,17 @@ namespace ERPService
                 Directory.CreateDirectory(path);
             }
             string filepath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
-            if (!File.Exists(filepath))
+            if (!System.IO.File.Exists(filepath))
             {
                 // Create a file to write to.
-                using (StreamWriter sw = File.CreateText(filepath))
+                using (StreamWriter sw = System.IO.File.CreateText(filepath))
                 {
                     sw.WriteLine(Message);
                 }
             }
             else
             {
-                using (StreamWriter sw = File.AppendText(filepath))
+                using (StreamWriter sw = System.IO.File.AppendText(filepath))
                 {
                     sw.WriteLine(Message);
                 }

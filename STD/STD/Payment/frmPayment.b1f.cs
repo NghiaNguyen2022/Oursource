@@ -764,25 +764,25 @@ namespace STDApp.Payment
             {
                 this.grData.DataTable.Clear();
 
-                var history = "N";
-                if (isHistory)
-                {
-                    isAfter = true;
-                    history = "Y";
-                }
+                //var history = "N";
+                //if (isHistory)
+                //{
+                //    isAfter = true;
+                //    history = "Y";
+                //}
 
-                var after = "N";
-                if (isAfter)
-                {
-                    after = "Y";
-                    btnCreate.Item.Enabled = false;
+                //var after = "N";
+                //if (isAfter)
+                //{
+                //    after = "Y";
+                //    btnCreate.Item.Enabled = false;
 
-                }
-                else
-                {
+                //}
+                //else
+                //{
 
-                    btnCreate.Item.Enabled = true;
-                }
+                //    btnCreate.Item.Enabled = true;
+                //}
 
                 this.grData.DataTable.ExecuteQuery(string.Format(QueryString.LoadInvoicesToPayment, FromDate, ToDate, _PaymentType.GetDescription(), Branch, CardCodeFilter, after, history, keylog));
 

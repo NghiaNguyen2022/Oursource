@@ -1,4 +1,4 @@
-﻿CREATE TABLE "InquiryDetail"
+﻿CREATE TABLE "tb_Bank_InquiryDetail"
 ( 
     "requestId" NVARCHAR(30),
     "providerId" NVARCHAR(30),
