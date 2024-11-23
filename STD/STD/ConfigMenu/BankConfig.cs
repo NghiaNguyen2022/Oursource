@@ -45,7 +45,7 @@ namespace STDApp.ConfigMenu
                 FormType = "frmPayment"
             };
 
-           // AddForms(PaymentForm, 1);
+            AddForms(PaymentForm, 1);
         }
     }
 }

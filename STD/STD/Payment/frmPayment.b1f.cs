@@ -128,11 +128,11 @@ namespace STDApp.Payment
         {
             get
             {
-                if (cbbFeeType != null && cbbFeeType.Selected != null)
-                {
-                    var type = cbbFeeType.Selected.Value.GetEnumValueByDescription<PaymentMethod>();
-                    return type;// cbbMeth.Selected.Value == "C" ? PaymentMethod.Cash : PaymentMethod.Bank;
-                }
+                //if (cbbFeeType != null && cbbFeeType.Selected != null)
+                //{
+                //    var type = cbbFeeType.Selected.Value.GetEnumValueByDescription<PaymentMethod>();
+                //    return type;// cbbMeth.Selected.Value == "C" ? PaymentMethod.Cash : PaymentMethod.Bank;
+                //}
 
                 return PaymentMethod.Cash;
             }
@@ -542,7 +542,8 @@ namespace STDApp.Payment
             this.folderCreate.Select();
 
             UIHelper.ComboboxSelectDefault(this.cbbFeeType);
-            
+            UIHelper.ComboboxSelectDefault(this.cbbPmTyp);
+
             LoadBankAccountCombobox();
             LoadCashflowCombobox();
 
@@ -792,8 +793,8 @@ namespace STDApp.Payment
                     return;
                 }
 
-                //this.grData.Columns.Item("Check").ColumnConfig(STRING_CONTRANTS.Title_Choose, true, true, BoGridColumnType.gct_CheckBox);
-                
+                this.grData.Columns.Item("Check").ColumnConfig(STRING_CONTRANTS.Title_Choose, true, true, BoGridColumnType.gct_CheckBox);
+
                 //this.grData.Columns.Item("DocNum").TitleObject.Caption = STRING_CONTRANTS.Title_DocNum;
                 //this.grData.Columns.Item("DocNum").Editable = false;
 
@@ -1769,24 +1770,24 @@ namespace STDApp.Payment
 
         private void cbbFeeT_ComboSelectAfter(object sboObject, SBOItemEventArg pVal)
         {
-            AutoFillData();
-            if (_PaymentMethod == PaymentMethod.CashBank)
-            {
-                this.cbbBankAccount.Item.Enabled = true;
-                this.cbbAccCa.Item.Enabled = true;
-            }
-            else if (_PaymentMethod == PaymentMethod.Cash)
-            {
+            //AutoFillData();
+            //if (_PaymentMethod == PaymentMethod.CashBank)
+            //{
+            //    this.cbbBankAccount.Item.Enabled = true;
+            //    this.cbbAccCa.Item.Enabled = true;
+            //}
+            //else if (_PaymentMethod == PaymentMethod.Cash)
+            //{
 
-                this.cbbBankAccount.Item.Enabled = false;
-                this.cbbAccCa.Item.Enabled = true;
-            }
-            else
-            {
+            //    this.cbbBankAccount.Item.Enabled = false;
+            //    this.cbbAccCa.Item.Enabled = true;
+            //}
+            //else
+            //{
 
-                this.cbbBankAccount.Item.Enabled = true;
-                this.cbbAccCa.Item.Enabled = false;
-            }
+            //    this.cbbBankAccount.Item.Enabled = true;
+            //    this.cbbAccCa.Item.Enabled = false;
+            //}
             //ChangePaymentMethod();
         }
 

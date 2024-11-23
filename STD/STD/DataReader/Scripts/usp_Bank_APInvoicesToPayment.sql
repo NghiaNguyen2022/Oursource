@@ -11,7 +11,7 @@ CREATE PROCEDURE "usp_Bank_APInvoicesToPayment"
 LANGUAGE SQLSCRIPT
 AS
 BEGIN
-	IF :v_Type = 'PC' -- chi
+	IF :v_Type = 'PT'
 	THEN
 		BEGIN 
 			SELECT T."CardCode",
@@ -26,7 +26,6 @@ BEGIN
 					T."InsTotalFC",	    
 				    CAST(T."MustPay" AS DECIMAL) AS "MustPay",  
 				    T."DocEntry",
-				    CAST('' AS NVARCHAR(200))  AS "CFlow",
 				    'Data' AS "Manual"
 			   FROM (
 					SELECT T."CardCode",
