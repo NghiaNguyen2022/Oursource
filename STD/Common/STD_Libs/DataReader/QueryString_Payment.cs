@@ -67,6 +67,13 @@ namespace STD.DataReader
             }
         }
 
+        public static string GetBPInformation
+        {
+            get
+            {
+                return CallStoreBySystem("usp_Bank_LoadBPInfor", "'{0}'");
+            }
+        }
 
         public static string LoadPaymentsReport
         {

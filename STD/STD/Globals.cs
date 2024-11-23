@@ -180,6 +180,7 @@ namespace STDApp
         public static string Title_Status = "Trạng Thái";
         public static string Title_Bank = "Ngân hàng";
         public static string Title_BankAccount = "Tài khoản Ngân hàng";
+        public static string Title_FeeAccount = "Tài khoản chịu phí";
         public static string Title_CFlow = "Dòng tiền";
     }
 }

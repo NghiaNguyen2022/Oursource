@@ -16,6 +16,11 @@ namespace STDApp.Models
         public string Currency { get; set; }
         public decimal Amount { get; set; }
         public decimal Rate { get; set; }
+
+        public string ReceiveBankName { get; set; }
+        public string ReceiveBankCode { get; set; }
+        public string ReceiveAccount { get; set; }
+        public string ReceiveAccountName { get; set; }
     }
 
     public class PaymentDocument

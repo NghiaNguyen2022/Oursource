@@ -549,6 +549,14 @@ namespace STDApp.Payment
 
             this.txtPosDa.Value = DateTime.Now.ToString("yyyyMMdd");
 
+            if(this.grData != null && this.grData.DataTable != null)
+            {
+                this.grData.Columns.Item("FeeAccount").ColumnConfig("Tài khoản chịu phí", false, false);
+                this.grData.Columns.Item("ReceiveBankCode").ColumnConfig("Mã NH thụ hưởng", false, true);
+                this.grData.Columns.Item("ReceiveAccount").ColumnConfig("Mã TK thụ hưởng", false, true);
+                this.grData.Columns.Item("ReceiveBankName").ColumnConfig("Tài khoản thụ hưởng", false, true);
+                this.grData.Columns.Item("ReceiveAccountName").ColumnConfig("Tên tài khoản  thụ hưởng", false, true);
+            }
         }
         
         private void LoadBankAccountCombobox()
@@ -794,7 +802,11 @@ namespace STDApp.Payment
                 }
 
                 this.grData.Columns.Item("Check").ColumnConfig(STRING_CONTRANTS.Title_Choose, true, true, BoGridColumnType.gct_CheckBox);
-                
+                this.grData.Columns.Item("ReceiveBankCode").ColumnConfig("Mã NH thụ hưởng", false, true);
+                this.grData.Columns.Item("ReceiveAccount").ColumnConfig("Mã TK thụ hưởng", false, true);
+                this.grData.Columns.Item("ReceiveBankName").ColumnConfig("Tài khoản thụ hưởng", false, true);
+                this.grData.Columns.Item("ReceiveAccountName").ColumnConfig("Tên tài khoản  thụ hưởng", false, true);
+
                 SAPbouiCOM.EditTextColumn oCol2 = null;
                 oCol2 = (SAPbouiCOM.EditTextColumn)this.grData.Columns.Item("CardCode");
                 oCol2.LinkedObjectType = SAPObjectType.oBusinessPartners;
@@ -1643,6 +1655,10 @@ namespace STDApp.Payment
                 this.grData.DataTable.SetValue("CardName", index, data.CardName);
                 this.grData.DataTable.SetValue("DocCur", index, data.Currency);
                 this.grData.DataTable.SetValue("MustPay", index, data.Amount.ToString());
+                this.grData.DataTable.SetValue("ReceiveBankCode", index, data.ReceiveBankCode);
+                this.grData.DataTable.SetValue("ReceiveAccountName", index, data.ReceiveAccountName);
+                this.grData.DataTable.SetValue("ReceiveBankName", index, data.ReceiveBankName);
+                this.grData.DataTable.SetValue("ReceiveAccount", index, data.ReceiveAccount);
                 //this.grData.
                 this.Freeze(false);
             }

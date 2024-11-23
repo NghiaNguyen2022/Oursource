@@ -145,7 +145,7 @@ namespace STDApp
                 //        }
                 //    }
                 //}
-                else if (pVal.FormTypeEx == GlobalsConfig.Instance.PaymentDetailFormInfo.FormType)
+                else if (pVal.FormTypeEx == bankConfig.PaymentDetailFormInfo.FormType)
                 {
                     try
                     {
