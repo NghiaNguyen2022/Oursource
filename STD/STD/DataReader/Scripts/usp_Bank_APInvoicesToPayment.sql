@@ -37,8 +37,7 @@ BEGIN
 						    T."DueDate",
 						    T."DocCur",
 						    T."InsTotal" AS "InsTotal",		  
-						    T."InsTotalFC",
-	  				        T."DocRate",		      
+						    T."InsTotalFC",	      
 						    CASE WHEN T."MustPay" > 0 THEN T."MustPay"
 						   	 	 ELSE 0 
 						   	 END AS "MustPay",  
@@ -62,7 +61,7 @@ BEGIN
 							  FROM OPCH T0
 							  LEFT JOIN PCH6 T1 ON T0."DocEntry" = T1."DocEntry"
 							  LEFT JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"	
-							 WHERE T0."DueDate" BETWEEN :v_FromDate AND :v_ToDate
+							 WHERE T1."DueDate" BETWEEN :v_FromDate AND :v_ToDate
 							   AND T1."InsTotal" - T1."PaidToDate" > 0		
 							   AND (:v_Account = 'All' OR t2."HousBnkAct" = :v_Account)
 						     ORDER BY T0."CardCode"
