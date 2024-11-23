@@ -31,3 +31,4 @@ STD/Common/PN-Libraries/DLLs/4.6/SAPCore.dll
 /Service/Common/PN-Libraries/SAPCore/bin
 /Service/ERPService/obj
 /Service/ERPService/.vs
+/Service/.vs
