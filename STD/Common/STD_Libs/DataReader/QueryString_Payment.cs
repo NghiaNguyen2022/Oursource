@@ -63,9 +63,7 @@ namespace STD.DataReader
         {
             get
             {
-                //usp_InvoicesToPayment  @fromData, @toDate, @type, @branch
-                //CALL "usp_InvoicesToPayment"('20240102','20240102', 'T', '4')
-                return CallStoreBySystem("usp_InvoicesToPayment1", "'{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}'");
+                return CallStoreBySystem("usp_Bank_APInvoicesToPayment", "'{0}', '{1}', '{2}', '{3}', '{4}', '{5}'");
             }
         }
 

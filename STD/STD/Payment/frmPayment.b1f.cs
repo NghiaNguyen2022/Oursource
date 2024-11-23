@@ -79,7 +79,7 @@ namespace STDApp.Payment
                 return PaymentType.T;
             }
         }
-        private string BankCode
+        private string BankAccount
         {
             get
             {
@@ -87,7 +87,19 @@ namespace STDApp.Payment
                 return UIHelper.GetComboValue(cbbBankAccount);
             }
         }
+        private FeeType _FeeType
+        {
+            get
+            {
+                if (cbbType != null && cbbType.Selected != null)
+                {
+                    var type = cbbFeeType.Selected.Value.GetEnumValueByDescription<FeeType>();
+                    return type;
+                }
 
+                return FeeType.BEN;
+            }
+        }
         private string CashCode
         {
             get
@@ -541,12 +553,14 @@ namespace STDApp.Payment
         private void LoadBankAccountCombobox()
         {
             UIHelper.ClearSelectValidValues(cbbBankAccount);
+            this.cbbBankAccount.ValidValues.Add(STRING_CONTRANTS.AllOption, STRING_CONTRANTS.AllOptionDesc);
+
             var values = DataHelper.ListBanks;
             if (values != null && values.Count() > 0)
             {
                 foreach (var data in values)
                 {
-                    this.cbbBankAccount.ValidValues.Add(data["Code"].ToString(), data["Name"].ToString());
+                    this.cbbBankAccount.ValidValues.Add(data["Account"].ToString(), data["Name"].ToString());
                 }
                 UIHelper.ComboboxSelectDefault(cbbBankAccount);
             }
@@ -762,29 +776,15 @@ namespace STDApp.Payment
 
             if (this.grData != null)
             {
-                this.grData.DataTable.Clear();
+                this.grData.DataTable.Rows.Clear();
 
-                //var history = "N";
-                //if (isHistory)
-                //{
-                //    isAfter = true;
-                //    history = "Y";
-                //}
-
-                //var after = "N";
-                //if (isAfter)
-                //{
-                //    after = "Y";
-                //    btnCreate.Item.Enabled = false;
-
-                //}
-                //else
-                //{
-
-                //    btnCreate.Item.Enabled = true;
-                //}
-
-                this.grData.DataTable.ExecuteQuery(string.Format(QueryString.LoadInvoicesToPayment, FromDate, ToDate, _PaymentType.GetDescription(), Branch, CardCodeFilter, after, history, keylog));
+                this.grData.DataTable.ExecuteQuery(string.Format(QueryString.LoadInvoicesToPayment,
+                                                                 FromDate,
+                                                                 ToDate,
+                                                                 _PaymentDocumentType.GetDescription(),
+                                                                 BankAccount,
+                                                                 _FeeType.GetDescription(),
+                                                                 ""));
 
                 if (this.grData.DataTable.Rows.Count <= 0)
                 {
@@ -792,103 +792,74 @@ namespace STDApp.Payment
                     return;
                 }
 
-                var bpCaptionCode = _PaymentType == PaymentType.T ? STRING_CONTRANTS.Title_CustomerCode : STRING_CONTRANTS.Title_VendorCode;
-                var bpCaption = _PaymentType == PaymentType.T ? STRING_CONTRANTS.Title_CustomerName : STRING_CONTRANTS.Title_VendorName;
+                //this.grData.Columns.Item("Check").ColumnConfig(STRING_CONTRANTS.Title_Choose, true, true, BoGridColumnType.gct_CheckBox);
+                
+                //this.grData.Columns.Item("DocNum").TitleObject.Caption = STRING_CONTRANTS.Title_DocNum;
+                //this.grData.Columns.Item("DocNum").Editable = false;
 
-                //this.grData.Columns.Item("CardCode").TitleObject.Caption = bpCaptionCode;
-                // this.grData.Columns.Item("CardCode").Editable = false;
+                //this.grData.Columns.Item("InvCode").TitleObject.Caption = STRING_CONTRANTS.Title_InvCode;
+                //this.grData.Columns.Item("InvCode").Editable = false;
 
-                this.grData.Columns.Item("CardCode").ColumnConfig(bpCaptionCode, false);
+                //// this.grData.Columns.Item("HasRequest").TitleObject.Caption = ;
+                //this.grData.Columns.Item("HasRequest").Visible = false;
+                //// this.grData.Columns.Item("Message").TitleObject.Caption ="Ghi chú";
+                //this.grData.Columns.Item("Message").Editable = false;
 
-                this.grData.Columns.Item("CardName").TitleObject.Caption = bpCaption;
-                this.grData.Columns.Item("CardName").Editable = false;
+                //this.grData.Columns.Item("DocDate").TitleObject.Caption = STRING_CONTRANTS.Title_DocDate;
+                //this.grData.Columns.Item("DocDate").Editable = false;
 
+                //this.grData.Columns.Item("DueDate").TitleObject.Caption = STRING_CONTRANTS.Title_DueDate;
+                //this.grData.Columns.Item("DueDate").Editable = false;
 
-                if (!isAfter)
-                {
-                    this.grData.Columns.Item("Check").ColumnConfig(STRING_CONTRANTS.Title_Choose, true, true, BoGridColumnType.gct_CheckBox);
+                //this.grData.Columns.Item("PostingDate").TitleObject.Caption = STRING_CONTRANTS.Title_PostingDate;
+                //this.grData.Columns.Item("PostingDate").Visible = false;
 
-                    //this.grData.Columns.Item("Check").TitleObject.Caption = STRING_CONTRANTS.Title_Choose;
-                    //this.grData.Columns.Item("Check").Type = SAPbouiCOM.BoGridColumnType.gct_CheckBox;
-                    //this.grData.Columns.Item("Check").Editable = true;
+                //this.grData.Columns.Item("DocCur").TitleObject.Caption = STRING_CONTRANTS.Title_Currency;
+                //this.grData.Columns.Item("DocCur").Editable = false;
 
-                    //this.grData.Columns.Item("HasRequest").Visible = false;
+                //this.grData.Columns.Item("JrnlMemo").TitleObject.Caption = STRING_CONTRANTS.Title_Remark;
+                //this.grData.Columns.Item("JrnlMemo").Editable = false;
 
-                    this.grData.Columns.Item("Message").Visible = false;
-                }
-                else
-                {
-                    this.grData.Columns.Item("Check").Visible = false;
-                    this.grData.Columns.Item("Message").TitleObject.Caption = "Ghi chú";
-                    this.grData.Columns.Item("Message").Visible = true;
-                }
+                //this.grData.Columns.Item("InsTotal").TitleObject.Caption = STRING_CONTRANTS.Title_InsTotal;
+                //this.grData.Columns.Item("InsTotal").Editable = false;
 
-                this.grData.Columns.Item("DocNum").TitleObject.Caption = STRING_CONTRANTS.Title_DocNum;
-                this.grData.Columns.Item("DocNum").Editable = false;
+                //this.grData.Columns.Item("InsTotalFC").TitleObject.Caption = STRING_CONTRANTS.Title_InsTotalFC;
+                //this.grData.Columns.Item("InsTotalFC").Editable = false;
 
-                this.grData.Columns.Item("InvCode").TitleObject.Caption = STRING_CONTRANTS.Title_InvCode;
-                this.grData.Columns.Item("InvCode").Editable = false;
+                //this.grData.Columns.Item("DocRate").TitleObject.Caption = STRING_CONTRANTS.Title_Rate;
+                //this.grData.Columns.Item("DocRate").Editable = true;
+                ////this.grData.Columns.Item("InsTotal").Type = BoGridColumnType.
 
-                // this.grData.Columns.Item("HasRequest").TitleObject.Caption = ;
-                this.grData.Columns.Item("HasRequest").Visible = false;
-                // this.grData.Columns.Item("Message").TitleObject.Caption ="Ghi chú";
-                this.grData.Columns.Item("Message").Editable = false;
+                //this.grData.Columns.Item("MustPay").TitleObject.Caption = STRING_CONTRANTS.Title_MustPay;
+                //this.grData.Columns.Item("MustPay").Editable = false;
 
-                this.grData.Columns.Item("DocDate").TitleObject.Caption = STRING_CONTRANTS.Title_DocDate;
-                this.grData.Columns.Item("DocDate").Editable = false;
+                //this.grData.Columns.Item("Account").TitleObject.Caption = STRING_CONTRANTS.Title_Account;
+                //this.grData.Columns.Item("Account").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;
+                //this.grData.Columns.Item("Account").Editable = true;
 
-                this.grData.Columns.Item("DueDate").TitleObject.Caption = STRING_CONTRANTS.Title_DueDate;
-                this.grData.Columns.Item("DueDate").Editable = false;
+                //this.grData.Columns.Item("MustPayAsCash").TitleObject.Caption = STRING_CONTRANTS.Title_MustPayAsCash;
+                //this.grData.Columns.Item("MustPayAsCash").Editable = true;// _PaymentMethod == PaymentMethod.Cash;
+                //this.grData.Columns.Item("MustPayAsCash").LostFocusAfter += FrmPayment_LostFocusAfter;
 
-                this.grData.Columns.Item("PostingDate").TitleObject.Caption = STRING_CONTRANTS.Title_PostingDate;
-                this.grData.Columns.Item("PostingDate").Visible = false;
+                //this.grData.Columns.Item("MustPayAsBank").TitleObject.Caption = STRING_CONTRANTS.Title_MustPayAsBank;
+                //this.grData.Columns.Item("MustPayAsBank").Editable = true;// _PaymentMethod != PaymentMethod.Cash;
+                //this.grData.Columns.Item("MustPayAsBank").LostFocusAfter += FrmPayment_LostFocusAfter;
 
-                this.grData.Columns.Item("DocCur").TitleObject.Caption = STRING_CONTRANTS.Title_Currency;
-                this.grData.Columns.Item("DocCur").Editable = false;
+                //this.grData.Columns.Item("DocEntry").Visible = false;
 
-                this.grData.Columns.Item("JrnlMemo").TitleObject.Caption = STRING_CONTRANTS.Title_Remark;
-                this.grData.Columns.Item("JrnlMemo").Editable = false;
+                //this.grData.Columns.Item("Manual").TitleObject.Caption = "Dữ liệu từ";
+                //this.grData.Columns.Item("Manual").Editable = false;
+                //this.grData.Columns.Item("Manual").Visible = false;
 
-                this.grData.Columns.Item("InsTotal").TitleObject.Caption = STRING_CONTRANTS.Title_InsTotal;
-                this.grData.Columns.Item("InsTotal").Editable = false;
+                //this.grData.Columns.Item("Bank").TitleObject.Caption = STRING_CONTRANTS.Title_Bank;
+                //this.grData.Columns.Item("Bank").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;
+                //this.grData.Columns.Item("Bank").Visible = true;
+                //this.grData.Columns.Item("Bank").Editable = true;
 
-                this.grData.Columns.Item("InsTotalFC").TitleObject.Caption = STRING_CONTRANTS.Title_InsTotalFC;
-                this.grData.Columns.Item("InsTotalFC").Editable = false;
-
-                this.grData.Columns.Item("DocRate").TitleObject.Caption = STRING_CONTRANTS.Title_Rate;
-                this.grData.Columns.Item("DocRate").Editable = true;
-                //this.grData.Columns.Item("InsTotal").Type = BoGridColumnType.
-
-                this.grData.Columns.Item("MustPay").TitleObject.Caption = STRING_CONTRANTS.Title_MustPay;
-                this.grData.Columns.Item("MustPay").Editable = false;
-
-                this.grData.Columns.Item("Account").TitleObject.Caption = STRING_CONTRANTS.Title_Account;
-                this.grData.Columns.Item("Account").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;
-                this.grData.Columns.Item("Account").Editable = true;
-
-                this.grData.Columns.Item("MustPayAsCash").TitleObject.Caption = STRING_CONTRANTS.Title_MustPayAsCash;
-                this.grData.Columns.Item("MustPayAsCash").Editable = true;// _PaymentMethod == PaymentMethod.Cash;
-                this.grData.Columns.Item("MustPayAsCash").LostFocusAfter += FrmPayment_LostFocusAfter;
-
-                this.grData.Columns.Item("MustPayAsBank").TitleObject.Caption = STRING_CONTRANTS.Title_MustPayAsBank;
-                this.grData.Columns.Item("MustPayAsBank").Editable = true;// _PaymentMethod != PaymentMethod.Cash;
-                this.grData.Columns.Item("MustPayAsBank").LostFocusAfter += FrmPayment_LostFocusAfter;
-
-                this.grData.Columns.Item("DocEntry").Visible = false;
-
-                this.grData.Columns.Item("Manual").TitleObject.Caption = "Dữ liệu từ";
-                this.grData.Columns.Item("Manual").Editable = false;
-                this.grData.Columns.Item("Manual").Visible = false;
-
-                this.grData.Columns.Item("Bank").TitleObject.Caption = STRING_CONTRANTS.Title_Bank;
-                this.grData.Columns.Item("Bank").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;
-                this.grData.Columns.Item("Bank").Visible = true;
-                this.grData.Columns.Item("Bank").Editable = true;
-
-                this.grData.Columns.Item("CFlow").TitleObject.Caption = STRING_CONTRANTS.Title_CFlow;
-                this.grData.Columns.Item("CFlow").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;
-                this.grData.Columns.Item("CFlow").Visible = true;
-                this.grData.Columns.Item("CFlow").Editable = true;
+                //this.grData.Columns.Item("CFlow").TitleObject.Caption = STRING_CONTRANTS.Title_CFlow;
+                //this.grData.Columns.Item("CFlow").Type = SAPbouiCOM.BoGridColumnType.gct_ComboBox;
+                //this.grData.Columns.Item("CFlow").Visible = true;
+                //this.grData.Columns.Item("CFlow").Editable = true;
 
                 SAPbouiCOM.EditTextColumn oCol2 = null;
                 oCol2 = (SAPbouiCOM.EditTextColumn)this.grData.Columns.Item("CardCode");
@@ -896,38 +867,12 @@ namespace STDApp.Payment
 
                 SAPbouiCOM.EditTextColumn oCol1 = null;
                 oCol1 = (SAPbouiCOM.EditTextColumn)this.grData.Columns.Item("DocNum");
-                if (_PaymentDocumentType == PaymentDocumentType.PT)
-                {
-                    oCol1.LinkedObjectType = SAPObjectType.oInvoices;
-                }
-                else
-                {
-                    oCol1.LinkedObjectType = SAPObjectType.oPurchaseInvoices;
-                }
+                oCol1.LinkedObjectType = SAPObjectType.oPurchaseInvoices;
 
                 this.grData.CollapseLevel = 1;
                 RemoveEmptyRow();
                 this.grData.AutoResizeColumns();
-
-                ViewHelper.ColorGridRows(this.grData, 0, true);
-
-                var comboAcct = (SAPbouiCOM.ComboBoxColumn)this.grData.Columns.Item("Account");
-
-                comboAcct.DisplayType = BoComboDisplayType.cdt_Description;
-                foreach (var data in ViewHelper.Banks)
-                {
-                    comboAcct.ValidValues.Add(data.Code, data.Name);
-                }
-                //comboAcct.
-
-
-                var comboBank = (SAPbouiCOM.ComboBoxColumn)this.grData.Columns.Item("Bank");
-                comboBank.DisplayType = BoComboDisplayType.cdt_Description;
-                foreach (var data in ViewHelper.Banks)
-                {
-                    comboBank.ValidValues.Add(data.Code, data.Name);
-                }
-
+                
                 var comboCashflow = (SAPbouiCOM.ComboBoxColumn)this.grData.Columns.Item("CFlow");
                 comboCashflow.DisplayType = BoComboDisplayType.cdt_Description;
 
@@ -935,9 +880,7 @@ namespace STDApp.Payment
                 foreach (var data in ViewHelper.CashFlows)
                 {
                     comboCashflow.ValidValues.Add(data.Id, data.Name);
-                }
-
-                //if (txtCusVen != null)
+                }               
 
             }
         }
@@ -1216,7 +1159,7 @@ namespace STDApp.Payment
 
                 var bankCode = this.grData.GetValueCustom("Bank", index);
                 if (string.IsNullOrEmpty(bankCode))
-                    bankCode = BankCode;
+                    bankCode = this.BankAccount;
                 var cashAccount = this.grData.GetValueCustom("Account", index);
                 if (string.IsNullOrEmpty(cashAccount))
                     cashAccount = CashCode;

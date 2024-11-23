@@ -112,6 +112,8 @@ namespace STDApp
         public static string NoData = "Không có dữ liệu";
         public static string NoDataCheck = "Chưa chọn dữ liệu";
         public static string NoChooseCashFlow = "Không chọn dòng tiền";
+        public static string AllOptionDesc = "Tất cả";
+        public static string AllOption = "All";
 
         public static string Action_Create = "Tạo";
 

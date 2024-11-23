@@ -170,6 +170,10 @@
   <ItemGroup>
     <Content Include="DataReader\Scripts\InquiryDetail.sql" />
     <Content Include="DataReader\Scripts\InquiryHeader.sql" />
+    <Content Include="DataReader\Scripts\pn_vwCashFlow.sql" />
+    <Content Include="DataReader\Scripts\tb_Bank_Payment.sql" />
+    <Content Include="DataReader\Scripts\usp_Bank_APInvoicesToPayment.sql" />
+    <Content Include="DataReader\Scripts\vw_Bank_BankAccount.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
