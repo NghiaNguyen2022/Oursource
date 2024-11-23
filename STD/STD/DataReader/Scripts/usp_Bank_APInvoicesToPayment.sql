@@ -33,6 +33,10 @@ BEGIN
 				   	END AS DECIMAL) AS "MustPay",  
 				   T."DocEntry",
 				   t."JrnlMemo",
+				   t."Content",
+				   '02' AS "SAPStatus",
+				   '' AS "BankStatus",
+				   '' AS "Message",
 				   'Data' AS "Manual"
 			  FROM (SELECT T0."CardCode",
 							T2."CardName",
@@ -53,7 +57,8 @@ BEGIN
 							T3."BankName",
 							T2."DflAccount",
 							T4."AcctName",
-							t2."HouseBank"
+							t2."HouseBank",
+							'Thanh toan' || t2."CardName" ||T1."DueDate" AS "Content"
 						FROM OPCH T0
 						LEFT JOIN PCH6 T1 ON T0."DocEntry" = T1."DocEntry"
 						LEFT JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"	

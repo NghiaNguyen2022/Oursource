@@ -182,5 +182,10 @@ namespace STDApp
         public static string Title_BankAccount = "Tài khoản Ngân hàng";
         public static string Title_FeeAccount = "Tài khoản chịu phí";
         public static string Title_CFlow = "Dòng tiền";
+
+        public static string Title_Content = "Nội dung thanh toán";
+        public static string Title_SAPStatus= "Trang thái từ SAP";
+        public static string Title_BankStatus = "Trang thái từ API";
+        public static string Title_Message = "Nội dung";
     }
 }

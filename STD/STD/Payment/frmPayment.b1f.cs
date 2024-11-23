@@ -326,16 +326,16 @@ namespace STDApp.Payment
         {
             var max = this.UIAPIRawForm.ClientHeight;
             var maxw = this.UIAPIRawForm.ClientWidth;
-            SetLocationOfFolderCreateControl(max, maxw);
+            SetLocationOfFolderCreateControl();
             SetLocationOfFolderListControl(max, maxw);
         }
 
         private void SetLocationOfFolderListControl(int max, int maxw)
         {
-            this.folderList.Item.Width = 500;
+            //this.folderList.Item.Width = 500;
 
-            this.lblFDateL.Item.Top = this.folderCreate.Item.Top + CoreSetting.UF_VerMargin;
-            this.lblFDateL.Item.Left = this.folderCreate.Item.Left + CoreSetting.UF_HorMargin;
+          //  this.lblFDateL.Item.Top = this.folderCreate.Item.Top + CoreSetting.UF_VerMargin;
+            //this.lblFDateL.Item.Left = this.folderCreate.Item.Left + CoreSetting.UF_HorMargin;
 
             this.txtFDateL.Item.Top = this.lblFDateL.Item.Top;
             this.txtFDateL.Item.Left = this.lblFDateL.Item.Left + this.lblFDateL.Item.Width + 20;
@@ -376,12 +376,14 @@ namespace STDApp.Payment
             this.grDt.Item.Height = max - grDt.Item.Top - 20;
         }
 
-        private void SetLocationOfFolderCreateControl(int max, int maxw)
+        private void SetLocationOfFolderCreateControl()
         {
-            this.folderCreate.Item.Width = 500;
+            var max = this.UIAPIRawForm.ClientHeight;
+            var maxw = this.UIAPIRawForm.ClientWidth;
+            //this.folderCreate.Item.Width = 500;
 
-            this.lblFDate.Item.Top = this.folderCreate.Item.Top + CoreSetting.UF_VerMargin;
-            this.lblFDate.Item.Left = this.folderCreate.Item.Left + CoreSetting.UF_HorMargin;
+           // this.lblFDate.Item.Top = this.folderCreate.Item.Top + CoreSetting.UF_VerMargin;
+            //this.lblFDate.Item.Left = this.folderCreate.Item.Left + CoreSetting.UF_HorMargin;
 
             this.txtFDate.Item.Top = this.lblFDate.Item.Top;
             this.txtFDate.Item.Left = this.lblFDate.Item.Left + this.lblFDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
@@ -784,6 +786,27 @@ namespace STDApp.Payment
                 this.grData.Columns.Item("ReceiveAccount").ColumnConfig("Mã TK thụ hưởng", false, true);
                 this.grData.Columns.Item("ReceiveBankName").ColumnConfig("Tài khoản thụ hưởng", false, true);
                 this.grData.Columns.Item("ReceiveAccountName").ColumnConfig("Tên tài khoản  thụ hưởng", false, true);
+
+                this.grData.Columns.Item("CardCode").ColumnConfig(STRING_CONTRANTS.Title_CustomerCode, false);
+
+                this.grData.Columns.Item("CardName").TitleObject.Caption = STRING_CONTRANTS.Title_CustomerName;
+                this.grData.Columns.Item("CardName").Editable = false;
+
+                this.grData.Columns.Item("DocNum").ColumnConfig(STRING_CONTRANTS.Title_DocNum, false);
+                this.grData.Columns.Item("DocDate").ColumnConfig(STRING_CONTRANTS.Title_DocDate, false);
+                this.grData.Columns.Item("DueDate").ColumnConfig(STRING_CONTRANTS.Title_DueDate, false);
+                this.grData.Columns.Item("DocCur").ColumnConfig(STRING_CONTRANTS.Title_Currency, false);
+                this.grData.Columns.Item("JrnlMemo").ColumnConfig(STRING_CONTRANTS.Title_Remark, false);
+                this.grData.Columns.Item("InsTotal").ColumnConfig(STRING_CONTRANTS.Title_InsTotal, false);
+                this.grData.Columns.Item("InsTotalFC").ColumnConfig(STRING_CONTRANTS.Title_InsTotalFC, false);
+                this.grData.Columns.Item("MustPay").ColumnConfig(STRING_CONTRANTS.Title_MustPay, true);
+
+                this.grData.Columns.Item("Content").ColumnConfig(STRING_CONTRANTS.Title_Content, false);
+                this.grData.Columns.Item("SAPStatus").ColumnConfig(STRING_CONTRANTS.Title_SAPStatus, false);
+                this.grData.Columns.Item("BankStatus").ColumnConfig(STRING_CONTRANTS.Title_BankStatus, false);
+                this.grData.Columns.Item("Message").ColumnConfig(STRING_CONTRANTS.Title_Message, false);
+
+                this.grData.Columns.Item("Manual").Visible = false;
 
                 SAPbouiCOM.EditTextColumn oCol2 = null;
                 oCol2 = (SAPbouiCOM.EditTextColumn)this.grData.Columns.Item("CardCode");
