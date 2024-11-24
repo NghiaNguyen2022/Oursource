@@ -37,9 +37,11 @@ BEGIN
 				   T."DocEntry",
 				   t."JrnlMemo",
 				   t."Content",
-				   '02' AS "SAPStatus",
+				   CASE WHEN COALESCE(T1."status", 'N') = 'N' THEN '01'
+				   	    ELSE '02'
+				    END AS "SAPStatus",
 				   '' AS "BankStatus",
-				   '' AS "Message",
+				   COALESCE(T1."Message", '') AS "Message",
 				   'Data' AS "Manual"
 			  FROM (SELECT T0."CardCode",
 							T2."CardName",
@@ -74,6 +76,9 @@ BEGIN
 						  AND (:v_Account = 'All' OR t2."HousBnkAct" = :v_Account)
 						ORDER BY T0."CardCode"
 					) T
+			LEFT JOIN "tb_Bank_TransferRecord" T1 ON T."CardCode" = T1."CardCode"
+												 AND T."DocEntry" = T1."DocEntry"
+											
 				 ;			
 			END;
 		END IF;

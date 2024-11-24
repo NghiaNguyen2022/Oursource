@@ -1066,7 +1066,7 @@ namespace STDApp.Payment
                 query += $"'{requestID}',";
                 query += $"'{transId}',";
                 query += $"{amount},";
-                query += $"N',";
+                query += $"'N',";
                 query += $"''";
                 query += ")";
 
@@ -1379,64 +1379,23 @@ namespace STDApp.Payment
             }
             var dataResponse = JsonSerializer.Deserialize<TransferHeader>(result);
 
+            if(dataResponse != null)
+            {
+                foreach(var item in dataResponse.records)
+                {
+                    var query = "UPDATE \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_TransferRecord\" ";
+                    query += "SET \"status\" = '" + item.code + "' ,";
+                    query += "\"Message\" = '" + item.message + "' ";
+                    query += "WHERE \"requestId\" = '" + dataResponse.requestId + "' ";
+                    query += "AND \"transId\" = '" + item.transId + "' ";
+
+                    var ret = dbProvider.ExecuteNonQuery(query);
+                 }
+            }
+
             UIHelper.LogMessage("Hoàn tất gửi yêu cầu thanh toán", UIHelper.MsgType.StatusBar, false);
-
-            //var isError = paymentList.Where(x => x.Error).ToList().Count() > 0;
-            //if (isError)
-            //{
-            //    UIHelper.LogMessage("Hoàn tất kiểm tra dữ liệu. Có xuất hiện lỗi, Vui lòng kiểm tra lại", UIHelper.MsgType.StatusBar, true);
-            //    var query = string.Empty;
-            //    foreach (var pm in paymentList.Where(X => X.Error))
-            //    {
-            //        foreach (var dt in pm.Details)
-            //        {
-            //            /*
-            //            query = "Call \"" + DIConnection.Instance.CompanyDB + "\".\"SP_LogPaymentTool\" ('" + pm.CardCode + "', '" + dt.DocEntry + "', '" + _PaymentType + "', '', 'F', '" + pm.Message + "', '" + keyLog + "') ";
-
-            //            var ret1 = dbProvider.ExecuteNonQuery(query); */
-            //        }
-            //    }
-            //}
-            //else
-            //{
-            //    var numberBranch = DataHelper.LoadKey(Branch, _PaymentDocumentType.GetDescription());
-            //    if (numberBranch == null)
-            //    {
-            //        UIHelper.LogMessage(STRING_CONTRANTS.CanNotGenerateKey, UIHelper.MsgType.StatusBar, true);
-            //        return;
-            //    }
-            //    var key = $"WL-{numberBranch.BranchID}-{_PaymentDocumentType.GetDescription()}-{DateTime.Now.Year}-{DateTime.Now.Month}-{numberBranch.Number.ToString("D5")}";
-
-            //    UIHelper.LogMessage("Bắt đầu tạo thanh toán", UIHelper.MsgType.StatusBar, false);
-            //    var ret = PaymentViaDI.CreatePayments(PaymentType.C, paymentList, key, _PaymentDocumentType, PaymentMethod.Bank, Branch, ref message);
-
-            //    var flag = "";
-
-            //    if (ret.Where(x => !x.Flag).Count() > 0)
-            //    {
-            //        UIHelper.LogMessage("Có xuất hiện lỗi, Vui lòng kiểm tra lại", UIHelper.MsgType.StatusBar, true);
-            //        flag = "F";
-
-            //    }
-            //    else
-            //    {
-            //        UIHelper.LogMessage("Hoàn tất tạo thanh toán", UIHelper.MsgType.StatusBar, false);
-            //        flag = "S";
-            //    }
-            //    var query = string.Empty;
-            //    foreach (var detail in ret)
-            //    {
-            //        foreach (var dt in paymentList.Where(x => x.CardCode == detail.CardCode).FirstOrDefault().Details)
-            //        {
-            //            /*
-            //            query = "Call \"" + DIConnection.Instance.CompanyDB + "\".\"SP_LogPaymentTool\" ('" + dt.CardCode + "', '" + dt.DocEntry + "', '" + _PaymentType + "', '" + key + "', '" + flag + "', '" + (flag == "F" ? detail.Message : "") + "', '" + keyLog + "') ";
-
-            //            var ret1 = dbProvider.ExecuteNonQuery(query);
-            //            */
-            //        }
-            //    }
-            //}
-            //LoadDataGridCreate(true, false, keyLog);
+            LoadDataGridCreate();
+            
         }
         private void AutoFillData(int selectedIndex = -1)
         {
