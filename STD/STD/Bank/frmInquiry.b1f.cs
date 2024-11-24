@@ -126,7 +126,7 @@ namespace STDApp.Bank
             SetLocation();
 
             //ConfigurationManager.AppSettings["Taikhoan"]
-            var account = ConfigurationManager.AppSettings["Taikhoan"];
+            var account = ConfigurationManager.AppSettings["Account"];
             UIHelper.ComboboxSelectDefault(cbbBank);
 
             UIHelper.ClearSelectValidValues(cbbAcc);
@@ -285,7 +285,7 @@ namespace STDApp.Bank
                     }
                     var result = response.Content;
 
-                    var rps = JsonSerializer.Deserialize<InquiryResponse>(result);
+                    var rps = JsonSerializer.Deserialize<VTResponse>(result);
                     if(rps == null)
                     {
                         UIHelper.LogMessage($"Lỗi không có phản hồi, vui lòng check lại", UIHelper.MsgType.StatusBar, true);

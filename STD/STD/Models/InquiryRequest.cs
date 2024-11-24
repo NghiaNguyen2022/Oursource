@@ -1,11 +1,11 @@
 ﻿namespace STDApp.Models
 {
-    public class InquiryRequest
+    public class InquiryRequest : VTRequest
     {
-        public string requestId { get; set; }
-        public object merchantId { get; set; }
-        public string providerId { get; set; }
-        public string model { get; set; }
+        //public string requestId { get; set; }
+        //public object merchantId { get; set; }
+        //public string providerId { get; set; }
+        //public string model { get; set; }
         public string account { get; set; }
         public string fromDate { get; set; }
         public string toDate { get; set; }

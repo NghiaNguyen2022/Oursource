@@ -26,6 +26,9 @@ BEGIN
 				   t."DflAccount" AS "ReceiveAccount",
 				   t."BankName" AS "ReceiveBankName",
 				   T."AcctName" AS "ReceiveAccountName",
+				   '10698' AS "SenderBankCode",
+				   '112000002609' AS "SenderAccount",
+				   'NGUYEN MINH TIEN' AS "SenderAccountName",
 				   T."InsTotal" AS "InsTotal",		  
 				   T."InsTotalFC",	      
 				   CAST(CASE WHEN T."MustPay" > 0 THEN T."MustPay"
