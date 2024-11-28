@@ -331,6 +331,9 @@ namespace STDApp.Payment
                 paymentdetail.CardName = CardName;
                 paymentdetail.Currency = Currency;
                 paymentdetail.Amount = Amount;
+                paymentdetail.SourceID = $"{DateTime.Now.ToString("yyMMddHHmmss")}";
+                paymentdetail.Check = "N"; 
+                // pay
 
                 var query = string.Format(QueryString.GetBPInformation, CardCode);
                 var data = dbProvider.QuerySingle(query);

@@ -8,20 +8,21 @@ namespace STDApp.Models
 {
     public class ManualPaymentDetail
     {
-        public string CardType { get; set; }
+        public string Check { get; set; }
+        public string SourceID { get; set; }
         public string CardCode { get; set; }
         public string CardName { get; set; }
-        public DateTime PaymentDate { get; set; }
-
         public string Currency { get; set; }
         public decimal Amount { get; set; }
-        public decimal Rate { get; set; }
-
         public string ReceiveBankName { get; set; }
         public string ReceiveBankCode { get; set; }
         public string ReceiveAccount { get; set; }
         public string ReceiveAccountName { get; set; }
-    }
+
+        public string SenderBankId { get; set; }
+        public string SenderAcctName { get; set; }
+        public string SenderAcctId { get; set; }
+    }                 
 
     public class PaymentDocument
     {

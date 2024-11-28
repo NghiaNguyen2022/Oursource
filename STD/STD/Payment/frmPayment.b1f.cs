@@ -8,7 +8,6 @@ using SAPCore.Helper;
 using SAPCore.SAP;
 using SAPCore.SAP.DIAPI;
 using STD.DataReader;
-using STDApp.AccessSAP;
 using STDApp.DataReader;
 using STDApp.Models;
 using System;
@@ -28,7 +27,7 @@ namespace STDApp.Payment
         private List<int> SelectedDataIndexs = new List<int>();
         public static bool IsFormOpen = false;
         private SAPbouiCOM.DataTable DataTableCbb;
-
+        private List<ManualPaymentDetail> ManualList;
         private string FromDate
         {
             get
@@ -60,7 +59,7 @@ namespace STDApp.Payment
             }
         }
 
-     
+
         private string BankAccount
         {
             get
@@ -303,13 +302,14 @@ namespace STDApp.Payment
             this.lblNote = ((SAPbouiCOM.StaticText)(this.GetItem("lblNote").Specific));
             this.lblCusVen = ((SAPbouiCOM.StaticText)(this.GetItem("lblCV").Specific));
             this.txtCusVen = ((SAPbouiCOM.EditText)(this.GetItem("txtCV").Specific));
-            // this.txtCusVen.LostFocusAfter += new SAPbouiCOM._IEditTextEvents_LostFocusAfterEventHandler(this.txtCusVen_LostFocusAfter);
+            //  this.txtCusVen.LostFocusAfter += new SAPbouiCOM._IEditTextEvents_LostFocusAfterEventHandler(this.txtCusVen_LostFocusAfter);
             this.btnFilter = ((SAPbouiCOM.Button)(this.GetItem("btnFil").Specific));
             this.btnFilter.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnFilter_ClickBefore);
             this.DataTableCbb = this.UIAPIRawForm.DataSources.DataTables.Item("DT_FT");
             this.btnHis = ((SAPbouiCOM.Button)(this.GetItem("btnHis").Specific));
-            // this.btnHis.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnHis_ClickBefore);
+            //  this.btnHis.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnHis_ClickBefore);
             this.btnUpd = ((SAPbouiCOM.Button)(this.GetItem("btnUpd").Specific));
+            this.btnUpd.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnUpd_ClickBefore);
             this.OnCustomInitialize();
 
         }
@@ -339,7 +339,7 @@ namespace STDApp.Payment
         {
             //this.folderList.Item.Width = 500;
 
-          //  this.lblFDateL.Item.Top = this.folderCreate.Item.Top + CoreSetting.UF_VerMargin;
+            //  this.lblFDateL.Item.Top = this.folderCreate.Item.Top + CoreSetting.UF_VerMargin;
             //this.lblFDateL.Item.Left = this.folderCreate.Item.Left + CoreSetting.UF_HorMargin;
 
             this.txtFDateL.Item.Top = this.lblFDateL.Item.Top;
@@ -387,7 +387,7 @@ namespace STDApp.Payment
             var maxw = this.UIAPIRawForm.ClientWidth;
             //this.folderCreate.Item.Width = 500;
 
-           // this.lblFDate.Item.Top = this.folderCreate.Item.Top + CoreSetting.UF_VerMargin;
+            // this.lblFDate.Item.Top = this.folderCreate.Item.Top + CoreSetting.UF_VerMargin;
             //this.lblFDate.Item.Left = this.folderCreate.Item.Left + CoreSetting.UF_HorMargin;
 
             this.txtFDate.Item.Top = this.lblFDate.Item.Top;
@@ -431,17 +431,17 @@ namespace STDApp.Payment
             this.cbbCFlow.Item.Top = this.lblCFlow.Item.Top;
             this.cbbCFlow.Item.Left = this.cbbBankAccount.Item.Left;
             this.cbbCFlow.Item.Width = this.cbbBankAccount.Item.Width;// + this.cbbBr.Item.Width + 20;
-                        
+
             this.lblPosDa.Item.Top = this.cbbCFlow.Item.Top;// this.txtPosDa.Item.Top;
             this.lblPosDa.Item.Left = this.lblFeeType.Item.Left;// - this.lblPosDa.Item.Width;
             this.lblPosDa.Item.Width = this.lblFeeType.Item.Width;
 
             this.txtPosDa.Item.Top = this.cbbCFlow.Item.Top;// this.grData.Item.Top - this.txtPosDa.Item.Height - 10;
             this.txtPosDa.Item.Left = this.lblPosDa.Item.Left + this.lblPosDa.Item.Width + 10;// maxw - this.txtPosDa.Item.Width - 20;
-            
+
             this.btnCreate.Item.Left = this.btnFind.Item.Left;// this.txtPosDa.Item.Left + this.txtPosDa.Item.Width + 10;
-            //var labBottom1 = this.lblPmTyp.Item.Top + this.lblPmTyp.Item.Height;
-           // var bttTop1 = labBottom1 - this.btnCreate.Item.Height;
+                                                              //var labBottom1 = this.lblPmTyp.Item.Top + this.lblPmTyp.Item.Height;
+                                                              // var bttTop1 = labBottom1 - this.btnCreate.Item.Height;
             this.btnCreate.Item.Top = this.btnFind.Item.Top + this.btnFind.Item.Height + CoreSetting.UF_VerticallySpaced;
             this.btnCreate.Item.Width = this.btnFind.Item.Width;
 
@@ -455,11 +455,11 @@ namespace STDApp.Payment
             this.txtNote.Item.Left = this.lblTDate.Item.Left;
             this.txtNote.Item.Top = this.lblNote.Item.Top;
             var lblNoteWidth = (this.txtPosDa.Item.Left + this.txtPosDa.Item.Width) - this.lblTDate.Item.Left;
-            this.txtNote.Item.Width = lblNoteWidth;                      
+            this.txtNote.Item.Width = lblNoteWidth;
 
             this.btnAddL.Item.Left = this.lblFDate.Item.Left;
             this.btnAddL.Item.Top = this.txtNote.Item.Top + this.txtNote.Item.Height + CoreSetting.UF_VerticallySpaced;
-                       
+
             this.btnChAl.Item.Top = this.btnAddL.Item.Top;
             this.btnChAl.Item.Left = this.btnAddL.Item.Left + this.btnAddL.Item.Width + CoreSetting.UF_VerticallySpaced;
 
@@ -538,7 +538,7 @@ namespace STDApp.Payment
 
             this.txtPosDa.Value = DateTime.Now.ToString("yyyyMMdd");
 
-            if(this.grData != null && this.grData.DataTable != null)
+            if (this.grData != null && this.grData.DataTable != null)
             {
                 this.grData.Columns.Item("FeeAccount").ColumnConfig("Tài khoản chịu phí", false, false);
                 this.grData.Columns.Item("ReceiveBankCode").ColumnConfig("Mã NH thụ hưởng", false, true);
@@ -547,7 +547,7 @@ namespace STDApp.Payment
                 this.grData.Columns.Item("ReceiveAccountName").ColumnConfig("Tên tài khoản  thụ hưởng", false, true);
             }
         }
-        
+
         private void LoadBankAccountCombobox()
         {
             UIHelper.ClearSelectValidValues(cbbBankAccount);
@@ -768,7 +768,7 @@ namespace STDApp.Payment
                 }
             }
         }
-        private void LoadDataGridCreate(bool isAfter = false, bool isHistory = false, string keylog = "")
+        private void LoadDataGridCreate(string requestID = "")
         {
             //this.UIAPIRawForm.DataSources.UserDataSources.Item("UD_Cod").ValueEx = CardCode;
 
@@ -776,13 +776,14 @@ namespace STDApp.Payment
             {
                 this.grData.DataTable.Rows.Clear();
 
-                this.grData.DataTable.ExecuteQuery(string.Format(QueryString.LoadInvoicesToPayment,
+                var query = string.Format(QueryString.LoadInvoicesToPayment,
                                                                  FromDate,
                                                                  ToDate,
                                                                  _PaymentDocumentType.GetDescription(),
                                                                  BankAccount,
                                                                  _FeeType.GetDescription(),
-                                                                 ""));
+                                                                 "");
+                this.grData.DataTable.ExecuteQuery(query);
 
                 if (this.grData.DataTable.Rows.Count <= 0)
                 {
@@ -812,7 +813,7 @@ namespace STDApp.Payment
                 this.grData.Columns.Item("JrnlMemo").ColumnConfig(STRING_CONTRANTS.Title_Remark, false);
                 this.grData.Columns.Item("InsTotal").ColumnConfig(STRING_CONTRANTS.Title_InsTotal, false);
                 this.grData.Columns.Item("InsTotalFC").ColumnConfig(STRING_CONTRANTS.Title_InsTotalFC, false);
-                this.grData.Columns.Item("MustPay").ColumnConfig(STRING_CONTRANTS.Title_MustPay, true);
+                this.grData.Columns.Item("MustPay").ColumnConfig(STRING_CONTRANTS.Title_MustPay, false);
 
                 this.grData.Columns.Item("Content").ColumnConfig(STRING_CONTRANTS.Title_Content, false);
                 this.grData.Columns.Item("SAPStatus").ColumnConfig(STRING_CONTRANTS.Title_SAPStatus, false);
@@ -820,6 +821,8 @@ namespace STDApp.Payment
                 this.grData.Columns.Item("Message").ColumnConfig(STRING_CONTRANTS.Title_Message, false);
 
                 this.grData.Columns.Item("Manual").Visible = false;
+                this.grData.Columns.Item("requestId").ColumnConfig(string.Empty, false, false);
+                this.grData.Columns.Item("transId").ColumnConfig(string.Empty, false, false);
 
                 SAPbouiCOM.EditTextColumn oCol2 = null;
                 oCol2 = (SAPbouiCOM.EditTextColumn)this.grData.Columns.Item("CardCode");
@@ -832,12 +835,21 @@ namespace STDApp.Payment
                 this.grData.CollapseLevel = 1;
                 RemoveEmptyRow();
                 this.grData.AutoResizeColumns();
-                
+
+                //for (var rowIndex = 0; rowIndex < grData.Rows.Count; rowIndex++)
+                //{
+                //    var sapstatus = this.grData.GetValueCustom("SAPStatus", rowIndex); 
+                //    if(sapstatus == "02")
+                //    {
+                //        var commonSetting = grData.CommonSetting;
+                //        commonSetting.SetCellEditable(rowIndex, 2, false);
+                //    }
+                //}
             }
         }
 
 
-       
+
         private void RemoveEmptyRow()
         {
             if (this.grData.Rows.Count > 0)
@@ -1045,14 +1057,31 @@ namespace STDApp.Payment
         {
             try
             {
-                var cardCode = this.grData.GetValueCustom("CardCode", index);
                 var docnum = string.Empty;
-                if (this.grData.GetValueCustom("Manual", index) == "Data")
+                var source = this.grData.GetValueCustom("Manual", index);
+
+                if (source == "Data")
                 {
                     docnum = this.grData.GetValueCustom("DocNum", index);
                 }
-               
-                 var transId = DateTime.Now.ToString("yyyyMMddHHmmss");
+                else
+                {
+                    var paymentDetail = ManualList.Where(x => x.SourceID == source).FirstOrDefault();
+                    paymentDetail.Check = "Y";
+                    var queryManualPayemnt = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_PaymentOnAccount\" VALUES ( ";
+                    queryManualPayemnt += $"'{requestID}',";
+                    queryManualPayemnt += $"'{paymentDetail.SourceID}',";
+                    queryManualPayemnt += $"'{paymentDetail.CardCode}',";
+                    queryManualPayemnt += $"'{paymentDetail.Currency}',";
+                    queryManualPayemnt += $"{paymentDetail.Amount}";
+                    queryManualPayemnt += ")";
+
+                    var retManualPayemnt = dbProvider.ExecuteNonQuery(queryManualPayemnt);
+                }
+
+                var cardCode = this.grData.GetValueCustom("CardCode", index);
+
+                var transId = DateTime.Now.ToString("yyyyMMddHHmmss");
                 decimal amount = 0;
                 decimal mustpay = 0;
                 if (CustomConverter.ConvertStringToDecimal(this.grData.GetValueCustom("MustPay", index), ref mustpay))
@@ -1067,7 +1096,7 @@ namespace STDApp.Payment
                 query += $"'{transId}',";
                 query += $"{amount},";
                 query += $"'N',";
-                query += $"''";
+                query += $"'', ''";
                 query += ")";
 
                 var ret1 = dbProvider.ExecuteNonQuery(query);
@@ -1075,7 +1104,7 @@ namespace STDApp.Payment
                 var record = new TransferRecord
                 {
                     transId = transId, //mã giao dịch
-                     approver = ConfigurationManager.AppSettings["USER_APPROVE"],
+                    approver = ConfigurationManager.AppSettings["USER_APPROVE"],
                     transType = "in",
                     amount = amount.ToString(),
                     recvAcctId = this.grData.GetValueCustom("ReceiveAccount", index),
@@ -1106,7 +1135,7 @@ namespace STDApp.Payment
             {
                 //var record = new  
                 var data = new PaymentDetail();
-               
+
                 var currency = this.grData.DataTable.GetValue("DocCur", index).ToString();
                 if (string.IsNullOrEmpty(currency))
                 {
@@ -1266,7 +1295,6 @@ namespace STDApp.Payment
             var message = string.Empty;
             var paymentDts = new List<PaymentDetail>();
             var currency = string.Empty;
-            var isReturn = false;
 
             var keyLog = $"PM_{DateTime.Now.ToString("yyMMddHHmmss")}";
             UIHelper.LogMessage("Bắt đầu lấy dữ liệu", UIHelper.MsgType.StatusBar, false);
@@ -1303,7 +1331,7 @@ namespace STDApp.Payment
 
                 request.records.Add(DataToRecordApi(index, request.requestId)); // DataInRow(index, ref isReturn, ref message);
 
-                
+
             }
             request.signature = (
                 request.requestId +
@@ -1372,30 +1400,40 @@ namespace STDApp.Payment
                 UIHelper.LogMessage($"Lỗi không có phản hồi, vui lòng check lại", UIHelper.MsgType.StatusBar, true);
                 return;
             }
-            if (rps.status.code == "")
+            if (rps.status.code == "0")
             {
                 UIHelper.LogMessage($"Lỗi {rps.status.message}", UIHelper.MsgType.StatusBar, true);
                 return;
             }
             var dataResponse = JsonSerializer.Deserialize<TransferHeader>(result);
 
-            if(dataResponse != null)
+            if (dataResponse != null && dataResponse.records != null)
             {
-                foreach(var item in dataResponse.records)
+                foreach (var item in dataResponse.records)
                 {
-                    var query = "UPDATE \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_TransferRecord\" ";
-                    query += "SET \"status\" = '" + item.code + "' ,";
-                    query += "\"Message\" = '" + item.message + "' ";
-                    query += "WHERE \"requestId\" = '" + dataResponse.requestId + "' ";
-                    query += "AND \"transId\" = '" + item.transId + "' ";
+                    if (item != null)
+                    {
+                        try
+                        {
+                            var query = "UPDATE \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_TransferRecord\" ";
+                            query += "SET \"status\" = '" + item.code + "' ,";
+                            query += "\"Message\" = '" + item.message + "' ";
+                            query += "WHERE \"requestId\" = '" + dataResponse.requestId + "' ";
+                            query += "AND \"transId\" = '" + item.transId + "' ";
 
-                    var ret = dbProvider.ExecuteNonQuery(query);
-                 }
+                            var ret = dbProvider.ExecuteNonQuery(query);
+                        }
+                        catch (Exception ex)
+                        {
+
+                        }
+                    }
+                }
             }
 
             UIHelper.LogMessage("Hoàn tất gửi yêu cầu thanh toán", UIHelper.MsgType.StatusBar, false);
             LoadDataGridCreate();
-            
+
         }
         private void AutoFillData(int selectedIndex = -1)
         {
@@ -1406,24 +1444,24 @@ namespace STDApp.Payment
                 {
                     foreach (var index in SelectedDataIndexs)
                     {
-                    //    var mustpay = this.grData.DataTable.GetValue("MustPay", index);
-                    //    if (_PaymentMethod == PaymentMethod.CashBank)
-                    //    {
-                    //        this.grData.DataTable.SetValue("MustPayAsCash", index, mustpay);
-                    //        this.grData.DataTable.SetValue("MustPayAsBank", index, 0);
-                    //    }
-                    //    else if (_PaymentMethod == PaymentMethod.Cash)
-                    //    {
+                        //    var mustpay = this.grData.DataTable.GetValue("MustPay", index);
+                        //    if (_PaymentMethod == PaymentMethod.CashBank)
+                        //    {
+                        //        this.grData.DataTable.SetValue("MustPayAsCash", index, mustpay);
+                        //        this.grData.DataTable.SetValue("MustPayAsBank", index, 0);
+                        //    }
+                        //    else if (_PaymentMethod == PaymentMethod.Cash)
+                        //    {
 
-                    //        this.grData.DataTable.SetValue("MustPayAsCash", index, mustpay);
-                    //        this.grData.DataTable.SetValue("MustPayAsBank", index, 0);
-                    //    }
-                    //    else
-                    //    {
+                        //        this.grData.DataTable.SetValue("MustPayAsCash", index, mustpay);
+                        //        this.grData.DataTable.SetValue("MustPayAsBank", index, 0);
+                        //    }
+                        //    else
+                        //    {
 
-                    //        this.grData.DataTable.SetValue("MustPayAsCash", index, 0);
-                    //        this.grData.DataTable.SetValue("MustPayAsBank", index, mustpay);
-                    //    }
+                        //        this.grData.DataTable.SetValue("MustPayAsCash", index, 0);
+                        //        this.grData.DataTable.SetValue("MustPayAsBank", index, mustpay);
+                        //    }
 
                         //var bank = this.grData.DataTable.GetValue("Bank", index);
                         //var cashflow = this.grData.DataTable.GetValue("CFlow", index);
@@ -1539,6 +1577,16 @@ namespace STDApp.Payment
                 return;
             }
 
+            var index1 = this.grData.GetDataTableRowIndex(pVal.Row);
+            var sapstatus = this.grData.GetValueCustom("SAPStatus", index1);
+            if (sapstatus == "02")
+            {
+                UIHelper.LogMessage("Phiếu này đã gửi đi sang ngân hàng", UIHelper.MsgType.StatusBar);
+                this.grData.DataTable.SetValue("Check", index1, "N");
+                this.Freeze(false);
+                return;
+            }
+
             UIHelper.CheckInGrid(this.grData, pVal.Row, SelectedDataIndexs, "CardCode");
 
             foreach (var index in SelectedDataIndexs)
@@ -1619,6 +1667,10 @@ namespace STDApp.Payment
                 }
 
                 this.Freeze(true);
+                if (ManualList == null)
+                    ManualList = new List<ManualPaymentDetail>();
+                ManualList.Add(data);
+
                 this.grData.DataTable.Rows.Add();
                 var index = grData.DataTable.Rows.Count - 1;
 
@@ -1630,6 +1682,7 @@ namespace STDApp.Payment
                 this.grData.DataTable.SetValue("ReceiveAccountName", index, data.ReceiveAccountName);
                 this.grData.DataTable.SetValue("ReceiveBankName", index, data.ReceiveBankName);
                 this.grData.DataTable.SetValue("ReceiveAccount", index, data.ReceiveAccount);
+                this.grData.DataTable.SetValue("Manual", index, data.SourceID);
                 //this.grData.
                 this.Freeze(false);
             }
@@ -1651,7 +1704,7 @@ namespace STDApp.Payment
             { }
             this.Freeze(false);
         }
-        
+
         private CheckBox ckbGr;
 
         private void CheckBox0_PressedAfter(object sboObject, SBOItemEventArg pVal)
@@ -1776,11 +1829,14 @@ namespace STDApp.Payment
             {
                 for (var i = 0; i < this.grData.DataTable.Rows.Count; i++)
                 {
-
-                    if (!this.SelectedDataIndexs.Contains(i))
+                    var sapstatus = this.grData.GetValueCustom("SAPStatus", i);
+                    if (sapstatus == "01")
                     {
-                        this.grData.DataTable.SetValue("Check", i, "Y");
-                        this.SelectedDataIndexs.Add(i);
+                        if (!this.SelectedDataIndexs.Contains(i))
+                        {
+                            this.grData.DataTable.SetValue("Check", i, "Y");
+                            this.SelectedDataIndexs.Add(i);
+                        }
                     }
                 }
                 EnableButton();
@@ -1874,5 +1930,136 @@ namespace STDApp.Payment
 
         private Button btnHis;
         private Button btnUpd;
+
+        private void btnUpd_ClickBefore(object sboObject, SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            this.Freeze(true);
+            //var count = 0;
+            List<int> listUpdate = new List<int>();
+            for(var i = 0; i < this.grData.DataTable.Rows.Count; i ++)
+            {
+                var sapStatus = this.grData.DataTable.GetValue("SAPStatus", i).ToString();
+                var bankStatus = this.grData.DataTable.GetValue("BankStatus", i).ToString();
+                
+                if(sapStatus == "02" && bankStatus == string.Empty )
+                {
+                    listUpdate.Add(i);
+                }
+            }
+
+            if(listUpdate.Count <= 0)
+            {
+                UIHelper.LogMessage("Chưa có đơn được gửi sang ngân hàng", UIHelper.MsgType.StatusBar); 
+                this.Freeze(false);
+                return;
+            }
+
+            UpdateBanksStatus(listUpdate);
+            
+            this.Freeze(false);
+        }
+
+        private void UpdateBanksStatus(List<int> data)
+        {
+            foreach(var index in data)
+            {
+                UpdateBankStatus(index);
+            }
+        }
+
+        private void UpdateBankStatus(int index)
+        {
+            try
+            {
+                UIHelper.LogMessage("Bắt đầu cập nhật trạng thái thanh toán", UIHelper.MsgType.StatusBar, false);
+                TransferInqRequest request = new TransferInqRequest
+                {
+                    requestId = this.grData.DataTable.GetValue("requestId", index).ToString(), //field id mapping với api transfer
+                    transId = this.grData.DataTable.GetValue("requestId", index).ToString(), //field mã giao dịch mapping với api transfer
+                    providerId = ConfigurationManager.AppSettings["ProviderId"],
+                    merchantId = ConfigurationManager.AppSettings["MerchantId"],
+                    clientIP = ConfigurationManager.AppSettings["ClientIP"],
+                    transTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    channel = "MOBILE",
+                    version = "1.0",
+                    language = "vi",
+                    fromDate = "01/01/2024",
+                    toDate = "31/12/2024",
+                    signature = ""
+                };
+
+                request.signature += (
+                    request.requestId +
+                    request.providerId +
+                    request.merchantId +
+                    request.transTime +
+                    request.channel +
+                    request.version +
+                    request.clientIP +
+                    request.language
+                );
+                var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
+
+                //request.signature = FPT.SHA256_RSA2048.Encrypt(request.signature, path);
+                request.signature = FPT.SHA256_RSA2048.Encrypt(request.signature, path);
+                var json = JsonSerializer.Serialize(request);
+
+
+                var options = new RestClientOptions(ConfigurationManager.AppSettings["LinkAPI"])
+                {
+                    MaxTimeout = -1,
+                };
+
+                var client = new RestClient(options);
+                var request1 = new RestRequest(ConfigurationManager.AppSettings["TransferInq"], Method.Post);
+                request1.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
+                request1.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
+                request1.AddHeader("Content-Type", "application/json");
+
+                request1.AddParameter("application/json", json, ParameterType.RequestBody);
+                var response = client.Execute(request1);
+                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                {
+                    UIHelper.LogMessage($"Lỗi {response.ErrorMessage}", UIHelper.MsgType.StatusBar, true);
+                    return;
+                }
+                var result = response.Content;
+
+                var rps = JsonSerializer.Deserialize<VTResponse>(result);
+                if (rps == null)
+                {
+                    UIHelper.LogMessage($"Lỗi không có phản hồi, vui lòng check lại", UIHelper.MsgType.StatusBar, true);
+                    return;
+                }
+                if (rps.status.code == "0")
+                {
+                    UIHelper.LogMessage($"Lỗi {rps.status.message}", UIHelper.MsgType.StatusBar, true);
+                    return;
+                }
+                var dataResponse = JsonSerializer.Deserialize<TransferInq>(result);
+
+                if (dataResponse != null && dataResponse.result != null)
+                {
+                    foreach (var item in dataResponse.result)
+                    {
+                        var query = "UPDATE \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_TransferRecord\" ";
+                        query += "SET \"bankStatus\" = '" + item.status + "' ,";
+                        query += "\"Message\" = '" + item.message + "' ";
+                        query += "WHERE \"requestId\" = '" + dataResponse.requestId + "' ";
+                        query += "AND \"transId\" = '" + item.transId + "' ";   
+
+                        var ret = dbProvider.ExecuteNonQuery(query);
+                    }
+                }
+
+                UIHelper.LogMessage("Hoàn tất gửi yêu cầu thanh toán", UIHelper.MsgType.StatusBar, false);
+                LoadDataGridCreate();
+            }
+            catch (Exception ex)
+            {
+                UIHelper.LogMessage($"Lỗi {ex.Message}", UIHelper.MsgType.StatusBar, true);
+            }
+        }
     }
 }

@@ -112,6 +112,8 @@
     <Compile Include="Models\PaymentEventArgs.cs" />
     <Compile Include="Models\TransferDetail.cs" />
     <Compile Include="Models\TransferHeader.cs" />
+    <Compile Include="Models\TransferInq.cs" />
+    <Compile Include="Models\TransferInqRequest.cs" />
     <Compile Include="Models\TransferRequest.cs" />
     <Compile Include="Models\VTRequest.cs" />
     <Compile Include="Payment\frmAddPaymentLine.b1f.cs">
@@ -177,6 +179,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="DataReader\Scripts\InquiryDetail.sql" />
+    <Content Include="DataReader\Scripts\tb_Bank_PaymentOnAccount.sql" />
     <Content Include="DataReader\Scripts\TransferRecord.sql" />
     <Content Include="DataReader\Scripts\InquiryHeader.sql" />
     <Content Include="DataReader\Scripts\pn_vwCashFlow.sql" />
