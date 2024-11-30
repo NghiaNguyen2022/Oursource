@@ -80,7 +80,7 @@ namespace STD.DataReader
             get
             {
                 //CALL "usp_PaymentListReport"('20240102','20240102', 'PT', '4')
-                return CallStoreBySystem("usp_PaymentListReport", "'{0}', '{1}', '{2}', '{3}'");
+                return CallStoreBySystem("usp_PaymentListReport", "'{0}', '{1}'");
             }
         }
         public static string LoadPaymentsReportWithStatus
@@ -95,7 +95,7 @@ namespace STD.DataReader
         {
             get
             {
-                return CallStoreBySystem("usp_PaymentListReportDetail", "{0}, '{1}', '{2}'");
+                return CallStoreBySystem("usp_PaymentListReportDetail", "'{0}'");
             }
         }
         public static string GenerateKeyQuery

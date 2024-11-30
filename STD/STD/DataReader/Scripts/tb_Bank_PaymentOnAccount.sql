@@ -1,4 +1,4 @@
-﻿CREATE TABLE "tb_Bank_PaymentOnAccount"
+﻿CREATE TABLE cc
 (
 	"RequestID" NVARCHAR(50),
 	"SourceID" NVARCHAR(30),

@@ -8,6 +8,7 @@ using SAPCore.Helper;
 using SAPCore.SAP;
 using SAPCore.SAP.DIAPI;
 using STD.DataReader;
+using STDApp.AccessSAP;
 using STDApp.DataReader;
 using STDApp.Models;
 using System;
@@ -97,28 +98,6 @@ namespace STDApp.Payment
             }
         }
 
-        private string Branch
-        {
-            get
-            {
-                return UIHelper.GetComboValue(cbbBr, "0");
-            }
-        }
-
-        //private PaymentMethod _PaymentMethod
-        //{
-        //    get
-        //    {
-        //        //if (cbbFeeType != null && cbbFeeType.Selected != null)
-        //        //{
-        //        //    var type = cbbFeeType.Selected.Value.GetEnumValueByDescription<PaymentMethod>();
-        //        //    return type;// cbbMeth.Selected.Value == "C" ? PaymentMethod.Cash : PaymentMethod.Bank;
-        //        //}
-
-        //        return PaymentMethod.Cash;
-        //    }
-        //}
-
         private PaymentDocumentType _PaymentDocumentType
         {
             get
@@ -145,62 +124,6 @@ namespace STDApp.Payment
         ChooseFromList oCFL;
         Conditions oConCustomers = null;
         Conditions oConVendors = null;
-        //private void ConfigCFL()
-        //{
-        //    ChooseFromListCollection oCFLs = null;
-        //    oCFLs = this.UIAPIRawForm.ChooseFromLists;
-        //    oCFL = oCFLs.Item("CFL_BP");
-        //    oConCustomers = null;
-        //    // Condition oCon = null;
-        //    oConCustomers = oCFL.GetConditions();
-
-        //    var oConCustomer = oConCustomers.Add();
-        //    oConCustomer.Alias = "CardType";
-
-        //    oConCustomer.Operation = BoConditionOperation.co_EQUAL;
-        //    oConCustomer.CondVal = "C";
-
-        //    oConVendors = null;
-        //    oConVendors = oCFL.GetConditions();
-
-        //    var oConVendor = oConVendors.Add();
-        //    oConVendor.Alias = "CardType";
-
-        //    oConVendor.Operation = BoConditionOperation.co_EQUAL;
-        //    oConVendor.CondVal = "S";
-        //    SetCondition();
-        //}
-
-        //private void SetCondition(string type = "C")
-        //{
-        //    if (oCFL != null)
-        //    {
-        //        if (type == "C" && oConCustomers != null)
-        //        {
-        //            oCFL.SetConditions(oConCustomers);
-        //        }
-        //        else
-        //        {
-        //            if (oConVendors != null)
-        //                oCFL.SetConditions(oConVendors);
-        //        }
-        //    }
-        //}
-
-        //private void SelectType(string type = "C")
-        //{
-        //    if (type == "C")
-        //    {
-        //        this.lblCusVen.Caption = STRING_CONTRANTS.Title_Customer;
-        //        //this.lblName.Caption = STRING_CONTRANTS.Title_CustomerName;// "Tên Khách hàng";
-        //    }
-        //    else
-        //    {
-        //        this.lblCusVen.Caption = STRING_CONTRANTS.Title_Vendor;
-        //        //this.lblName.Caption = STRING_CONTRANTS.Title_VendorName;// "Tên Nhà Cung cấp";
-        //    }
-        //    SetCondition(type);
-        //}
 
         private string ToDateReport
         {
@@ -208,28 +131,6 @@ namespace STDApp.Payment
             {
                 return UIHelper.GetTextboxValue(txtTDateL);
 
-            }
-        }
-        private string BranchReport
-        {
-            get
-            {
-                return "";
-                //return UIHelper.GetComboValue(cbbStt, "0");
-            }
-        }
-        private PaymentDocumentType _PaymentDocumentTypeReport
-        {
-            get
-            {
-                if (cbbPmTyL != null && cbbPmTyL.Selected != null)
-                {
-                    var type = cbbPmTyL.Selected.Value.GetEnumValueByDescription<PaymentDocumentType>();
-
-                    return type;// PaymentDocumentType.UC;
-                }
-
-                return PaymentDocumentType.PT;
             }
         }
         private frmPayment()
@@ -249,7 +150,7 @@ namespace STDApp.Payment
             this.txtTDate = ((SAPbouiCOM.EditText)(this.GetItem("txtTDa").Specific));
             this.lblType = ((SAPbouiCOM.StaticText)(this.GetItem("lblTy").Specific));
             this.cbbType = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbTy").Specific));
-            this.cbbType.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cbbType_ComboSelectAfter);
+            // this.cbbType.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cbbType_ComboSelectAfter);
             this.btnFind = ((SAPbouiCOM.Button)(this.GetItem("btnFind").Specific));
             this.btnFind.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnFind_ClickBefore);
             this.grData = ((SAPbouiCOM.Grid)(this.GetItem("grData").Specific));
@@ -270,10 +171,6 @@ namespace STDApp.Payment
             this.txtTDateL = ((SAPbouiCOM.EditText)(this.GetItem("txtTDaL").Specific));
             this.btnFindL = ((SAPbouiCOM.Button)(this.GetItem("btnFindL").Specific));
             this.btnFindL.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnFindL_ClickBefore);
-            this.lblStt = ((SAPbouiCOM.StaticText)(this.GetItem("lblStt").Specific));
-            this.cbbStt = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbStt").Specific));
-            this.lblPmTyL = ((SAPbouiCOM.StaticText)(this.GetItem("lblPTL").Specific));
-            this.cbbPmTyL = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbPTL").Specific));
             this.grHdr = ((SAPbouiCOM.Grid)(this.GetItem("grHdr").Specific));
             this.grHdr.ClickAfter += new SAPbouiCOM._IGridEvents_ClickAfterEventHandler(this.grHdr_ClickAfter);
             this.grDt = ((SAPbouiCOM.Grid)(this.GetItem("grDt").Specific));
@@ -302,12 +199,12 @@ namespace STDApp.Payment
             this.lblNote = ((SAPbouiCOM.StaticText)(this.GetItem("lblNote").Specific));
             this.lblCusVen = ((SAPbouiCOM.StaticText)(this.GetItem("lblCV").Specific));
             this.txtCusVen = ((SAPbouiCOM.EditText)(this.GetItem("txtCV").Specific));
-            //  this.txtCusVen.LostFocusAfter += new SAPbouiCOM._IEditTextEvents_LostFocusAfterEventHandler(this.txtCusVen_LostFocusAfter);
+            //   this.txtCusVen.LostFocusAfter += new SAPbouiCOM._IEditTextEvents_LostFocusAfterEventHandler(this.txtCusVen_LostFocusAfter);
             this.btnFilter = ((SAPbouiCOM.Button)(this.GetItem("btnFil").Specific));
             this.btnFilter.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnFilter_ClickBefore);
             this.DataTableCbb = this.UIAPIRawForm.DataSources.DataTables.Item("DT_FT");
             this.btnHis = ((SAPbouiCOM.Button)(this.GetItem("btnHis").Specific));
-            //  this.btnHis.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnHis_ClickBefore);
+            //   this.btnHis.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnHis_ClickBefore);
             this.btnUpd = ((SAPbouiCOM.Button)(this.GetItem("btnUpd").Specific));
             this.btnUpd.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnUpd_ClickBefore);
             this.OnCustomInitialize();
@@ -351,22 +248,10 @@ namespace STDApp.Payment
             this.txtTDateL.Item.Top = this.lblFDateL.Item.Top;
             this.txtTDateL.Item.Left = this.lblTDateL.Item.Left + this.lblTDateL.Item.Width + 20;
 
-            this.lblPmTyL.Item.Top = this.lblFDateL.Item.Top;
-            this.lblPmTyL.Item.Left = this.txtTDateL.Item.Left + this.txtTDateL.Item.Width + 20;
-
-            this.cbbPmTyL.Item.Top = this.lblFDateL.Item.Top;
-            this.cbbPmTyL.Item.Left = this.lblPmTyL.Item.Left + this.lblPmTyL.Item.Width + 20;
-
-            this.lblStt.Item.Top = this.lblFDateL.Item.Top;
-            this.lblStt.Item.Left = this.cbbPmTyL.Item.Left + this.cbbPmTyL.Item.Width + 20;
-
-            this.cbbStt.Item.Top = this.lblFDateL.Item.Top;
-            this.cbbStt.Item.Left = this.lblStt.Item.Left + this.lblStt.Item.Width + 20;
-
             var labBottom = this.lblFDateL.Item.Top + this.lblFDateL.Item.Height;
             var bttTop = labBottom - this.btnFindL.Item.Height;
             this.btnFindL.Item.Top = bttTop;
-            this.btnFindL.Item.Left = this.cbbStt.Item.Left + this.cbbStt.Item.Width + 30;
+            this.btnFindL.Item.Left = this.txtTDateL.Item.Left + this.txtTDateL.Item.Width + 30;
 
             this.grHdr.Item.Left = this.lblFDateL.Item.Left;
             this.grHdr.Item.Width = maxw - grHdr.Item.Left - 20;
@@ -496,10 +381,6 @@ namespace STDApp.Payment
         private SAPbouiCOM.EditText txtFDateL;
         private SAPbouiCOM.EditText txtTDateL;
         private SAPbouiCOM.Button btnFindL;
-        private SAPbouiCOM.StaticText lblStt;
-        private SAPbouiCOM.ComboBox cbbStt;
-        private SAPbouiCOM.StaticText lblPmTyL;
-        private SAPbouiCOM.ComboBox cbbPmTyL;
         private SAPbouiCOM.Grid grHdr;
         private SAPbouiCOM.Grid grDt;
         private SAPbouiCOM.Button btnAddL;
@@ -607,23 +488,16 @@ namespace STDApp.Payment
             if (this.grDt != null)
             {
                 this.grDt.DataTable.Clear();
-                this.grDt.DataTable.ExecuteQuery(string.Format(QueryString.LoadPaymentsReportDetail, docnum, _PaymentDocumentTypeReport.GetDescription(), BranchReport));
+                this.grDt.DataTable.ExecuteQuery(string.Format(QueryString.LoadPaymentsReportDetail, docnum));
 
-                var bpCaptionCode = _PaymentDocumentTypeReport == PaymentDocumentType.PT ? STRING_CONTRANTS.Title_CustomerCode : STRING_CONTRANTS.Title_VendorCode;
-
-                this.grDt.Columns.Item("CardCode").TitleObject.Caption = bpCaptionCode;
+                this.grDt.Columns.Item("CardCode").TitleObject.Caption = STRING_CONTRANTS.Title_VendorCode;
                 this.grDt.Columns.Item("CardCode").Editable = false;
 
                 this.grDt.Columns.Item("CardName").Editable = false;
                 this.grDt.Columns.Item("CardName").Visible = false;
 
-                this.grDt.Columns.Item("Check").Visible = false;
-
                 this.grDt.Columns.Item("DocNum").TitleObject.Caption = STRING_CONTRANTS.Title_DocNum;
                 this.grDt.Columns.Item("DocNum").Editable = false;
-
-                this.grDt.Columns.Item("InvCode").TitleObject.Caption = STRING_CONTRANTS.Title_InvCode;
-                this.grDt.Columns.Item("InvCode").Editable = false;
 
                 this.grDt.Columns.Item("DocDate").TitleObject.Caption = STRING_CONTRANTS.Title_DocDate;
                 this.grDt.Columns.Item("DocDate").Editable = false;
@@ -636,15 +510,16 @@ namespace STDApp.Payment
 
                 this.grDt.Columns.Item("InsTotal").TitleObject.Caption = STRING_CONTRANTS.Title_InsTotal;
                 this.grDt.Columns.Item("InsTotal").Editable = false;
+
                 this.grDt.Columns.Item("MustPay").TitleObject.Caption = STRING_CONTRANTS.Title_MustPay;
                 this.grDt.Columns.Item("MustPay").Editable = false;
-                this.grDt.Columns.Item("MustPayAsCash").TitleObject.Caption = STRING_CONTRANTS.Title_PayAmount;
-                this.grDt.Columns.Item("MustPayAsCash").Editable = false;
-                //this.grDt.Columns.Item("MustPayAsBank").TitleObject.Caption = "Số tiền thanh toán (Bank)";
-                this.grDt.Columns.Item("MustPayAsBank").Visible = false;
 
-                this.grDt.Columns.Item("DocEntry").Visible = false;
-                this.grDt.Columns.Item("Manual").Visible = false;
+                this.grDt.Columns.Item("SumAmout").TitleObject.Caption = STRING_CONTRANTS.Title_SumTotal;
+                this.grDt.Columns.Item("SumAmout").Editable = false;
+
+                this.grDt.Columns.Item("SumAmoutFC").TitleObject.Caption = STRING_CONTRANTS.Title_SumTotalFC;
+                this.grDt.Columns.Item("SumAmoutFC").Editable = false;
+
 
                 SAPbouiCOM.EditTextColumn oCol2 = null;
                 oCol2 = (SAPbouiCOM.EditTextColumn)this.grDt.Columns.Item("CardCode");
@@ -652,14 +527,9 @@ namespace STDApp.Payment
 
                 SAPbouiCOM.EditTextColumn oCol1 = null;
                 oCol1 = (SAPbouiCOM.EditTextColumn)this.grDt.Columns.Item("DocNum");
-                if (_PaymentDocumentTypeReport == PaymentDocumentType.PT)
-                {
-                    oCol1.LinkedObjectType = SAPObjectType.oInvoices;
-                }
-                else
-                {
-                    oCol1.LinkedObjectType = SAPObjectType.oPurchaseInvoices;
-                }
+
+                oCol1.LinkedObjectType = SAPObjectType.oPurchaseInvoices;
+
                 this.grDt.AutoResizeColumns();
                 //ViewHelper.ColorGridRows(this.grDt, 0, true);
             }
@@ -670,7 +540,7 @@ namespace STDApp.Payment
             if (this.grHdr != null)
             {
                 this.grHdr.DataTable.Clear();
-                this.grHdr.DataTable.ExecuteQuery(string.Format(QueryString.LoadPaymentsReport, FromDateReport, ToDateReport, _PaymentDocumentTypeReport.GetDescription(), BranchReport));
+                this.grHdr.DataTable.ExecuteQuery(string.Format(QueryString.LoadPaymentsReport, FromDateReport, ToDateReport));
 
                 if (this.grHdr.DataTable.Rows.Count <= 0)
                 {
@@ -680,15 +550,7 @@ namespace STDApp.Payment
                 this.grHdr.Columns.Item("PaymentKey").TitleObject.Caption = STRING_CONTRANTS.Title_PaymentKey;
                 this.grHdr.Columns.Item("PaymentKey").Editable = false;
 
-                //this.grHdr.Columns.Item("Check").TitleObject.Caption = "Chọn";
-                //this.grHdr.Columns.Item("Check").Type = SAPbouiCOM.BoGridColumnType.gct_CheckBox;
-                this.grHdr.Columns.Item("Check").Visible = false;
-
-                this.grHdr.Columns.Item("PaymentType").TitleObject.Caption = STRING_CONTRANTS.Title_PaymentType;// "Loại thanh toán";
-                this.grHdr.Columns.Item("PaymentType").Editable = false;
-
-                var bpCaptionCode = _PaymentDocumentTypeReport == PaymentDocumentType.PT ? STRING_CONTRANTS.Title_CustomerCode : STRING_CONTRANTS.Title_VendorCode;
-                this.grHdr.Columns.Item("CardCode").TitleObject.Caption = bpCaptionCode;
+                this.grHdr.Columns.Item("CardCode").TitleObject.Caption = STRING_CONTRANTS.Title_VendorCode;
                 this.grHdr.Columns.Item("CardCode").Editable = false;
 
                 this.grHdr.Columns.Item("DocNum").TitleObject.Caption = STRING_CONTRANTS.Title_PaymentDocNum;
@@ -700,67 +562,23 @@ namespace STDApp.Payment
                 this.grHdr.Columns.Item("DocCurr").TitleObject.Caption = STRING_CONTRANTS.Title_Currency;
                 this.grHdr.Columns.Item("DocCurr").Editable = false;
 
-                this.grHdr.Columns.Item("Cash").TitleObject.Caption = STRING_CONTRANTS.Title_MustPayAsCash;
-                this.grHdr.Columns.Item("Cash").Editable = false;
-
-                this.grHdr.Columns.Item("Bank").TitleObject.Caption = STRING_CONTRANTS.Title_MustPayAsBank;
-                this.grHdr.Columns.Item("Bank").Editable = false;
-
-                this.grHdr.Columns.Item("CreateName").TitleObject.Caption = STRING_CONTRANTS.Title_CreateBy;
-                this.grHdr.Columns.Item("CreateName").Editable = false;
-
-                this.grHdr.Columns.Item("StatusName").TitleObject.Caption = STRING_CONTRANTS.Title_Status;
-                this.grHdr.Columns.Item("StatusName").Editable = false;
-                this.grHdr.Columns.Item("Status").Visible = false;
-                if (this._PaymentDocumentTypeReport != PaymentDocumentType.PT)
-                {
-
-                    this.grHdr.Columns.Item("CashAcct").Visible = false;
-                    this.grHdr.Columns.Item("BankCode").Visible = false;
-                    this.grHdr.Columns.Item("TrsfrAcct").Visible = false;
+                this.grHdr.Columns.Item("Amount").TitleObject.Caption = STRING_CONTRANTS.Title_PayAmount;
+                this.grHdr.Columns.Item("Amount").Editable = false;
 
 
-                    this.grHdr.Columns.Item("DocEntry").TitleObject.Caption = STRING_CONTRANTS.Title_PaymentDraftEntry;
-                    this.grHdr.Columns.Item("DocEntry").Editable = false;
+                this.grHdr.Columns.Item("PaymentEntry").TitleObject.Caption = STRING_CONTRANTS.Title_PaymentDocEntry;
+                this.grHdr.Columns.Item("PaymentEntry").Editable = false;
 
-                    this.grHdr.Columns.Item("PaymentEntry").TitleObject.Caption = STRING_CONTRANTS.Title_PaymentDocEntry;
-                    this.grHdr.Columns.Item("PaymentEntry").Editable = false;
+                SAPbouiCOM.EditTextColumn oCol1 = null;
+                oCol1 = (SAPbouiCOM.EditTextColumn)this.grHdr.Columns.Item("PaymentEntry");
+                oCol1.LinkedObjectType = SAPObjectType.oVendorPayments;
 
-                    SAPbouiCOM.EditTextColumn oCol1 = null;
-                    oCol1 = (SAPbouiCOM.EditTextColumn)this.grHdr.Columns.Item("PaymentEntry");
-                    oCol1.LinkedObjectType = SAPObjectType.oVendorPayments;
-
-                    SAPbouiCOM.EditTextColumn oCol2 = null;
-                    oCol2 = (SAPbouiCOM.EditTextColumn)this.grHdr.Columns.Item("DocEntry");
-                    oCol2.LinkedObjectType = SAPObjectType.oPaymentsDrafts;
-                }
-                else
-                {
-                    this.grHdr.Columns.Item("DocEntry").TitleObject.Caption = STRING_CONTRANTS.Title_PaymentDocEntry;
-                    this.grHdr.Columns.Item("DocEntry").Editable = false;
-
-                    SAPbouiCOM.EditTextColumn oCol1 = null;
-                    oCol1 = (SAPbouiCOM.EditTextColumn)this.grHdr.Columns.Item("DocEntry");
-                    oCol1.LinkedObjectType = SAPObjectType.oIncomingPayments;
-                }
-                this.grHdr.CollapseLevel = 1;
+              //  this.grHdr.CollapseLevel = 1;
                 this.grHdr.AutoResizeColumns();
                 SAPbouiCOM.EditTextColumn oCol = null;
                 oCol = (SAPbouiCOM.EditTextColumn)this.grHdr.Columns.Item("CardCode");
                 oCol.LinkedObjectType = SAPObjectType.oBusinessPartners;
 
-                //SAPbouiCOM.EditTextColumn oCol1 = null;
-                //oCol1 = (SAPbouiCOM.EditTextColumn)this.grHdr.Columns.Item("DocEntry");
-                //if (_PaymentDocumentTypeReport == PaymentDocumentType.PT)
-                //{
-                //    oCol1.LinkedObjectType = SAPObjectType.oIncomingPayments;
-                //}
-                //else
-                //{
-                //    oCol1.LinkedObjectType = SAPObjectType.oVendorPayments;
-                //}
-
-                //ViewHelper.ColorGridRows(this.grHdr, 0, true);
                 var docnum = this.grHdr.DataTable.GetValue("DocNum", 0).ToString();
                 if (!string.IsNullOrEmpty(docnum))
                 {
@@ -801,9 +619,9 @@ namespace STDApp.Payment
                 this.grData.Columns.Item("SenderAccount").ColumnConfig("Tài khoản gửi", false, true);
                 this.grData.Columns.Item("SenderAccountName").ColumnConfig("Tên tài khoản gửi", false, true);
 
-                this.grData.Columns.Item("CardCode").ColumnConfig(STRING_CONTRANTS.Title_CustomerCode, false);
+                this.grData.Columns.Item("CardCode").ColumnConfig(STRING_CONTRANTS.Title_VendorCode, false);
 
-                this.grData.Columns.Item("CardName").TitleObject.Caption = STRING_CONTRANTS.Title_CustomerName;
+                this.grData.Columns.Item("CardName").TitleObject.Caption = STRING_CONTRANTS.Title_VendorName;
                 this.grData.Columns.Item("CardName").Editable = false;
 
                 this.grData.Columns.Item("DocNum").ColumnConfig(STRING_CONTRANTS.Title_DocNum, false);
@@ -1147,56 +965,14 @@ namespace STDApp.Payment
                 data.Cashflow = CashFlowID;
                 data.Currency = currency;
 
-                var bankCode = this.grData.GetValueCustom("Bank", index);
-                if (string.IsNullOrEmpty(bankCode))
-                    bankCode = this.BankAccount;
-                var cashAccount = this.grData.GetValueCustom("Account", index);
-                if (string.IsNullOrEmpty(cashAccount))
-                    cashAccount = CashCode;
-
-                /* note cho xu ly sau
-                var BankAccount = ViewHelper.Banks.Where(x => x.Code == bankCode).Select(x => x.Account).FirstOrDefault();
-                var CashAccount = ViewHelper.Banks.Where(x => x.Code == cashAccount).Select(x => x.Account).FirstOrDefault();
-
-                data.BankInfo = bankCode;
-
-                switch (_PaymentMethod)
-                {
-                    case PaymentMethod.Cash:
-                        if (string.IsNullOrEmpty(CashAccount))
-                        {
-                            message = STRING_CONTRANTS.NoAccount;
-                            isReturn = true;
-                            return null;
-                        }
-                        break;
-                    case PaymentMethod.Bank:
-                        if (string.IsNullOrEmpty(BankAccount))
-                        {
-                            message = STRING_CONTRANTS.NoBank;
-                            isReturn = true;
-                            return null;
-                        }
-                        break;
-                    default:
-                        if (string.IsNullOrEmpty(CashAccount) || string.IsNullOrEmpty(BankAccount))
-                        {
-                            message = STRING_CONTRANTS.NoAccount + " hoặc " + STRING_CONTRANTS.NoBank;
-                            isReturn = true;
-                            return null;
-                        }
-                        break;
-                }
 
                 data.BankAccount = BankAccount;// ViewHelper.Banks.Where(x => x.Code == bankCode).Select(x => x.Account).FirstOrDefault();  
-                data.Account = CashAccount;// this.grData.DataTable.GetValue("Account", index).ToString();
-                */
+
                 data.CardType = "S";
                 data.CardCode = this.grData.GetValueCustom("CardCode", index);
                 if (this.grData.GetValueCustom("Manual", index) == "Data")
                 {
                     data.DocNum = this.grData.GetValueCustom("DocNum", index);
-                    data.InvCode = this.grData.GetValueCustom("InvCode", index);
                     data.DocEntry = this.grData.GetValueCustom("DocEntry", index);
                     DateTime docdate = default(DateTime);
                     if (CustomConverter.ConvertStringToDate(this.grData.GetValueCustom("DocDate", index), ref docdate))
@@ -1204,8 +980,18 @@ namespace STDApp.Payment
                         data.DocDate = docdate;
                     }
                 }
+                else
+                {
+                    data.DocNum = string.Empty;
+                }
                 DateTime duedate;
-                if (DateTime.TryParseExact(PostingDate, "yyyyMMdd", CultureInfo.CurrentCulture, DateTimeStyles.None, out duedate))
+                var postingDate = string.Empty;
+                if (!string.IsNullOrEmpty(PostingDate))
+                    postingDate = PostingDate;
+                else
+                    postingDate = this.grData.GetValueCustom("DueDate", index);
+
+                if (DateTime.TryParseExact(postingDate, "yyyyMMdd", CultureInfo.CurrentCulture, DateTimeStyles.None, out duedate))
                 {
                     data.PaymentDate = duedate;
                 }
@@ -1217,52 +1003,7 @@ namespace STDApp.Payment
                 {
                     total = mustpay;
                 }
-
-                decimal mustpayCash = -1;
-                decimal mustpayBank = -1;
-                var isCash = CustomConverter.ConvertStringToDecimal(this.grData.GetValueCustom("MustPayAsCash", index), ref mustpayCash);
-                var isBank = CustomConverter.ConvertStringToDecimal(this.grData.GetValueCustom("MustPayAsBank", index), ref mustpayBank);
-
-                /* xu ly sau
-                if (_PaymentMethod == PaymentMethod.Cash)
-                {
-                    if (isCash)
-                    {
-                        data.AmountCash = mustpayCash;
-                        data.Amount = mustpayCash;
-                    }
-                }
-                else if (_PaymentMethod == PaymentMethod.Bank)
-                {
-                    if (isBank)
-                    {
-                        data.AmountBank = mustpayBank;
-                        data.Amount = mustpayBank;
-                    }
-                }
-                else
-                {
-                    decimal cash = 0;
-                    if (isCash)
-                    {
-                        cash = mustpayCash;
-                    }
-                    decimal bank = 0;
-                    if (isBank)
-                    {
-                        bank = mustpayBank;
-                    }
-                    data.AmountBank = bank;
-                    data.AmountCash = cash;
-                    data.Amount = bank + cash;
-                }
-                */
-                if (data.Currency != GlobalsConfig.Instance.LocalCurrencyDefault)
-                {
-                    decimal rate = 0;
-                    decimal.TryParse(this.grData.GetValueCustom("DocRate", index), out rate);
-                    data.Rate = rate;
-                }
+                data.Amount = total;
                 if (data.Amount == 0)
                 {
                     message = STRING_CONTRANTS.PaymentZero;
@@ -1287,17 +1028,14 @@ namespace STDApp.Payment
             }
 
         }
-        /// <summary>
-        /// New version with log
-        /// </summary>
-        private void CreatePayments()
+
+        private void CreatePayment(int index)
         {
             var message = string.Empty;
-            var paymentDts = new List<PaymentDetail>();
             var currency = string.Empty;
 
-            var keyLog = $"PM_{DateTime.Now.ToString("yyMMddHHmmss")}";
             UIHelper.LogMessage("Bắt đầu lấy dữ liệu", UIHelper.MsgType.StatusBar, false);
+           // var keyLog = $"PM_{DateTime.Now.ToString("yyMMddHHmmss")}";
             var request = new TransferRequest
             {
                 model = "2",
@@ -1320,19 +1058,9 @@ namespace STDApp.Payment
                 records = new List<TransferRecord>()
             };
 
-            for (var i = 0; i < SelectedDataIndexs.Count; i++)
-            {
-                var index = SelectedDataIndexs[i];
 
-                if (this.grData.GetValueCustom("Check", index) != "Y")
-                {
-                    continue;
-                }
+            request.records.Add(DataToRecordApi(index, request.requestId)); // DataInRow(index, ref isReturn, ref message);
 
-                request.records.Add(DataToRecordApi(index, request.requestId)); // DataInRow(index, ref isReturn, ref message);
-
-
-            }
             request.signature = (
                 request.requestId +
                 request.providerId +
@@ -1369,8 +1097,6 @@ namespace STDApp.Payment
             //request.signature = FPT.SHA256_RSA2048.Encrypt(request.signature, path);
             request.signature = FPT.SHA256_RSA2048.Encrypt(request.signature, path);
             var json = JsonSerializer.Serialize(request);
-
-            UIHelper.LogMessage("Hoàn tất lấy dữ liệu", UIHelper.MsgType.StatusBar, false);
 
             UIHelper.LogMessage("Bắt đầu gửi yêu cầu", UIHelper.MsgType.StatusBar, false);
 
@@ -1431,6 +1157,22 @@ namespace STDApp.Payment
                 }
             }
 
+        }
+        private void CreatePayments()
+        {
+            UIHelper.LogMessage("Bắt đầu quá trình gửi yêu cầu lên ngân hàng", UIHelper.MsgType.StatusBar, false);
+            for (var i = 0; i < SelectedDataIndexs.Count; i++)
+            {
+                var index = SelectedDataIndexs[i];
+
+                if (this.grData.GetValueCustom("Check", index) != "Y")
+                {
+                    continue;
+                }
+
+                CreatePayment(index);
+             }
+            
             UIHelper.LogMessage("Hoàn tất gửi yêu cầu thanh toán", UIHelper.MsgType.StatusBar, false);
             LoadDataGridCreate();
 
@@ -1554,15 +1296,8 @@ namespace STDApp.Payment
             this.Freeze(true);
             SetControlLocation();
             this.Freeze(false);
-        }
 
-        private void cbbType_ComboSelectAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
-        {
-            this.Freeze(true);
-            LoadPaymentTypeCombobox();
-            this.Freeze(false);
         }
-
         private void grData_ClickAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
         {
             this.Freeze(true);
@@ -1683,6 +1418,15 @@ namespace STDApp.Payment
                 this.grData.DataTable.SetValue("ReceiveBankName", index, data.ReceiveBankName);
                 this.grData.DataTable.SetValue("ReceiveAccount", index, data.ReceiveAccount);
                 this.grData.DataTable.SetValue("Manual", index, data.SourceID);
+
+                var values = DataHelper.ListBanks;
+                var bank = values.FirstOrDefault();
+                if(bank != null)
+                {
+                    this.grData.DataTable.SetValue("SenderBankCode", index, bank["SenderBankCode"].ToString());
+                    this.grData.DataTable.SetValue("SenderAccount", index, bank["Account"].ToString());
+                    this.grData.DataTable.SetValue("SenderAccountName", index, bank["Name"].ToString());
+                }
                 //this.grData.
                 this.Freeze(false);
             }
@@ -1937,46 +1681,75 @@ namespace STDApp.Payment
             this.Freeze(true);
             //var count = 0;
             List<int> listUpdate = new List<int>();
-            for(var i = 0; i < this.grData.DataTable.Rows.Count; i ++)
+            for (var i = 0; i < this.grData.DataTable.Rows.Count; i++)
             {
                 var sapStatus = this.grData.DataTable.GetValue("SAPStatus", i).ToString();
                 var bankStatus = this.grData.DataTable.GetValue("BankStatus", i).ToString();
-                
-                if(sapStatus == "02" && bankStatus == string.Empty )
+
+                if (sapStatus == "02" && bankStatus != "05")
                 {
                     listUpdate.Add(i);
                 }
             }
 
-            if(listUpdate.Count <= 0)
+            if (listUpdate.Count <= 0)
             {
-                UIHelper.LogMessage("Chưa có đơn được gửi sang ngân hàng", UIHelper.MsgType.StatusBar); 
+                UIHelper.LogMessage("Chưa có đơn được gửi sang ngân hàng", UIHelper.MsgType.StatusBar);
                 this.Freeze(false);
                 return;
             }
 
             UpdateBanksStatus(listUpdate);
-            
+
             this.Freeze(false);
         }
 
         private void UpdateBanksStatus(List<int> data)
         {
-            foreach(var index in data)
+            foreach (var index in data)
             {
-                UpdateBankStatus(index);
+                var status = string.Empty;
+                var requestID = string.Empty;
+                UpdateBankStatus(index, ref status, ref requestID);
+                var message = string.Empty;
+                var isReturn = false;
+               // status = this.grData.DataTable.GetValue("BankStatus", index).ToString();
+                //requestID = this.grData.DataTable.GetValue("requestId", index).ToString();
+                if (status != "05")
+                {
+                    continue;
+                }
+
+                var dataPayment = DataInRow(index, ref isReturn, ref message);
+                if (isReturn)
+                {
+                    UIHelper.LogMessage(message, UIHelper.MsgType.StatusBar, true);
+                    return;
+                }
+                //var key = $"PM{DateTime.Now.ToString("yyyymmddhhmms")}";
+                UIHelper.LogMessage("Bắt đầu tạo thanh toán trên SAP", UIHelper.MsgType.StatusBar, false);
+                var ret = PaymentViaDI.CreatePayment(dataPayment, requestID, ref message);
+
+                UIHelper.LogMessage(ret.Message, UIHelper.MsgType.StatusBar, !ret.Flag);
+
             }
+            LoadDataGridCreate();
         }
 
-        private void UpdateBankStatus(int index)
+        private void UpdateBankStatus(int index, ref string status, ref string requestID)
         {
             try
             {
+                status = "00";
+                // requestID = "";
+                //status = this.grData.DataTable.GetValue("BankStatus", index).ToString();
+                requestID = this.grData.DataTable.GetValue("requestId", index).ToString();
+
                 UIHelper.LogMessage("Bắt đầu cập nhật trạng thái thanh toán", UIHelper.MsgType.StatusBar, false);
                 TransferInqRequest request = new TransferInqRequest
                 {
                     requestId = this.grData.DataTable.GetValue("requestId", index).ToString(), //field id mapping với api transfer
-                    transId = this.grData.DataTable.GetValue("requestId", index).ToString(), //field mã giao dịch mapping với api transfer
+                    transId = this.grData.DataTable.GetValue("transId", index).ToString(), //field mã giao dịch mapping với api transfer
                     providerId = ConfigurationManager.AppSettings["ProviderId"],
                     merchantId = ConfigurationManager.AppSettings["MerchantId"],
                     clientIP = ConfigurationManager.AppSettings["ClientIP"],
@@ -2047,14 +1820,14 @@ namespace STDApp.Payment
                         query += "SET \"bankStatus\" = '" + item.status + "' ,";
                         query += "\"Message\" = '" + item.message + "' ";
                         query += "WHERE \"requestId\" = '" + dataResponse.requestId + "' ";
-                        query += "AND \"transId\" = '" + item.transId + "' ";   
+                        query += "AND \"transId\" = '" + item.transId + "' ";
 
                         var ret = dbProvider.ExecuteNonQuery(query);
+                        status = item.status;
                     }
                 }
 
-                UIHelper.LogMessage("Hoàn tất gửi yêu cầu thanh toán", UIHelper.MsgType.StatusBar, false);
-                LoadDataGridCreate();
+                UIHelper.LogMessage("Hoàn tất cập nhật thanh toán", UIHelper.MsgType.StatusBar, false);
             }
             catch (Exception ex)
             {

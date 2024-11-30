@@ -164,6 +164,8 @@ namespace STDApp
         public static string Title_Remark = "Ghi chú";
         public static string Title_InsTotal = "Số tiền hóa đơn";
         public static string Title_InsTotalFC = "Số Tiền Hóa Đơn (Ngoại tệ)";
+        public static string Title_SumTotal = "Số tiền thanh toán";
+        public static string Title_SumTotalFC = "Số Tiền thanh toán (Ngoại tệ)";
         public static string Title_MustPay = "Số tiền chưa thanh toán";
         public static string Title_PayAmount = "Số tiền thanh toán";
         public static string Title_Rate = "Tỉ giá ngoại tệ";

@@ -26,14 +26,16 @@ BEGIN
 	SELECT T."CardCode",
 		   T."CardName",
 		   T."Check",
-		   T."SAPStatus",
-		   T."BankStatus",
 		   --t."HouseBank",
 		   T."DocEntry" AS "DocNum",
+		   T."SAPStatus",
+		   T."BankStatus",
+		   T."Message",
 		   T."DocDate", 
 		   T."DueDate",
 		   T."DocCur",
-		   '24898' --T."DflSwift" 
+		   --'24898' --
+		   T."DflSwift" 
 			AS "ReceiveBankCode",
 		   t."DflAccount" AS "ReceiveAccount",
 		   t."BankName" AS "ReceiveBankName",
@@ -49,7 +51,6 @@ BEGIN
 		   T."DocEntry",
 		   t."JrnlMemo",
 		   t."Content",
-		   T."Message",
 		   T."Manual",
 		   t."requestId",
 		   t."transId"

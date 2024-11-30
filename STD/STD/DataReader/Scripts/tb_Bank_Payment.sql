@@ -1,24 +1,22 @@
-drop TABLE "tb_Bank_Payment"
+drop TABLE "tb_Bank_Payment";
 CREATE TABLE "tb_Bank_Payment"
 (
 	"CardCode" VARCHAR(50),
 	"DocEntry" INT,
-	"PaymentType" CHAR(1),
-	"PaymentKey" VARCHAR(50),
+	"TransId" VARCHAR(30),
 	"Status"  VARCHAR(10),
-	"StatusName" VARCHAR(500),
+	"Message"  VARCHAR(200),
 	"DateAction" Date,
 	"Key" VARCHAR(30)
 )
 
 -- Call "SP_LogPaymentTool" ('NC0100051', '1283', 'C', 'F', 'Không thể tạo phiếu thanh toán nhiều hóa đơn khác nhau về Dòng tiền.') 
 
-CREATE PROCEDURE "usp_Bank_LogPaymentTool"
+ALTER PROCEDURE "usp_Bank_LogPaymentTool"
 (
 	IN v_CardCode NVARCHAR(100),
 	IN v_DocEntry INT,
-	IN v_DocType CHAR(1),
-	IN v_PaymentKey VARCHAR(50),
+	IN v_TransId VARCHAR(30) ,
 	IN v_Status VARCHAR(1),
 	IN v_StatusName VARCHAR(500),
 	IN v_key VARCHAR(30)
@@ -31,20 +29,19 @@ BEGIN
 				 FROM "tb_Bank_Payment"
 				WHERE "CardCode" = :v_CardCode
 				  AND "DocEntry" = :v_DocEntry
-				  AND "PaymentType" = :v_DocType
+				  AND "TransId" = :v_TransId
 				)
 	THEN
 		UPDATE "tb_Bank_Payment"
- 		   SET "PaymentKey" = :v_PaymentKey,
- 		   	   "Status" = :v_Status,
- 		   	   "StatusName" = :v_StatusName,
+ 		   SET "Status" = :v_Status,
+ 		   	   "Message" = :v_StatusName,
  		   	   "DateAction" = CURRENT_DATE,
  		   	   "Key" = :v_key
  		 WHERE "CardCode" = :v_CardCode
 		   AND "DocEntry" = :v_DocEntry
-		   AND "PaymentType" = :v_DocType;
+		   AND "TransId" = :v_TransId;
 	ELSE
 		INSERT INTO "tb_Bank_Payment"
-		VALUES (:v_CardCode, :v_DocEntry, :v_DocType, :v_PaymentKey, :v_Status, :v_StatusName, CURRENT_DATE, :v_key);
+		VALUES (:v_CardCode, :v_DocEntry, :v_TransId, :v_Status, :v_StatusName, CURRENT_DATE, :v_key);
 	END IF;
 END;

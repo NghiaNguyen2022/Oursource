@@ -47,18 +47,18 @@ namespace STDApp.Models
         public string CardCode { get; set; }
         public string DocNum { get; set; }
         public string DocEntry { get; set; }
-        public string InvCode { get; set; }
+        //public string InvCode { get; set; }
         public DateTime DocDate { get; set; }
         public DateTime PaymentDate { get; set; }
         public decimal Amount { get; set; }
-        public decimal AmountBank { get; set; }
-        public decimal AmountCash { get; set; }
+       // public decimal AmountBank { get; set; }
+      //  public decimal AmountCash { get; set; }
         public string Currency { get; set; }
-        public string BankInfo { get; set; }
+       // public string BankInfo { get; set; }
         public string BankAccount { get; set; }
-        public string Account { get; set; }
+        //public string Account { get; set; }
         public string Cashflow { get; set; }
-        public decimal Rate { get; set; }
+       // public decimal Rate { get; set; }
         public string Remark { get; set; }
     }
 }
