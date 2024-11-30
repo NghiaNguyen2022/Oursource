@@ -6,6 +6,8 @@
 /STD/STD/bin
 /STD/STUserDefine/obj
 STD/.vs/ST_Addon/v16/.suo
+STD/.vs/ST_Addon/v17
+STD/.vs
 STD/Common/PN-Libraries/DLLs/4.6/PN.SmartLib.dll
 STD/Common/PN-Libraries/DLLs/4.6/SAPCore.dll
 /STD/.vs/ST_Addon/FileContentIndex/24041bdf-472b-4334-9aaa-def75de696cf.vsidx
@@ -31,4 +33,7 @@ STD/Common/PN-Libraries/DLLs/4.6/SAPCore.dll
 /Service/Common/PN-Libraries/SAPCore/bin
 /Service/ERPService/obj
 /Service/ERPService/.vs
+/Service/ERPService/bin
 /Service/.vs
+/Service/packages
+/.vs
