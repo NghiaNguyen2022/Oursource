@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Remoting.Messaging;
 using ERPService.DataReader;
 using SAPCore.SAP.DIAPI;
 
@@ -38,44 +39,83 @@ namespace ERPService.Models
         public string toTime { get; set; }
         public List<InquiryDetail> transactions { get; set; }
         public string signature { get; set; }
-        public bool InsertData()
+        public bool InsertData(ref string query)
         {
-            //using(var trans)
             try
             {
-                var query = "INSERT INTO \""+ DIConnection.Instance.CompanyDB+ "\".\"tb_Bank_InquiryHeader\" VALUES ( ";
-                query += $"'{requestId}',";
-                query += $"'{providerId}',";
-                query += $"'{merchantId}',";
-                query += $"'{account}',";
-                query += $"'{companyName}',";
-                query += $"'{accountType}',";
-                query += $"'{curency}',";
-                query += $"{accountBal},";
-                query += $"{availableBal},";
-                query += $"{openningBal},";
-                query += $"{closingBal},";
-                query += $"'{fromDate}',";
-                query += $"{totalCredit},";
-                query += $"{numberCreditTransaction},";
-                query += $"{totalDebit},";
-                query += $"{numberDebitTransaction},";
-                query += $"'{toDate}',";
-                query += $"'{fromTime}',";
-                query += $"'{toTime}'";
+                query = "INSERT INTO \"tb_Bank_InquiryHeader\" VALUES ( ";
+                query += $"'{requestId ?? ""}',";
+                query += $"'{providerId??""}',";
+                query += $"'{merchantId ?? ""}',";
+                query += $"'{account ?? ""}',";
+                query += $"'{companyName ?? ""}',";
+                query += $"'{accountType ?? ""}',";
+                query += $"'{curency ?? ""}',";
+                query += $"{accountBal ?? "0"},";
+                query += $"{availableBal ?? "0"},";
+                query += $"{openningBal ?? "0"},";
+                query += $"{closingBal ?? "0"},";
+                query += $"'{fromDate ?? ""}',";
+                query += $"{totalCredit ?? "0"},";
+                query += $"{numberCreditTransaction ?? "0"},";
+                query += $"{totalDebit ?? "0"},";
+                query += $"{numberDebitTransaction ?? "0"},";
+                query += $"'{toDate ?? ""}',";
+                query += $"'{fromTime ?? ""}',";
+                query += $"'{toTime ?? ""}'";
                 query += ")";
 
                 var ret1 = dbProvider.ExecuteNonQuery(query);
+
+                //foreach(var item in transactions)
+                //{
+                //    item.InsertData(requestId, providerId, merchantId);
+                //}
+            }
+            catch (Exception ex)
+            {
+                
+            }
+            return true;
+        }
+		public bool InsertData()
+		{
+			try
+			{
+				var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"InquiryHeader\" VALUES ( ";
+				query += $"'{requestId ?? ""}',";
+				query += $"'{providerId ?? ""}',";
+				query += $"'{merchantId ?? ""}',";
+				query += $"'{account ?? ""}',";
+				query += $"'{companyName ?? ""}',";
+				query += $"'{accountType ?? ""}',";
+				query += $"'{curency ?? ""}',";
+				query += $"{accountBal ?? "0"},";
+				query += $"{availableBal ?? "0"},";
+				query += $"{openningBal ?? "0"},";
+				query += $"{closingBal ?? "0"},";
+				query += $"'{fromDate ?? ""}',";
+				query += $"{totalCredit ?? "0"},";
+				query += $"{numberCreditTransaction ?? "0"},";
+				query += $"{totalDebit ?? "0"},";
+				query += $"{numberDebitTransaction ?? "0"},";
+				query += $"'{toDate ?? ""}',";
+				query += $"'{fromTime ?? ""}',";
+				query += $"'{toTime ?? ""}'";
+				query += ")";
+
+				var ret1 = dbProvider.ExecuteNonQuery(query);
 
                 foreach(var item in transactions)
                 {
                     item.InsertData(requestId, providerId, merchantId);
                 }
             }
-            catch (Exception ex)
-            {
-            }
-            return true;
-        }
-    }
+			catch (Exception ex)
+			{
+
+			}
+			return true;
+		}
+	}
 }

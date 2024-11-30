@@ -28,22 +28,22 @@ namespace ERPService.Models
             try
             {
                 var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_InquiryDetail\" VALUES ( ";
-                query += $"'{requestId}',";
-                query += $"'{providerId}',";
-                query += $"'{merchantId}',";
-                query += $"'{transactionDate}',";
-                query += $"'{transactionContent}',";
-                query += $"{debit},";
-                query += $"{credit},";
-                query += $"{accountBal},";
-                query += $"'{transactionNumber}',";
-                query += $"'{corresponsiveAccount}',";
-                query += $"'{corresponsiveAccountName}',";
-                query += $"'{agency}',";
-                query += $"'{virtualAccount}',";
-                query += $"'{corresponsiveBankName}',";
-                query += $"'{corresponsiveBankId}',";
-                query += $"'{channel}'";
+                query += $"'{requestId ?? ""}',";
+                query += $"'{providerId ?? ""}',";
+                query += $"'{merchantId ?? ""}',";
+                query += $"'{transactionDate ?? ""}',";
+                query += $"'{transactionContent ?? ""}',";
+                query += $"{debit ?? "0"},";
+                query += $"{credit ?? "0"},";
+                query += $"{accountBal ?? "0"},";
+                query += $"'{transactionNumber ?? "0"}',";
+                query += $"'{corresponsiveAccount ?? ""}',";
+                query += $"'{corresponsiveAccountName ?? ""}',";
+                query += $"'{agency ?? ""}',";
+                query += $"'{virtualAccount ?? ""}',";
+                query += $"'{corresponsiveBankName ?? ""}',";
+                query += $"'{corresponsiveBankId ?? ""}',";
+                query += $"'{channel ?? ""}'";
                 query += ")";
 
                 var ret1 = dbProvider.ExecuteNonQuery(query);
