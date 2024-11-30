@@ -6,6 +6,7 @@ using SAPbouiCOM;
 using SAPbouiCOM.Framework;
 using System;
 using System.Globalization;
+using STD.DataReader;
 
 namespace STDApp.Payment
 {
@@ -183,11 +184,12 @@ namespace STDApp.Payment
         {
 
         }
+
         public void ShowForm(PaymentType paymentType = PaymentType.T)
         {
-            if (paymentType == PaymentType.T)
-                Instance.SelectType("C");
-            else
+            //if (paymentType == PaymentType.T)
+            //    Instance.SelectType("C");
+            //else
                 Instance.SelectType("V");
 
             Instance.Show();
@@ -316,14 +318,6 @@ namespace STDApp.Payment
                     return;
                 }
 
-                //if (string.IsNullOrEmpty(PaymentDate))
-                //{
-                //    UIHelper.LogMessage("Vui lòng nhập Ngày thanh toán", UIHelper.MsgType.StatusBar);
-                //    this.Freeze(false);
-                //    //this.UIAPIRawForm.Close();
-                //    return;
-                //}
-
                 if (Amount == 0)
                 {
                     UIHelper.LogMessage("Vui lòng nhập số tiền", UIHelper.MsgType.StatusBar);
@@ -335,15 +329,21 @@ namespace STDApp.Payment
                 var paymentdetail = new ManualPaymentDetail();
                 paymentdetail.CardCode = CardCode;
                 paymentdetail.CardName = CardName;
-                //DateTime paymentDate;
-                //// if (DateTime.TryParse(PaymentDate, out paymentDate))
-                //if (DateTime.TryParseExact(PaymentDate, "yyyyMMdd", CultureInfo.CurrentCulture, DateTimeStyles.None, out paymentDate))
-                //{
-                //    paymentdetail.PaymentDate = paymentDate;
-                //}
                 paymentdetail.Currency = Currency;
                 paymentdetail.Amount = Amount;
+                paymentdetail.SourceID = $"{DateTime.Now.ToString("yyMMddHHmmss")}";
+                paymentdetail.Check = "N"; 
+                // pay
 
+                var query = string.Format(QueryString.GetBPInformation, CardCode);
+                var data = dbProvider.QuerySingle(query);
+                if(data != null)
+                {
+                    paymentdetail.ReceiveBankCode = data["DflSwift"].ToString();
+                    paymentdetail.ReceiveBankName = data["BankName"].ToString();
+                    paymentdetail.ReceiveAccount = data["DflAccount"].ToString();
+                    paymentdetail.ReceiveAccountName = data["AcctName"].ToString();
+                }
                 OnInputPaymentData?.Invoke(this, new PaymentEventArgs(paymentdetail));
                 //paymentdetail.PaymentDate = 
                 //paymentdetail.

@@ -172,7 +172,7 @@ namespace STDApp
             //    var commonSetting = grid.CommonSetting;
             //    var hex = "#e7e7e7";
             //    Color _color = System.Drawing.ColorTranslator.FromHtml(hex);
-            //    commonSetting.SetRowBackColor(rowIndex + 1, System.Drawing.ColorTranslator.ToOle(_color));
+            //    c.SetRowBackColor(rowIndex + 1, System.Drawing.ColorTranslator.ToOle(_color));
 
             //    for (var colIndex = 0; colIndex < grid.Columns.Count; colIndex++)
             //    {

@@ -164,6 +164,8 @@ namespace STDApp
         public static string Title_Remark = "Ghi chú";
         public static string Title_InsTotal = "Số tiền hóa đơn";
         public static string Title_InsTotalFC = "Số Tiền Hóa Đơn (Ngoại tệ)";
+        public static string Title_SumTotal = "Số tiền thanh toán";
+        public static string Title_SumTotalFC = "Số Tiền thanh toán (Ngoại tệ)";
         public static string Title_MustPay = "Số tiền chưa thanh toán";
         public static string Title_PayAmount = "Số tiền thanh toán";
         public static string Title_Rate = "Tỉ giá ngoại tệ";
@@ -180,6 +182,12 @@ namespace STDApp
         public static string Title_Status = "Trạng Thái";
         public static string Title_Bank = "Ngân hàng";
         public static string Title_BankAccount = "Tài khoản Ngân hàng";
+        public static string Title_FeeAccount = "Tài khoản chịu phí";
         public static string Title_CFlow = "Dòng tiền";
+
+        public static string Title_Content = "Nội dung thanh toán";
+        public static string Title_SAPStatus= "Trang thái từ SAP";
+        public static string Title_BankStatus = "Trang thái từ API";
+        public static string Title_Message = "Nội dung";
     }
 }

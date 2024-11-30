@@ -10,6 +10,8 @@ namespace STDApp.ConfigMenu
         public AddonUserForm InquiryForm { get; set; }
         public AddonUserForm PaymentForm { get; set; }
 
+        public AddonUserForm PaymentDetailFormInfo { get; set; }
+
 
         protected override void AddFolder(string mainParentID, int index = 0)
         {
@@ -31,9 +33,8 @@ namespace STDApp.ConfigMenu
                 MenuID = "PM_Inquiry_M",
                 MenuName = "Tích hợp vấn tin tài khoản",
                 ParentID = FolderInfomation.MenuID,
-                FormType = "frmInquiry"
+                FormType = "STDApp.Bank.frmInquiry"
             };
-
             AddForms(InquiryForm, 0);
 
             PaymentForm = new AddonUserForm()
@@ -42,10 +43,19 @@ namespace STDApp.ConfigMenu
                 MenuID = "PM_Payment_M",
                 MenuName = "Thanh toán NCC qua ngân hàng",
                 ParentID = FolderInfomation.MenuID,
-                FormType = "frmPayment"
+                FormType = "STDApp.Payment.frmPayment"
+            };
+            AddForms(PaymentForm, 1);
+
+            PaymentDetailFormInfo = new AddonUserForm()
+            {
+                //FormID = "PaymentDetail_F",
+                MenuID = "PM_Detail_M",
+               // MenuName = "Thanh toán chi tiết",
+                //ParentID = CusPMFolderID,
+                FormType = "STDApp.Payment.frmAddPaymentLine"
             };
 
-           // AddForms(PaymentForm, 1);
         }
     }
 }

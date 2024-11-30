@@ -5,20 +5,8 @@ using STD.DataReader;
 
 namespace STDApp.Models
 {
-    public class InquiryResponse
-    {
-        public string requestId { get; set; }
-        public string providerId { get; set; }
-        public string merchantId { get; set; }
-        public Status status { get; set; }
-    }
 
-    public class Status
-    {
-        public string code { get; set; }
-        public string message { get; set; }
-    }
-    internal class InquiryHeader : InquiryResponse
+    internal class InquiryHeader : VTResponse
     {       
         public string account { get; set; }
         public string companyName { get; set; }
