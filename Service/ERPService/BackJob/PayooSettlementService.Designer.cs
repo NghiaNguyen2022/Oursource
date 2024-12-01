@@ -1,6 +1,6 @@
 ﻿namespace ERPService.BackJob
 {
-    partial class InquiryService
+    partial class PayooSettlementService
     {
         /// <summary> 
         /// Required designer variable.
@@ -29,9 +29,9 @@
         private void InitializeComponent()
         {
             // 
-            // BankingService
+            // PayooSettlement
             // 
-            this.ServiceName = "Banking Service";
+            this.ServiceName = "Payoo Settlement";
 
         }
 

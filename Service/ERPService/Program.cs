@@ -4,6 +4,7 @@ using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using ERPService.BackJob;
 
 namespace ERPService
 {
@@ -17,7 +18,8 @@ namespace ERPService
             ServiceBase[] ServicesToRun;
             ServicesToRun = new ServiceBase[]
             {
-                new InquiryService()
+                new InquiryService(),
+                new PayooSettlement()
             };
             ServiceBase.Run(ServicesToRun);
         }
