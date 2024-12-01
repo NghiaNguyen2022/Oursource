@@ -1,0 +1,34 @@
+﻿using APICore.Authen.Atts;
+using PN.ApplicationAPI.APICore.Controller;
+using PN.ApplicationAPI.Models;
+using PN.SmartLib.Helper;
+using SAPCore.Config;
+using STD.DataReader;
+using System.Web.Http;
+
+namespace PN.ApplicationAPI.Controllers
+{
+    public class PaymentController : BaseController
+    {
+        //[BasicAuthentication]
+        [System.Web.Http.HttpGet]
+        public IHttpActionResult Create(Payoo_Payment input)
+        {
+            //if(input == null)
+            //{
+            //    return Ok(ResponseFaild("Data chưa đúng cấu trúc và định dạng"));
+            //}
+
+            var query = string.Format(QueryString.CheckOrderExists, input.OrderNo);
+            var data = DataProvider.QuerySingle(CoreSetting.DataConnection, query);
+            if(data != null && data["Existed"].ToString() == "Existed")
+            {
+                return Ok(ResponseFaild("Order No đã tồn tại"));
+            }
+            var message = string.Empty;
+            if (input.InsertData(ref message))
+                return Ok(ResponseSuccessed(message));
+            return Ok(ResponseFaild(message));
+        }
+    }
+}

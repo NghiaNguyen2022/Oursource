@@ -184,5 +184,13 @@ namespace STD.DataReader
                 return "SELECT Count(*) AS \"Exist\" FROM \"" + schema + "\".\"vw_PaymentUserRole\" WHERE \"Role\" = 'Approver' AND \"UserName\" = '{0}'";
             }
         }
+
+        public static string CheckOrderExists
+        {
+            get
+            {
+                return CallStoreBySystem("usp_Payoo_CheckOrderExists", "'{0}'");
+            }
+        }
     }
 }

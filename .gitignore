@@ -32,3 +32,5 @@ STD/Common/PN-Libraries/DLLs/4.6/SAPCore.dll
 /Service/ERPService/obj
 /Service/ERPService/.vs
 /Service/.vs
+/API/PN.ApplicationAPI/PN.ApplicationAPI/obj
+/API/PN.ApplicationAPI/PN.ApplicationAPI/bin
