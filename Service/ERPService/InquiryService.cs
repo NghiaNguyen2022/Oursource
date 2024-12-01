@@ -2,8 +2,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.ServiceProcess;
+using System.Text.Json;
 using System.Timers;
 using System.Web.Script.Serialization;
 using ERPService.DataReader;
@@ -21,168 +24,214 @@ namespace ERPService
     public partial class InquiryService : ServiceBase
     {
         Timer timer = new Timer();
+		TimeSpan? timeRun1 = null;
+		TimeSpan? timeRun2 = null;
+
         public InquiryService()
         {
             InitializeComponent();
-        }
+		}
+
         protected override void OnStop()
         {
-            //WriteToFile("Service is stopped at " + DateTime.Now);
+            
         }
-        private void OnElapsedTime(object source, ElapsedEventArgs e)
+
+		protected override void OnStart(string[] args)
+		{
+			try
+			{
+				WriteToFile($"On Start");
+				string timeRun1String = ConfigurationManager.AppSettings["timeRun1"];
+				string timeRun2String = ConfigurationManager.AppSettings["timeRun2"];
+				timeRun1 = TimeSpan.Parse(timeRun1String);
+				timeRun2 = TimeSpan.Parse(timeRun2String);
+				WriteToFile($"Success parse time from config: {timeRun1} - {timeRun2}");
+			}
+			catch (FormatException ex)
+			{
+				WriteToFile($"Error parsing time: {ex.Message}");
+				return;
+			}
+			bool isDebugMode = Boolean.Parse(ConfigurationManager.AppSettings["isDebugMode"]);
+			WriteToFile($"Is debug mode: {isDebugMode}");
+			run(isDebugMode);
+		}
+
+		private void run(bool debugMode = false)
+		{
+			if (debugMode)
+			{
+				DateTime fromDate = new DateTime(2024, 9, 1);
+				DateTime toDate = new DateTime(2024, 9, 30);
+				this.Process(fromDate, toDate);
+			}
+			else
+			{
+				timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
+				timer.Interval = 60000;
+				timer.Enabled = true;
+				timer.Start();
+			}
+		}
+
+		private void OnElapsedTime(object source, ElapsedEventArgs e)
         {
-            //WriteToFile("Service is recall at " + DateTime.Now);
-        }
+			try
+			{
+				DateTime now = DateTime.Now;
+				TimeSpan currentTime = now.TimeOfDay;
+				DateTime fromTime, toTime;
+				// Match the current time to the configured times
+				if (currentTime.Hours == timeRun1.Value.Hours && currentTime.Minutes == timeRun1.Value.Minutes)
+				{
+					// timeRun1 match: from = timeRun2 of yesterday, to = timeRun1 of today
+					fromTime = DateTime.Today.AddDays(-1).Add(timeRun2.Value); // Yesterday's timeRun2
+					toTime = DateTime.Today.Add(timeRun1.Value);              // Today's timeRun1
+					Console.WriteLine($"Matched timeRun1: From {fromTime} to {toTime}");
+				}
+				else if (currentTime.Hours == timeRun2.Value.Hours && currentTime.Minutes == timeRun2.Value.Minutes)
+				{
+					// timeRun2 match: from = timeRun1 of today, to = timeRun2 of today
+					fromTime = DateTime.Today.Add(timeRun1.Value);            // Today's timeRun1
+					toTime = DateTime.Today.Add(timeRun2.Value);              // Today's timeRun2
+					Console.WriteLine($"Matched timeRun2: From {fromTime} to {toTime}");
+				}
+			}
+			catch (Exception ex)
+			{
+				WriteToFile($"Error catching runTime and generate fromDate toDate: {ex.Message}");
+				return;
+			}
+		}
 
-        protected override void OnStart(string[] args)
-        {
-            Process();
-
-            timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 5000 * 3600; //number in milisecinds
-            timer.Enabled = true;
-        }
-
-        bool hasData = false;
-        Hashtable[] Datas;
-
-        private string CreateBody(bool first = true)
-        {
-            var data = new InquiryRequest()
-            {
-                requestId = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                model = "2",
-                providerId = ConfigurationManager.AppSettings["ProviderId"],
-                account = ConfigurationManager.AppSettings["Taikhoan"],
-                
-                fromDate = first ? DateTime.Now.AddDays(-1).ToString("dd/MM/yyyy") :  DateTime.Now.ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
-                toDate = DateTime.Now.ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
-
-                fromTime = first ?  "17:15:00" : "12:15:00",
-                toTime = first ? "11:15:00" : "17:15:00",
-                accountType = "D",
-                collectionType = "c,d",
-                agencyType = "a",
-                transTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                channel = "ERP",
-                version = "1",
-                clientIP = "",
-                language = "vi",
-                signature = ""
-            }; 
-            var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
-
-            data.signature = FPT.SHA256_RSA2048.Encrypt(data.signature, path);
-
-            var objJson = new JavaScriptSerializer();
-            var json = objJson.Serialize(data);
-
-            return string.Empty;
-        }
-        private void CallAPI()
-        {
-            var options = new RestClientOptions("https://api-uat.vietinbank.vn")
-            {
-                MaxTimeout = -1,
-            };
-
-            var client = new RestClient(options);
-            var request = new RestRequest("/vtb-api-uat/development/erp/v1/statement/inquiry", Method.Post);
-            request.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
-            request.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
-            request.AddHeader("Content-Type", "application/json");
-            //request.AddHeader("Cookie", "TS013bf802=013caf07cb3822867b1b0e1ee5c7c3cb089b742bce940d1b15cc8d50ea123b077ef15e8ebbc8df562125275bde3b2daafd75473e44");
-
-
-            hasData = false;
-            Datas = null;
-
-            var querydata = QueryString.GetDocumentApprovedQuery;
-            Datas = DataProvider.QueryList(CoreSetting.DataConnection, querydata);
-
-            if (Datas != null && Datas.Length > 0)
-            {
-                hasData = true;
-            }
-            else
-            {
-                hasData = false;
-                Datas = null;
-            }
-        }
-
-        private bool ReadConfigAndConnect(ref string message)
-        {
-            //var query = QueryString.SAPConnection;
-            //var data = DataProvider.QuerySingle(CoreSetting.DataConnection, QueryString.SAPConnection);
-            //if(data == null)
-            //{
-            //    message = StringConstrants.NoDIConnectConfig;
-            //    return false;
-            //}
-
-            //var config = new ServiceConnection(data);
-            //var cont = DIServiceConnection.Instance.ConnectDI(config, ref message);
-
-            //if(!cont)
-            //{
-            //    message = StringConstrants.CanNotConnectCompany;
-            //    return false;
-            //}
-
-            return true;
-
-        }
         private void DisConnect()
         {
-           // DIServiceConnection.Instance.DIDisconnect();
+           //DIServiceConnection.Instance.DIDisconnect();
         }
-        private void Process()
+        private void Process(DateTime fromDate, DateTime toDate)
         {
-            //WriteToFile("Service is started at " + DateTime.Now);
+			WriteToFile($"[Process] START from - to: {fromDate} - {toDate}");
+			InquiryHeader inquiryHeader = CallAPIViettin(fromDate, toDate);
+			WriteToFile($"[Process] CallAPIViettin success");
+			if (inquiryHeader == null)
+			{
+				return;
+			};
+			HashSet<string> transactionNumbers = inquiryHeader.transactions.Select(transaction => transaction.transactionNumber).ToHashSet();
+			HashSet<string> existed = this.checkExistedInDb(transactionNumbers);
+			//HashSet<string> notExistedInDb = this.getNotExistedInDb(new List<string> { "1", "2", "3", "6", "10"});
+			WriteToFile($"[Process] existed in db: {JsonSerializer.Serialize(existed)}");
+		    if(existed.Count == inquiryHeader.transactions.Count)
+			{
+				WriteToFile($"[Process] All transaction number is existed!");
+				return;
+			}
+			inquiryHeader.transactions = inquiryHeader.transactions.Where(transaction => !existed.Contains(transaction.transactionNumber)).ToList();
+			inquiryHeader.InsertData();
+			WriteToFile($"[Process] Fetch data from Viettin and insert success!");
+			WriteToFile($"[Process] END");
+		}
 
-            CallAPI();
+		private InquiryHeader CallAPIViettin(DateTime fromDate, DateTime toDate)
+		{
+			WriteToFile($"[CallAPIViettin] fromDate - to Date: {fromDate} - {toDate}");
+			try
+			{
+				var options = new RestClientOptions()
+				{
+					MaxTimeout = -1,
+				};
 
-            if (!hasData)
-            {
-               // WriteToFile(StringConstrants.NotHaveData + DateTime.Now);
-                return;
-            }
+				var client = new RestClient(options);
+				var request = new RestRequest(ConfigurationManager.AppSettings["UrlApiInquiry"], Method.Post);
+				request.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
+				request.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
+				request.AddHeader("Content-Type", "application/json");
 
-            var message = string.Empty;
-            if(!ReadConfigAndConnect(ref message))
-            {
-                WriteToFile(message + DateTime.Now);
-                return;
-            }
-            foreach (var dt in Datas)
-            {
-                message = string.Empty;
-                var doc = new ERPDocument(dt);
-                var ret = ConvertDrafToDocument(doc, ref message);
-               
-                var query = string.Empty;
-                if(ret)
-                {
-                    query = string.Format(QueryString.UpdateAfterExecute, doc.Objtype, doc.DocEntry, doc.DocNum, "S", message);
-                }
-                else
-                {
-                    query = string.Format(QueryString.UpdateAfterExecute, doc.Objtype, doc.DocEntry, doc.DocNum, "F", message);
-                }
+				var data = new InquiryRequest()
+				{
+					requestId = DateTime.Now.ToString("yyyyMMddHHmmss"),
+					merchantId = ConfigurationManager.AppSettings["MerchantId"],
+					providerId = ConfigurationManager.AppSettings["ProviderId"],
+					model = "2",
+					account = "112000002609",
+					fromDate = fromDate.ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
+					toDate = toDate.ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
+					accountType = "D",
+					collectionType = "c,d",
+					agencyType = "a",
+					transTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
+					channel = "ERP",
+					version = "1",
+					clientIP = "",
+					language = "vi",
+					signature = "", // Giá trị rỗng
+					fromTime = "00:00:00",
+					toTime = DateTime.Now.ToString("HH:mm:ss")
+				};
+				data.signature = (
+					  data.requestId +
+					  data.providerId +
+					  data.merchantId +
+					  data.account);
+				var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
+				data.signature = FPT.SHA256_RSA2048.Encrypt(data.signature, path);
+				WriteToFile($"[CallAPIViettin] SIGNATURE: {JsonSerializer.Serialize(data.signature)}");
+				var json = JsonSerializer.Serialize(data);
+				request.AddParameter("application/json", json, ParameterType.RequestBody);
+				var response = client.Execute(request);
+				WriteToFile($"[CallAPIViettin] call api success!");
+				WriteToFile($"[CallAPIViettin] response: {JsonSerializer.Serialize(response)}");
+				if ((response.StatusCode != System.Net.HttpStatusCode.OK) || response?.Content == null)
+				{
+					return null;
+				}
+				var result = response.Content;
+				var rps = JsonSerializer.Deserialize<InquiryHeader>(result);
+				WriteToFile($"[CallAPIViettin] response: {JsonSerializer.Serialize(rps)}");
+				if (rps == null || rps.transactions == null || rps.transactions.Count <= 0)
+				{
+					return null;
+				}
+				return rps;
+			}catch(Exception e)
+			{
+				WriteToFile($"[CallAPIViettin] ERROR: {e.Message}");
+				return null;
+			}
+		}
 
-                DataProvider.ExecuteNonQuery(CoreSetting.DataConnection, query);
-                WriteToFile($"After: {message} " + DateTime.Now);
-            }
-            DisConnect();
-
-        }
-
-        private bool ConvertDrafToDocument(ERPDocument document, ref string message)
+		private HashSet<string> checkExistedInDb(ICollection<string> checkList)
         {
-            return false;
-           // return DIServiceConnection.Instance.ConvertDraft(document.DocEntry, document.Objtype, ref message);
-          
+			var list = new HashSet<string>();
+			try
+			{
+				
+				string query = $@"
+            WITH Transactions AS (
+                SELECT * 
+                FROM (VALUES {string.Join(",", checkList.Select(item => $"('{item}')"))}) AS T(transNumber)
+            )
+            SELECT transNumber
+            FROM Transactions
+            WHERE transNumber IN (SELECT transNumber FROM tb_Bank_InquiryDetail);
+			";
+				dbProvider dbProvider = new dbProvider();
+				Hashtable[] results = dbProvider.QueryList(query);
+				foreach (Hashtable row in results)
+				{
+					if (row.ContainsKey("transNumber"))
+					{
+						list.Add(row["transNumber"].ToString());
+					}
+				}
+				return list;
+			}
+			catch (Exception e) {
+				WriteToFile($"[Process] getNotExistedInDb ERROR: {JsonSerializer.Serialize(e.Message)}");
+				return list;
+			}
         }
       
         public void WriteToFile(string Message)
