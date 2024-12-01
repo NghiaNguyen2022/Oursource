@@ -1,12 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Configuration;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text;
 using System.Threading.Tasks;
+using ERPService.Common;
 
 namespace ERPService.BackJob
 {
@@ -19,7 +21,16 @@ namespace ERPService.BackJob
 
         protected override void OnStart(string[] args)
         {
-            // TODO: Add code here to start your service.
+            try
+            {
+                Utils.WriteToFile($"On Start");
+
+            }
+            catch (FormatException ex)
+            {
+                Utils.WriteToFile($"Error: {ex.Message}");
+                return;
+            }
         }
 
         protected override void OnStop()
