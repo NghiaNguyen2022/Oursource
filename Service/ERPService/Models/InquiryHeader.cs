@@ -43,7 +43,7 @@ namespace ERPService.Models
         {
             try
             {
-                query = "INSERT INTO \"tb_Bank_InquiryHeader\" VALUES ( ";
+                query = "INSERT INTO \""+ DIConnection.Instance.CompanyDB+ "\".\"tb_Bank_InquiryHeader\" VALUES ( ";
                 query += $"'{requestId ?? ""}',";
                 query += $"'{providerId??""}',";
                 query += $"'{merchantId ?? ""}',";

@@ -207,16 +207,14 @@ namespace ERPService
 			var list = new HashSet<string>();
 			try
 			{
-				
-				string query = $@"
-            WITH Transactions AS (
-                SELECT * 
-                FROM (VALUES {string.Join(",", checkList.Select(item => $"('{item}')"))}) AS T(transNumber)
-            )
-            SELECT transNumber
-            FROM Transactions
-            WHERE transNumber IN (SELECT transNumber FROM tb_Bank_InquiryDetail);
-			";
+
+				string query = "WITH \"Transactions\" AS ( "
+					+ $@"SELECT * FROM (VALUES {string.Join(",", checkList.Select(item => $"('{item}')"))}) AS T( "
+					+ "\"transNumber\")"
+					+ ")"
+					+ "SELECT \"transNumber\""
+					+ "FROM \"Transactions\""
+					+ "WHERE \"transNumber\" IN (SELECT \"transNumber\" FROM \"tb_Bank_InquiryDetail\");";
 				dbProvider dbProvider = new dbProvider();
 				Hashtable[] results = dbProvider.QueryList(query);
 				foreach (Hashtable row in results)
