@@ -10,14 +10,14 @@ namespace PN.ApplicationAPI.Controllers
 {
     public class PaymentController : BaseController
     {
-        //[BasicAuthentication]
-        [System.Web.Http.HttpGet]
-        public IHttpActionResult Create(Payoo_Payment input)
+        [BasicAuthentication]
+        [System.Web.Http.HttpPost]
+        public IHttpActionResult Create([FromBody]Payoo_Payment input)
         {
-            //if(input == null)
-            //{
-            //    return Ok(ResponseFaild("Data chưa đúng cấu trúc và định dạng"));
-            //}
+            if (input == null)
+            {
+                return Ok(ResponseFaild("Data chưa đúng cấu trúc và định dạng"));
+            }
 
             var query = string.Format(QueryString.CheckOrderExists, input.OrderNo);
             var data = DataProvider.QuerySingle(CoreSetting.DataConnection, query);

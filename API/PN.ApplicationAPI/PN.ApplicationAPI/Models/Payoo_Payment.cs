@@ -1,7 +1,9 @@
-﻿using SAPCore.SAP.DIAPI;
+﻿using SAPCore.Config;
+using SAPCore.SAP.DIAPI;
 using STD.DataReader;
 using System;
 using System.Collections.Generic;
+using System.Configuration;
 using System.Linq;
 using System.Web;
 
@@ -32,7 +34,9 @@ namespace PN.ApplicationAPI.Models
             //using(var trans)
             try
             {
-                var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Payoo_PaymentINT\" VALUES ( ";
+                var dbName = CoreSetting.System == SystemType.SAP_HANA  ? 
+                    ConfigurationManager.AppSettings["Schema"] + "\"." : ConfigurationManager.AppSettings["Schema"] + "\"..";
+                var query = "INSERT INTO \"" + dbName + "\"tb_Payoo_PaymentINT\" VALUES ( ";
                 query += $"{PaymentMethod},";
                 query += $"'{PaymentMethodName}',";
                 query += $"'{PurDate}',";

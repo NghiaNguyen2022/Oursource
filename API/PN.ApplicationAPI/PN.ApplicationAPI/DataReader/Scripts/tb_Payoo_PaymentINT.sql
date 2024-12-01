@@ -4,7 +4,7 @@ CREATE TABLE "tb_Payoo_PaymentINT"
 (
 	"PaymentMethod"	INT,
 	"PaymentMethodName"	NVARCHAR(50),
-	"PurDate" NVARCHAR(13),
+	"PurDate" NVARCHAR(20),
 	"MerchantUserName" NVARCHAR(50),
 	"ShopId" NUMERIC,
 	"MasterShopID" NUMERIC,
