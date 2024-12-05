@@ -9,7 +9,7 @@ namespace PN.ApplicationAPI.Controllers
 {
     public class BankController : BaseController
     {
-        [BasicAuthentication]
+        //[BasicAuthentication]
         [System.Web.Http.HttpPost]
         public IHttpActionResult Create([FromBody]BIDV_Accesstoken input)
         {

@@ -95,6 +95,13 @@
     <Compile Include="BackJob\InquiryService.Designer.cs">
       <DependentUpon>InquiryService.cs</DependentUpon>
     </Compile>
+    <Compile Include="BackJob\PayooSettlementService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BackJob\PayooSettlementService.Designer.cs">
+      <DependentUpon>PayooSettlementService.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="DataReader\DataProvider.cs" />
     <Compile Include="DataReader\QueryString.cs" />
     <Compile Include="GlobalConfig.cs" />
@@ -124,6 +131,9 @@
   <ItemGroup>
     <EmbeddedResource Include="BackJob\InquiryService.resx">
       <DependentUpon>InquiryService.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="BackJob\PayooSettlementService.resx">
+      <DependentUpon>PayooSettlementService.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ServiceInstaller.resx">
       <DependentUpon>ServiceInstaller.cs</DependentUpon>
