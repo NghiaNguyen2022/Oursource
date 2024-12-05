@@ -137,8 +137,8 @@
     <Compile Include="ViewHelper..cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Common\PN-Libraries\SAPCore\SAPCore.csproj">
-      <Project>{90b593c4-84b2-465f-979b-8d7a5f113243}</Project>
+    <ProjectReference Include="..\Common\SAPCore\SAPCore.csproj">
+      <Project>{90B593C4-84B2-465F-979B-8D7A5F113243}</Project>
       <Name>SAPCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\Common\STD_Libs\STDLibs.csproj">

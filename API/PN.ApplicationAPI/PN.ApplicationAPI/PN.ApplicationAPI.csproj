@@ -268,12 +268,12 @@
     <Content Include="Scripts\jquery-3.3.1.min.map" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\STD\Common\PN-Libraries\PN.Libs\PN.SmartLib.csproj">
-      <Project>{141d8614-7f15-4b5a-994f-a6f960d8a451}</Project>
+    <ProjectReference Include="..\..\..\STD\Common\PN.Libs\PN.SmartLib.csproj">
+      <Project>{141D8614-7F15-4B5A-994F-A6F960D8A451}</Project>
       <Name>PN.SmartLib</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\..\STD\Common\PN-Libraries\SAPCore\SAPCore.csproj">
-      <Project>{90b593c4-84b2-465f-979b-8d7a5f113243}</Project>
+    <ProjectReference Include="..\..\..\STD\Common\SAPCore\SAPCore.csproj">
+      <Project>{90B593C4-84B2-465F-979B-8D7A5F113243}</Project>
       <Name>SAPCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\STD\Common\STD_Libs\STDLibs.csproj">

@@ -58,8 +58,8 @@
     <Compile Include="Utils\ConfigHelper.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PN-Libraries\SAPCore\SAPCore.csproj">
-      <Project>{90b593c4-84b2-465f-979b-8d7a5f113243}</Project>
+    <ProjectReference Include="..\SAPCore\SAPCore.csproj">
+      <Project>{90B593C4-84B2-465F-979B-8D7A5F113243}</Project>
       <Name>SAPCore</Name>
     </ProjectReference>
   </ItemGroup>
