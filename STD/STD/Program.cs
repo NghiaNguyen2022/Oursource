@@ -36,11 +36,9 @@ namespace STDApp
                 }
 
                 var ch = GlobalsConfig.Instance.Language;
-                //Globals.ConnectionContextCookie = DIConnection.Instance.CookieConnection;
                 Menu MyMenu = new Menu();
                 MainApplication.RegisterMenuEventHandler(MyMenu.SBO_Application_MenuEvent);
                 Application.SBO_Application.AppEvent += new SAPbouiCOM._IApplicationEvents_AppEventEventHandler(SBO_Application_AppEvent);
-                //Application.SBO_Application.ItemEvent += new SAPbouiCOM._IApplicationEvents_ItemEventEventHandler(SBO_Application_ItemEvent);
                 Application.SBO_Application.ItemEvent += MyMenu.SBO_Application_ItemEvent;
                 MainApplication.Run();
             }
