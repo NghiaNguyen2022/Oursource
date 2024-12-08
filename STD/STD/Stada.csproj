@@ -42,6 +42,9 @@
     <Reference Include="FPT">
       <HintPath>..\Libs\FPT.dll</HintPath>
     </Reference>
+    <Reference Include="jose-jwt, Version=5.1.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\jose-jwt.5.1.0\lib\net472\jose-jwt.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
@@ -86,6 +89,7 @@
       <HintPath>..\packages\System.ValueTuple.4.5.0\lib\net47\System.ValueTuple.dll</HintPath>
     </Reference>
     <Reference Include="System.Web" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -103,6 +107,9 @@
     <Compile Include="DataReader\DataHelper.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Models\Banks.cs" />
+    <Compile Include="Models\BIDVAccesstokenResponse.cs" />
+    <Compile Include="Models\BIDVInquiryRequest.cs" />
+    <Compile Include="Models\BIDVInquiryResponse.cs" />
     <Compile Include="Models\ChangeOfApprove.cs" />
     <Compile Include="Models\InquiryDetail.cs" />
     <Compile Include="Models\InquiryHeader.cs" />
@@ -154,6 +161,7 @@
     <None Include="Bank\frmInquiry.b1f">
       <FormCategory>UserForm</FormCategory>
     </None>
+    <None Include="Info\BIDV.cer" />
     <None Include="Info\certificate.cer">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>

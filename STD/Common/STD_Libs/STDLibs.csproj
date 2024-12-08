@@ -47,7 +47,7 @@
   <ItemGroup>
     <Compile Include="DataReader\DataProvider.cs" />
     <Compile Include="DataReader\QueryString_CostCalc.cs" />
-    <Compile Include="DataReader\QueryString_Payment.cs" />
+    <Compile Include="DataReader\QueryString.cs" />
     <Compile Include="Models\Account.cs" />
     <Compile Include="Models\Bank.cs" />
     <Compile Include="Models\Branch.cs" />
