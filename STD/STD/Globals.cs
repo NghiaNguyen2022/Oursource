@@ -4,6 +4,35 @@ using SAPCore.SAP.DIAPI;
 
 namespace STDApp
 {
+    
+    public class APIVietinBankConstrant
+    {
+        public static string APIVTB = "https://api-uat.vietinbank.vn";
+        public static string UAT_VTB = "/vtb-api-uat/development/erp/v1";
+        public static string InquiryVTB = $"{UAT_VTB}/statement/inquiry";
+        public static string TransferVTB = $"{UAT_VTB}//payment/transfer";
+        public static string TransferInqVTB = $"{UAT_VTB}//payment/transferInq";
+
+        public static string ClientID = $"fbbf1989a3ad0de68446317f5f104df0";
+        public static string ClientSecret = $"2cd7b943f4d7c5115d44b81487497ae3";
+        public static string AccountRecv = $"108004261279";
+        public static string Account = $"112000002609";
+    }
+    public class APIBIDVConstrant
+    {
+        public static string APILink = "https://www.bidv.net:9303";
+        public static string UAT_BIDV = "/bidvorg/service";
+        public static string InquiryBIDV = $"{UAT_BIDV}/open-banking/inquire-account-transaction/v1";
+        public static string AuthenBIDV = $"{UAT_BIDV}/ibank-oauth/oauth2/token";
+
+        public static string ChannelBIDVAPI = "IERP";
+        public static string UserAgentIDVAPI = "IERP";
+        public static string SymmetricKey = "2094508740466af766392a869e92ac81229e15ec3e75b0476d8fbdbc9d924f65";
+        public static string ClientID = $"df616d171dae4974042d4d95577c05de";
+        public static string ClientSecret = $"9adc6d5f750dcdfc898c74aec2d0e0c7";
+        public static string URL_Redirect = $"https://azstvntstsapb1db:50000/b1s/v1/BIDV_TEST";
+    }
+
     public class GlobalsConfig : SysGlobals
     {
         public AddonUserForm PaymentFormInfo;
@@ -22,52 +51,7 @@ namespace STDApp
             CusPMFolderID = "IntegrationCustomize";
             CusPMFolderDesc = "Nhóm chức năng Tích hợp";
             ParentMenuID = "43520";
-
-            //PaymentFormInfo = new AddonUserForm()
-            //{
-            //   // FormID = "Payment_F",
-            //    MenuID = "PM_Create_M",
-            //    MenuName = "Đề xuất thanh toán",
-            //    ParentID = CusPMFolderID,
-            //    FormType = "STDApp.Payment.frmPayment"
-            //};
-
-            //PaymentReviewFormInfo = new AddonUserForm()
-            //{
-            //    //FormID = "PaymentRe_F",
-            //    MenuID = "PM_Review_M",
-            //    MenuName = "Thanh toán",
-            //    ParentID = CusPMFolderID,
-            //    FormType = "STDApp.Payment.frmPaymentReview"
-            //};
-
-            //PaymentDetailFormInfo = new AddonUserForm()
-            //{
-            //    //FormID = "PaymentDetail_F",
-            //    MenuID = "PM_Detail_M",
-            //    MenuName = "Thanh toán chi tiết",
-            //    ParentID = CusPMFolderID,
-            //    FormType = "STDApp.Payment.frmAddPaymentLine"
-            //};
-
-            //PaymentApproveFormInfo = new AddonUserForm()
-            //{
-            //    //FormID = "PaymentAppr_F",
-            //    MenuID = "PM_Appr_M",
-            //    MenuName = "Phê duyệt Thanh toán",
-            //    ParentID = CusPMFolderID,
-            //    FormType = "STDApp.Payment.frmApprovePayment"
-            //};
-
-            //FilterFormInfo = new AddonUserForm()
-            //{
-            //    //FormID = "Filter_F",
-            //    MenuID = "Filter_M",
-            //    MenuName = "Chọn từ danh sách",
-            //    ParentID = CusPMFolderID,
-            //    FormType = "STDApp.Payment.frmObjectFilter"
-            //};
-
+            
         }
 
         public static GlobalsConfig Instance

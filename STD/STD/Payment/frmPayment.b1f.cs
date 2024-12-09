@@ -1100,13 +1100,13 @@ namespace STDApp.Payment
 
             UIHelper.LogMessage("Bắt đầu gửi yêu cầu", UIHelper.MsgType.StatusBar, false);
 
-            var options = new RestClientOptions(ConfigurationManager.AppSettings["LinkAPI"])
+            var options = new RestClientOptions(APIVietinBankConstrant.APIVTB)
             {
                 MaxTimeout = -1,
             };
 
             var client = new RestClient(options);
-            var request1 = new RestRequest(ConfigurationManager.AppSettings["Transfer"], Method.Post);
+            var request1 = new RestRequest(APIVietinBankConstrant.TransferVTB, Method.Post);
             request1.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
             request1.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
             request1.AddHeader("Content-Type", "application/json");
@@ -1779,13 +1779,13 @@ namespace STDApp.Payment
                 var json = JsonSerializer.Serialize(request);
 
 
-                var options = new RestClientOptions(ConfigurationManager.AppSettings["LinkAPI"])
+                var options = new RestClientOptions(APIVietinBankConstrant.APIVTB)
                 {
                     MaxTimeout = -1,
                 };
 
                 var client = new RestClient(options);
-                var request1 = new RestRequest(ConfigurationManager.AppSettings["TransferInq"], Method.Post);
+                var request1 = new RestRequest(APIVietinBankConstrant.TransferInqVTB, Method.Post);
                 request1.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
                 request1.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
                 request1.AddHeader("Content-Type", "application/json");

@@ -420,14 +420,14 @@ namespace STDApp.Bank
                         UIHelper.MsgType.StatusBar, true);
                     return;
                 }
-                var options = new RestClientOptions(ConfigurationManager.AppSettings["LinkBIDVAPI"]);
+                var options = new RestClientOptions(APIBIDVConstrant.APILink);
                 var client = new RestClient(options);
-                var request = new RestRequest(ConfigurationManager.AppSettings["InquiryBIDV"].ToString() + "?Scope=read&JWE=Yes", Method.Post);
+                var request = new RestRequest(APIBIDVConstrant.InquiryBIDV + "?Scope=read&JWE=Yes", Method.Post);
                 request.AddHeader("Content-Type", "application/json");
                 request.AddHeader("X-API-Interaction-ID", DateTime.Now.ToString("yyyyMMddHHmmss"));
                 request.AddHeader("Timestamp", DateTime.Now.ToString("yyyyMMddHHmmssffff"));
-                request.AddHeader("Channel", ConfigurationManager.AppSettings["ChannelBIDVAPI"]);
-                request.AddHeader("User-Agent", ConfigurationManager.AppSettings["UserAgentIDVAPI"]);
+                request.AddHeader("Channel", APIBIDVConstrant.ChannelBIDVAPI);// ConfigurationManager.AppSettings["ChannelBIDVAPI"]);
+                request.AddHeader("User-Agent", APIBIDVConstrant.UserAgentIDVAPI);// ConfigurationManager.AppSettings["UserAgentIDVAPI"]);
                 request.AddHeader("accept", "application/json");
                 //OPTION: request.AddHeader("X-Idempotency-Key", "REPLACE_THIS_VALUE");
                 //OPTION: request.AddHeader("X-Customer-IP-Address", "REPLACE_THIS_VALUE");
@@ -449,25 +449,7 @@ namespace STDApp.Bank
                 var symmetricKeys = HexToByteArray(symmetricKey);
 
                 var json = JsonSerializer.Serialize(requestData);
-                var encryptData = APIUtil.doEncryptJWE(json, symmetricKey);
-                //var encryptData = Jose.JWT.Encode(json, symmetricKeys, JweAlgorithm.A256KW, JweEncryption.A128GCM);
-                //var parts = encryptData.Split('.');
-                //var jweGeneralJson = new
-                //{
-                //    recipients = new List<object>
-                //    {
-                //        new
-                //        {
-                //            header = new { }, // Empty header for single recipient
-                //            encrypted_key = parts[1] // Second part of JWE
-                //        }
-                //    },
-                //    protectedField = parts[0],  // First part of JWE
-                //    ciphertext = parts[3],      // Fourth part of JWE
-                //    iv = parts[2],              // Third part of JWE
-                //    tag = parts[4]              // Fifth part of JWE
-                //};
-                //var jweJson = JsonSerializer.Serialize(jweGeneralJson);                
+                var encryptData = APIUtil.doEncryptJWE(json, symmetricKey);             
                 request.AddStringBody(encryptData, DataFormat.Json);
 
                 var signature = APIUtil.DoSignatureJWS(encryptData);
@@ -571,17 +553,15 @@ namespace STDApp.Bank
         {
             try
             {
-                //if (Bank == Banks.ViettinBank.GetDescription())
-                //{
                 UIHelper.LogMessage($"Bắt đầu vấn gửi yêu cầu tin tài khoản đến ngân hàng", UIHelper.MsgType.StatusBar, false);
 
-                var options = new RestClientOptions(ConfigurationManager.AppSettings["LinkAPI"])
+                var options = new RestClientOptions(APIVietinBankConstrant.APIVTB)
                 {
                     MaxTimeout = -1,
                 };
 
                 var client = new RestClient(options);
-                var request = new RestRequest(ConfigurationManager.AppSettings["Inquiry"], Method.Post);
+                var request = new RestRequest(APIVietinBankConstrant.InquiryVTB, Method.Post);
                 request.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
                 request.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
                 request.AddHeader("Content-Type", "application/json");
@@ -607,6 +587,7 @@ namespace STDApp.Bank
                     fromTime = "00:00:00",
                     toTime = DateTime.Now.ToString("HH:mm:ss")
                 };
+
                 data.signature = (
                   data.requestId +
                   data.providerId +
@@ -615,9 +596,8 @@ namespace STDApp.Bank
                   );
 
                 var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
-
-                //request.signature = FPT.SHA256_RSA2048.Encrypt(request.signature, path);
-                //data.signature = FPT.SHA256_RSA2048.Encrypt(data.signature, path);
+                
+                data.signature = FPT.SHA256_RSA2048.Encrypt(data.signature, path);
                 var json = JsonSerializer.Serialize(data);
 
                 request.AddParameter("application/json", json, ParameterType.RequestBody);

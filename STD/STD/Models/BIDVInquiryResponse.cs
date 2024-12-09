@@ -30,13 +30,13 @@ namespace STDApp.Models
         public string currCode { get; set; }
     }
 
-    public class BIDVInquiryResponse401Error
+    public class BIDVResponse401Error
     {
         public string httpCode { get; set; }
         public string httpMessage { get; set; }
         public string moreInformation { get; set; }
     }
-    public class BIDVInquiryResponse400Error
+    public class BIDVResponse400Error
     {
         public ErrorResponse errorResponse { get; set; }
     }
@@ -63,7 +63,7 @@ namespace STDApp.Models
         public int errorCode { get; set; }
         public string desc { get; set; }
     }
-    public class BIDVInquiryResponse500Error
+    public class BIDVResponse500Error
     {
         public ErrorResponse errorResponse { get; set; }
     }

@@ -113,6 +113,7 @@
     <Compile Include="Globals.cs" />
     <Compile Include="Models\Banks.cs" />
     <Compile Include="Models\BIDVAccesstokenResponse.cs" />
+    <Compile Include="Models\BIDVDomesticPaymentRequest.cs" />
     <Compile Include="Models\BIDVInquiryRequest.cs" />
     <Compile Include="Models\BIDVInquiryResponse.cs" />
     <Compile Include="Models\ChangeOfApprove.cs" />
