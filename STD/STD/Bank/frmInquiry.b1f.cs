@@ -9,6 +9,8 @@ using SAPCore;
 using SAPCore.Config;
 using SAPCore.Helper;
 using STD.DataReader;
+using STDApp.Common;
+using STDApp.DataReader;
 using STDApp.Models;
 using System;
 using System.Collections.Generic;
@@ -56,6 +58,7 @@ namespace STDApp.Bank
             this.DT_Header_BI = this.UIAPIRawForm.DataSources.DataTables.Item("DT_hd1");
             this.DT_Detail_VT = this.UIAPIRawForm.DataSources.DataTables.Item("DT_Dt");
             this.DT_Detail_BI = this.UIAPIRawForm.DataSources.DataTables.Item("DT_dt1");
+            this.cbbCur = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbCur").Specific));
             this.OnCustomInitialize();
 
         }
@@ -141,7 +144,7 @@ namespace STDApp.Bank
         {
             SetLocation();
 
-            var account = ConfigurationManager.AppSettings["Account"];
+            //var account = ConfigurationManager.AppSettings["Account"];
             UIHelper.ComboboxSelectDefault(cbbBank);
 
             var data = DataProvider.QuerySingle(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
@@ -151,9 +154,23 @@ namespace STDApp.Bank
                 this.cbbAcc.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
                 UIHelper.ComboboxSelectDefault(cbbAcc);
             }
-
+            LoadCurrencyCombobox();
         }
+        private void LoadCurrencyCombobox()
+        {
+            UIHelper.ClearSelectValidValues(cbbCur);
+            
+            var values = DataHelper.ListCurrency();
+            if (values != null && values.Length > 0)
+            {
+                foreach (var data in values)
+                {
+                    this.cbbCur.ValidValues.Add(data["CurrCode"].ToString(), data["CurrName"].ToString());
+                }
 
+                UIHelper.ComboboxSelectDefaultValue(cbbCur, "VND");
+            }
+        }
         private void SetLocation()
         {
             var max = this.UIAPIRawForm.ClientHeight;
@@ -183,10 +200,13 @@ namespace STDApp.Bank
             this.txtTDate.Item.Top = this.lblBank.Item.Top;
             this.txtTDate.Item.Left = this.lblTDa.Item.Left + this.lblTDa.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
+            this.cbbCur.Item.Top = this.lblBank.Item.Top;
+            this.cbbCur.Item.Left = this.txtTDate.Item.Left + this.txtTDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
+
             var labBottom = this.lblBank.Item.Top + this.lblBank.Item.Height;
             var bttTop = labBottom - this.btnLoad.Item.Height;
             this.btnLoad.Item.Top = bttTop;
-            this.btnLoad.Item.Left = this.txtTDate.Item.Left + this.txtTDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.btnLoad.Item.Left = this.cbbCur.Item.Left + this.cbbCur.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.btnClear.Item.Top = bttTop;
             this.btnClear.Item.Left = this.btnLoad.Item.Left + this.btnLoad.Item.Width + CoreSetting.UF_HorizontallySpaced;
@@ -249,60 +269,60 @@ namespace STDApp.Bank
             this.Freeze(false);
         }
 
-        private string GetToken()
-        {
-            try
-            {
-                var query = string.Format(QueryString.GetAPICode);
-                var data = DataProvider.QuerySingle(CoreSetting.DataConnection, query);
-                if (data == null)
-                {
-                    return string.Empty;
-                }
-                var code = data["Code"].ToString();
-                if (string.IsNullOrEmpty(code))
-                {
-                    return string.Empty;
-                }
+        //private string GetToken()
+        //{
+        //    try
+        //    {
+        //        var query = string.Format(QueryString.GetAPICode);
+        //        var data = DataProvider.QuerySingle(CoreSetting.DataConnection, query);
+        //        if (data == null)
+        //        {
+        //            return string.Empty;
+        //        }
+        //        var code = data["Code"].ToString();
+        //        if (string.IsNullOrEmpty(code))
+        //        {
+        //            return string.Empty;
+        //        }
 
-                var options = new RestClientOptions(ConfigurationManager.AppSettings["LinkBIDVAPI"])
-                {
-                    MaxTimeout = -1,
-                };
-                var client = new RestClient(options);
-                var request = new RestRequest(ConfigurationManager.AppSettings["AuthenBIDV"], Method.Post);
+        //        var options = new RestClientOptions(ConfigurationManager.AppSettings["LinkBIDVAPI"])
+        //        {
+        //            MaxTimeout = -1,
+        //        };
+        //        var client = new RestClient(options);
+        //        var request = new RestRequest(ConfigurationManager.AppSettings["AuthenBIDV"], Method.Post);
 
-                request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
-                request.AddParameter("grant_type", "authorization_code");
-                request.AddParameter("client_id", ConfigurationManager.AppSettings["ClientIDBIDV"]);
-                request.AddParameter("client_secret", ConfigurationManager.AppSettings["ClientSecretBIDV"]);
-                request.AddParameter("code", code);
-                request.AddParameter("redirect_uri", ConfigurationManager.AppSettings["redirect_uri"]);
+        //        request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
+        //        request.AddParameter("grant_type", "authorization_code");
+        //        request.AddParameter("client_id", ConfigurationManager.AppSettings["ClientIDBIDV"]);
+        //        request.AddParameter("client_secret", ConfigurationManager.AppSettings["ClientSecretBIDV"]);
+        //        request.AddParameter("code", code);
+        //        request.AddParameter("redirect_uri", ConfigurationManager.AppSettings["redirect_uri"]);
 
-                var response = client.Execute(request);
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
-                {
-                    var error = JsonSerializer.Deserialize<BIDVAccesstokenResponseErrro>(response.Content);
-                    if (error.error_description.Contains("code expired"))
-                    {
-                        UIHelper.LogMessage($"Code để lấy token đã bị hết hạn, vui lòng lấy lại code mới và thử lại", UIHelper.MsgType.StatusBar, true);
-                    }
-                    else
-                    {
-                        UIHelper.LogMessage($"Lỗi {error.error_description}", UIHelper.MsgType.StatusBar, true);
-                    }
-                }
-                else
-                {
-                    var result = JsonSerializer.Deserialize<BIDVAccesstokenResponse>(response.Content);
-                    if (result != null)
-                        return result.access_token;
-                }
-            }
-            catch (Exception ex)
-            { }
-            return string.Empty;
-        }
+        //        var response = client.Execute(request);
+        //        if (response.StatusCode != System.Net.HttpStatusCode.OK)
+        //        {
+        //            var error = JsonSerializer.Deserialize<BIDVAccesstokenResponseErrro>(response.Content);
+        //            if (error.error_description.Contains("code expired"))
+        //            {
+        //                UIHelper.LogMessage($"Code để lấy token đã bị hết hạn, vui lòng lấy lại code mới và thử lại", UIHelper.MsgType.StatusBar, true);
+        //            }
+        //            else
+        //            {
+        //                UIHelper.LogMessage($"Lỗi {error.error_description}", UIHelper.MsgType.StatusBar, true);
+        //            }
+        //        }
+        //        else
+        //        {
+        //            var result = JsonSerializer.Deserialize<BIDVAccesstokenResponse>(response.Content);
+        //            if (result != null)
+        //                return result.access_token;
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    { }
+        //    return string.Empty;
+        //}
         private string Base64UrlEncode(byte[] input)
         {
             return Convert.ToBase64String(input)
@@ -310,81 +330,82 @@ namespace STDApp.Bank
                 .Replace('+', '-')
                 .Replace('/', '_');
         }
-        private static RSAParameters ConvertToRSAParameters(RsaPrivateCrtKeyParameters rsaKey)
-        {
-            RSAParameters result = default(RSAParameters);
-            result.Modulus = rsaKey.Modulus.ToByteArrayUnsigned();
-            result.Exponent = rsaKey.PublicExponent.ToByteArrayUnsigned();
-            result.D = rsaKey.Exponent.ToByteArrayUnsigned();
-            result.P = rsaKey.P.ToByteArrayUnsigned();
-            result.Q = rsaKey.Q.ToByteArrayUnsigned();
-            result.DP = rsaKey.DP.ToByteArrayUnsigned();
-            result.DQ = rsaKey.DQ.ToByteArrayUnsigned();
-            result.InverseQ = rsaKey.QInv.ToByteArrayUnsigned();
-            return result;
-        }
-        private RSA LoadPrivateKey(string filePath)
-        {
-            try
-            {
-                string text = File.ReadAllText(filePath);
-                text = text.Replace("-----BEGIN PRIVATE KEY-----", "").Replace("-----END PRIVATE KEY-----", "").Replace("\n", "")
-                    .Replace("\r", "")
-                    .Trim();
-                var obj = Convert.FromBase64String(text);
-                var instance = PrivateKeyInfo.GetInstance(obj);
-                var asymmetricKeyParameter = PrivateKeyFactory.CreateKey(instance);
-                if (asymmetricKeyParameter is RsaPrivateCrtKeyParameters rsaKey)
-                {
-                    RSA rSA = RSA.Create();
-                    rSA.ImportParameters(ConvertToRSAParameters(rsaKey));
-                    return rSA;
-                }
+        //private static RSAParameters ConvertToRSAParameters(RsaPrivateCrtKeyParameters rsaKey)
+        //{
+        //    RSAParameters result = default(RSAParameters);
+        //    result.Modulus = rsaKey.Modulus.ToByteArrayUnsigned();
+        //    result.Exponent = rsaKey.PublicExponent.ToByteArrayUnsigned();
+        //    result.D = rsaKey.Exponent.ToByteArrayUnsigned();
+        //    result.P = rsaKey.P.ToByteArrayUnsigned();
+        //    result.Q = rsaKey.Q.ToByteArrayUnsigned();
+        //    result.DP = rsaKey.DP.ToByteArrayUnsigned();
+        //    result.DQ = rsaKey.DQ.ToByteArrayUnsigned();
+        //    result.InverseQ = rsaKey.QInv.ToByteArrayUnsigned();
+        //    return result;
+        //}
+        //private RSA LoadPrivateKey(string filePath)
+        //{
+        //    try
+        //    {
+        //        string text = File.ReadAllText(filePath);
+        //        text = text.Replace("-----BEGIN PRIVATE KEY-----", "").Replace("-----END PRIVATE KEY-----", "").Replace("\n", "")
+        //            .Replace("\r", "")
+        //            .Trim();
+        //        var obj = Convert.FromBase64String(text);
+        //        var instance = PrivateKeyInfo.GetInstance(obj);
+        //        var asymmetricKeyParameter = PrivateKeyFactory.CreateKey(instance);
+        //        if (asymmetricKeyParameter is RsaPrivateCrtKeyParameters rsaKey)
+        //        {
+        //            RSA rSA = RSA.Create();
+        //            rSA.ImportParameters(ConvertToRSAParameters(rsaKey));
+        //            return rSA;
+        //        }
 
-                throw new ArgumentException("Key is not an RSA private key.");
-            }
-            catch (Exception innerException)
-            {
-                throw new Exception("Error loading private key", innerException);
-            }
-        }
-        static byte[] SignData(RSA rsa, string data)
-        {
-            byte[] dataBytes = Encoding.UTF8.GetBytes(data);
-            return rsa.SignData(dataBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-        }
-        private string GenSignature()
-        {
+        //        throw new ArgumentException("Key is not an RSA private key.");
+        //    }
+        //    catch (Exception innerException)
+        //    {
+        //        throw new Exception("Error loading private key", innerException);
+        //    }
+        //}
+        //static byte[] SignData(RSA rsa, string data)
+        //{
+        //    byte[] dataBytes = Encoding.UTF8.GetBytes(data);
+        //    return rsa.SignData(dataBytes, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
+        //}
+        //private string GenSignature()
+        //{
 
-            // Header (base64 encoded JSON)
-            var header = new
-            {
-                alg = "RS256", // RSA with SHA-256
-                typ = "JWT"
-            };
-            var headerJson = JsonSerializer.Serialize(header);
-            var headerBase64 = Base64UrlEncode(Encoding.UTF8.GetBytes(headerJson));
-            var detachedPayload = string.Empty;
+        //    // Header (base64 encoded JSON)
+        //    var header = new
+        //    {
+        //        alg = "RS256", // RSA with SHA-256
+        //        typ = "JWT"
+        //    };
+        //    var headerJson = JsonSerializer.Serialize(header);
+        //    var headerBase64 = Base64UrlEncode(Encoding.UTF8.GetBytes(headerJson));
+        //    var detachedPayload = string.Empty;
 
-            var signingInput = $"{headerBase64}.{detachedPayload}";
-            var certPath = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
+        //    var signingInput = $"{headerBase64}.{detachedPayload}";
+        //    var certPath = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
 
-            var rsa = LoadPrivateKey(certPath);
-            var signature = SignData(rsa, signingInput);
+        //    var rsa = LoadPrivateKey(certPath);
+        //    var signature = SignData(rsa, signingInput);
 
-            var signatureBase64 = Base64UrlEncode(signature);
-            var jws = $"{headerBase64}.{detachedPayload}.{signatureBase64}";
-            return jws;
-            // Console.WriteLine("Detached JWS:");
-            //Console.WriteLine(jws);
+        //    var signatureBase64 = Base64UrlEncode(signature);
+        //    var jws = $"{headerBase64}.{detachedPayload}.{signatureBase64}";
+        //    return jws;
+        //    // Console.WriteLine("Detached JWS:");
+        //    //Console.WriteLine(jws);
 
-            // Example: Verification
-            //bool isValid = VerifySignature(rsa, signingInput, signature);
-            //Console.WriteLine("Signature valid: " + isValid);
-        }
+        //    // Example: Verification
+        //    //bool isValid = VerifySignature(rsa, signingInput, signature);
+        //    //Console.WriteLine("Signature valid: " + isValid);
+        //}
         private void CallBIDVAPI()
         {
-            var token = GetToken();
+            var token = APIHelper.GetToken();
+
             if (string.IsNullOrEmpty(token))
             {
                 UIHelper.LogMessage($"Không lấy được token từ phía ngân hàng, vui lòng thử lại",
@@ -420,7 +441,7 @@ namespace STDApp.Bank
                 request.AddHeader("Authorization", $"Bearer {token}");
                 request.AddHeader("X-Client-Certificate", certificate);
 
-                var signature = GenSignature();
+                var signature = APIHelper.GenSignature();
                 if (string.IsNullOrEmpty(signature))
                 {
                     UIHelper.LogMessage($"Không tạo được chữ ký, vui lòng kiểm tra lại",
@@ -433,8 +454,8 @@ namespace STDApp.Bank
                 {
                     actNumber = Bank,// "12010002159887",
                     curr = "VND",
-                    fromDate = "20240901",
-                    toDate = "20240930",
+                    fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"),//"20240901",
+                    toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"),//,
                     page = "1"
                 };
                 var symmetricKey = ConfigurationManager.AppSettings["SymmetricKey"];
@@ -845,5 +866,7 @@ namespace STDApp.Bank
 
             this.Freeze(false);
         }
+
+        private SAPbouiCOM.ComboBox cbbCur;
     }
 }

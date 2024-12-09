@@ -103,7 +103,8 @@
     <Compile Include="Bank\frmInquiry.b1f.cs">
       <DependentUpon>frmInquiry.b1f</DependentUpon>
     </Compile>
-    <Compile Include="ConfigMenu\BankConfig.cs" />
+    <Compile Include="Common\APIHelper.cs" />
+    <Compile Include="Common\BankConfig.cs" />
     <Compile Include="DataReader\DataHelper.cs" />
     <Compile Include="Globals.cs" />
     <Compile Include="Models\Banks.cs" />

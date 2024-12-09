@@ -1,6 +1,6 @@
 ﻿using SAPCore.Form;
 
-namespace STDApp.ConfigMenu
+namespace STDApp.Common
 {
     public class BankConfig : FunctionConfig
     {

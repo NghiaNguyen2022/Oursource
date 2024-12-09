@@ -185,6 +185,12 @@ namespace SAPCore
             comboBox.ExpandType = SAPbouiCOM.BoExpandType.et_DescriptionOnly;
             comboBox.Item.DisplayDesc = true;
         }
+        public static void ComboboxSelectDefaultValue(ComboBox comboBox, string defValue = "")
+        {
+            comboBox.Select(defValue, SAPbouiCOM.BoSearchKey.psk_ByValue);
+            comboBox.ExpandType = SAPbouiCOM.BoExpandType.et_ValueDescription;
+            comboBox.Item.DisplayDesc = true;
+        }
 
         public static void LoadComboboxFromDataSource(ComboBox comboBox, DataTable dataTable, string query, string keyField, string valueField, int defValue = 0, string allValue = "", string allDescription = "")
         {

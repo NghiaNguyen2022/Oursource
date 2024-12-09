@@ -1,7 +1,7 @@
 ﻿using SAPbouiCOM.Framework;
 using SAPCore;
 using STDApp.Bank;
-using STDApp.ConfigMenu;
+using STDApp.Common;
 using STDApp.Payment;
 using System;
 
