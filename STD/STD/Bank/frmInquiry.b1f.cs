@@ -1,7 +1,4 @@
 ﻿using Jose;
-using Org.BouncyCastle.Asn1.Pkcs;
-using Org.BouncyCastle.Crypto.Parameters;
-using Org.BouncyCastle.Security;
 using PN.SmartLib.Helper;
 using RestSharp;
 using SAPbouiCOM.Framework;
@@ -16,8 +13,6 @@ using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Json;
 
 namespace STDApp.Bank
@@ -323,14 +318,14 @@ namespace STDApp.Bank
         //    { }
         //    return string.Empty;
         //}
-        private string Base64UrlEncode(byte[] input)
-        {
-            return Convert.ToBase64String(input)
-                .TrimEnd('=')
-                .Replace('+', '-')
-                .Replace('/', '_');
-        }
-        //private static RSAParameters ConvertToRSAParameters(RsaPrivateCrtKeyParameters rsaKey)
+        //private string Base64UrlEncode(byte[] input)
+        //{
+        //    return Convert.ToBase64String(input)
+        //        .TrimEnd('=')
+        //        .Replace('+', '-')
+        //        .Replace('/', '_');
+        //}
+        ////private static RSAParameters ConvertToRSAParameters(RsaPrivateCrtKeyParameters rsaKey)
         //{
         //    RSAParameters result = default(RSAParameters);
         //    result.Modulus = rsaKey.Modulus.ToByteArrayUnsigned();
@@ -441,14 +436,6 @@ namespace STDApp.Bank
                 request.AddHeader("Authorization", $"Bearer {token}");
                 request.AddHeader("X-Client-Certificate", certificate);
 
-                var signature = APIHelper.GenSignature();
-                if (string.IsNullOrEmpty(signature))
-                {
-                    UIHelper.LogMessage($"Không tạo được chữ ký, vui lòng kiểm tra lại",
-                       UIHelper.MsgType.StatusBar, true);
-                    return;
-                }
-                request.AddHeader("X-JWS-Signature", signature);
 
                 var requestData = new BIDVInquiryRequest()
                 {
@@ -460,28 +447,38 @@ namespace STDApp.Bank
                 };
                 var symmetricKey = ConfigurationManager.AppSettings["SymmetricKey"];
                 var symmetricKeys = HexToByteArray(symmetricKey);
-                var json = JsonSerializer.Serialize(requestData);
-                var encryptData = Jose.JWT.Encode(json, symmetricKeys, JweAlgorithm.A256KW, JweEncryption.A256GCM);
-                var parts = encryptData.Split('.');
-                var jweGeneralJson = new
-                {
-                    recipients = new List<object>
-                    {
-                        new
-                        {
-                            header = new { }, // Empty header for single recipient
-                            encrypted_key = parts[1] // Second part of JWE
-                        }
-                    },
-                    protectedField = parts[0],  // First part of JWE
-                    ciphertext = parts[3],      // Fourth part of JWE
-                    iv = parts[2],              // Third part of JWE
-                    tag = parts[4]              // Fifth part of JWE
-                };
-                var jweJson = JsonSerializer.Serialize(jweGeneralJson);
 
-                //request.AddParameter("application/json", json, ParameterType.RequestBody);
-                request.AddStringBody(json, DataFormat.Json);
+                var json = JsonSerializer.Serialize(requestData);
+                var encryptData = APIUtil.doEncryptJWE(json, symmetricKey);
+                //var encryptData = Jose.JWT.Encode(json, symmetricKeys, JweAlgorithm.A256KW, JweEncryption.A128GCM);
+                //var parts = encryptData.Split('.');
+                //var jweGeneralJson = new
+                //{
+                //    recipients = new List<object>
+                //    {
+                //        new
+                //        {
+                //            header = new { }, // Empty header for single recipient
+                //            encrypted_key = parts[1] // Second part of JWE
+                //        }
+                //    },
+                //    protectedField = parts[0],  // First part of JWE
+                //    ciphertext = parts[3],      // Fourth part of JWE
+                //    iv = parts[2],              // Third part of JWE
+                //    tag = parts[4]              // Fifth part of JWE
+                //};
+                //var jweJson = JsonSerializer.Serialize(jweGeneralJson);                
+                request.AddStringBody(encryptData, DataFormat.Json);
+
+                var signature = APIUtil.DoSignatureJWS(encryptData);
+                if (string.IsNullOrEmpty(signature))
+                {
+                    UIHelper.LogMessage($"Không tạo được chữ ký, vui lòng kiểm tra lại",
+                       UIHelper.MsgType.StatusBar, true);
+                    return;
+                }
+                request.AddHeader("X-JWS-Signature", signature);
+
                 var response = client.Execute(request);
                 //var result = response.Content;
 
@@ -620,7 +617,7 @@ namespace STDApp.Bank
                 var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
 
                 //request.signature = FPT.SHA256_RSA2048.Encrypt(request.signature, path);
-                data.signature = FPT.SHA256_RSA2048.Encrypt(data.signature, path);
+                //data.signature = FPT.SHA256_RSA2048.Encrypt(data.signature, path);
                 var json = JsonSerializer.Serialize(data);
 
                 request.AddParameter("application/json", json, ParameterType.RequestBody);

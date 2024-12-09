@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace STDApp.Models
 {
-    //public class BIDVInquiryRequest
+    //public class BodyReq
     //{
     //    public Body body { get; set; }
     //}
@@ -22,7 +23,9 @@ namespace STDApp.Models
 
     public class Req_000_JWEBIDVInquiryRequest
     {
-        public List<Recipient> recipients { get; set; }
+        public Recipient[] recipients { get; set; }
+
+        [JsonProperty(PropertyName = "protected")]
         public string protectedField { get; set; }
         public string ciphertext { get; set; }
         public string iv { get; set; }

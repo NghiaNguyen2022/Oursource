@@ -155,5 +155,18 @@ namespace STDApp.Common
             { }
             return string.Empty;
         }
+        private static byte[] HexToByteArray(string hex)
+        {
+            if (hex.Length % 2 != 0)
+                throw new ArgumentException("Hex string must have an even length.");
+
+            byte[] result = new byte[hex.Length / 2];
+            for (int i = 0; i < hex.Length; i += 2)
+            {
+                result[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
+            }
+
+            return result;
+        }
     }
 }
