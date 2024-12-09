@@ -399,12 +399,18 @@ namespace STDApp.Bank
         //}
         private void CallBIDVAPI()
         {
-            var token = APIHelper.GetToken();
+            var mesage = string.Empty;
+            var token = APIHelper.GetToken(ref mesage);
 
             if (string.IsNullOrEmpty(token))
             {
+                if(string.IsNullOrEmpty(mesage))
                 UIHelper.LogMessage($"Không lấy được token từ phía ngân hàng, vui lòng thử lại",
                     UIHelper.MsgType.StatusBar, true);
+                else
+                    UIHelper.LogMessage(mesage,
+                        UIHelper.MsgType.StatusBar, true);
+
                 return;
             }
             var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
@@ -420,6 +426,9 @@ namespace STDApp.Bank
                         UIHelper.MsgType.StatusBar, true);
                     return;
                 }
+                var rsaPrivateKeyHeaderPem = "-----BEGIN PRIVATE KEY-----";
+                var rsaPrivateKeyFooterPem = "-----END PRIVATE KEY-----";
+                certificate = certificate.Replace(rsaPrivateKeyHeaderPem, "").Replace(rsaPrivateKeyFooterPem, "").Replace("\n\r", "");
                 var options = new RestClientOptions(APIBIDVConstrant.APILink);
                 var client = new RestClient(options);
                 var request = new RestRequest(APIBIDVConstrant.InquiryBIDV + "?Scope=read&JWE=Yes", Method.Post);

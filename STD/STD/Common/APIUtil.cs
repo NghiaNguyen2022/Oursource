@@ -5,11 +5,7 @@ using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
 using STDApp.Models;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Security.Cryptography;
-using System.Text.Json;
-using System.Text.Json.Serialization;
 
 namespace STDApp.Common
 {
@@ -99,7 +95,7 @@ namespace STDApp.Common
 
         private static byte[] getRsaPrivateKeyEncodedFromPem(string rsaPrivateKeyPem)
         {
-            string rsaPrivateKeyHeaderPem = "-----BEGIN PRIVATE KEY-----\n";
+            string rsaPrivateKeyHeaderPem = "-----BEGIN PRIVATE KEY-----";
             string rsaPrivateKeyFooterPem = "-----END PRIVATE KEY-----";
             string rsaPrivateKeyDataPem = rsaPrivateKeyPem.Replace(rsaPrivateKeyHeaderPem, "").Replace(rsaPrivateKeyFooterPem, "").Replace("\n", "");
             return Base64Decoding(rsaPrivateKeyDataPem);
