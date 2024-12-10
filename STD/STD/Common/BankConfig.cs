@@ -8,6 +8,7 @@ namespace STDApp.Common
         { }
 
         public AddonUserForm InquiryForm { get; set; }
+        public AddonUserForm BatchForm { get; set; }
         public AddonUserForm PaymentForm { get; set; }
 
         public AddonUserForm PaymentDetailFormInfo { get; set; }
@@ -37,6 +38,18 @@ namespace STDApp.Common
             };
             AddForms(InquiryForm, 0);
 
+
+            BatchForm = new AddonUserForm()
+            {
+                FormID = "Payoo_Batch_F",
+                MenuID = "PM_Payoo_Batch_M",
+                MenuName = "Dữ liệu thanh toán từ Payoo",
+                ParentID = FolderInfomation.MenuID,
+                FormType = "STDApp.Payoo.frmBatch"
+            };
+            AddForms(InquiryForm, 0);
+
+
             PaymentForm = new AddonUserForm()
             {
                 FormID = "Payment_F",
@@ -45,7 +58,7 @@ namespace STDApp.Common
                 ParentID = FolderInfomation.MenuID,
                 FormType = "STDApp.Payment.frmPayment"
             };
-            AddForms(PaymentForm, 1);
+            AddForms(PaymentForm, 2);
 
             PaymentDetailFormInfo = new AddonUserForm()
             {

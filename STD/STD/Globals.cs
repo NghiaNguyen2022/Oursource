@@ -31,6 +31,8 @@ namespace STDApp
         public static string ClientID = $"df616d171dae4974042d4d95577c05de";
         public static string ClientSecret = $"9adc6d5f750dcdfc898c74aec2d0e0c7";
         public static string URL_Redirect = $"https://azstvntstsapb1db:50000/b1s/v1/BIDV_TEST";
+
+        public static string TransferBIDV = $"{UAT_BIDV}/open-banking/domestic-payment/v1";
     }
 
     public class GlobalsConfig : SysGlobals

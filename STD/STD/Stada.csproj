@@ -103,6 +103,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessSAP\PaymentViaDI.cs" />
+    <Compile Include="Payoo\frmBatch.b1f.cs">
+      <DependentUpon>frmBatch.b1f</DependentUpon>
+    </Compile>
     <Compile Include="Bank\frmInquiry.b1f.cs">
       <DependentUpon>frmInquiry.b1f</DependentUpon>
     </Compile>
@@ -163,6 +166,9 @@
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Payoo\frmBatch.b1f">
+      <FormCategory>UserForm</FormCategory>
     </None>
     <None Include="Bank\frmInquiry.b1f">
       <FormCategory>UserForm</FormCategory>
