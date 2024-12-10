@@ -4,7 +4,6 @@ using SAPbouiCOM.Framework;
 using SAPCore;
 using SAPCore.Config;
 using SAPCore.Helper;
-using STD.DataReader;
 using STDApp.Common;
 using STDApp.Models;
 using System;
@@ -20,11 +19,7 @@ namespace STDApp.Payoo
         public frmBatch()
         {
         }
-
-        //private SAPbouiCOM.DataTable DT_Header_VT;
-        //private SAPbouiCOM.DataTable DT_Header_BI;
-        //private SAPbouiCOM.DataTable DT_Detail_VT;
-        //private SAPbouiCOM.DataTable DT_Detail_BI;
+        
 
         /// <summary>
         /// Initialize components. Called by framework after form created.
@@ -46,10 +41,6 @@ namespace STDApp.Payoo
             this.grDt = ((SAPbouiCOM.Grid)(this.GetItem("grDt").Specific));
             this.btnClear = ((SAPbouiCOM.Button)(this.GetItem("btnClear").Specific));
             this.btnClear.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnClear_ClickBefore);
-            //this.DT_Header_VT = this.UIAPIRawForm.DataSources.DataTables.Item("DT_Hd");
-            //this.DT_Header_BI = this.UIAPIRawForm.DataSources.DataTables.Item("DT_hd1");
-            //this.DT_Detail_VT = this.UIAPIRawForm.DataSources.DataTables.Item("DT_Dt");
-            //this.DT_Detail_BI = this.UIAPIRawForm.DataSources.DataTables.Item("DT_dt1");
             this.OnCustomInitialize();
 
         }
@@ -84,7 +75,7 @@ namespace STDApp.Payoo
         public static bool IsFormOpen = false;
         private static frmBatch instance;
 
-        private string FromDate
+        private string TransDate
         {
             get
             {
@@ -92,7 +83,7 @@ namespace STDApp.Payoo
             }
         }
 
-        private string ToDate
+        private string Page
         {
             get
             {
@@ -107,7 +98,7 @@ namespace STDApp.Payoo
                 return UIHelper.GetComboValue(cbbBank);
             }
         }
-        private string Account
+        private string BatchNumber
         {
             get
             {
@@ -134,18 +125,9 @@ namespace STDApp.Payoo
         private void InitControl()
         {
             SetLocation();
-
-            //var account = ConfigurationManager.AppSettings["Account"];
+            
             UIHelper.ComboboxSelectDefault(cbbBank);
-
-            var data = DataProvider.QuerySingle(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
-            if (data != null)
-            {
-                UIHelper.ClearSelectValidValues(cbbBat);
-                this.cbbBat.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
-                UIHelper.ComboboxSelectDefault(cbbBat);
-            }
-            //LoadCurrencyCombobox();
+            cbbBank.Item.Enabled = false;
         }
 
         private void SetLocation()
@@ -217,29 +199,22 @@ namespace STDApp.Payoo
         {
             BubbleEvent = true;
             this.Freeze(true);
-            if (string.IsNullOrEmpty(FromDate) || string.IsNullOrEmpty(ToDate))
+            if (string.IsNullOrEmpty(TransDate))
             {
-                UIHelper.LogMessage(STRING_CONTRANTS.Validate_DateSelectNull, UIHelper.MsgType.Msgbox, true);
+                UIHelper.LogMessage(STRING_CONTRANTS.Validate_TransDateSelectNull, UIHelper.MsgType.Msgbox, true);
                 this.Freeze(false);
                 return;
             }
-
-            if (!StringUtils.CheckFromDateEarlyToDate(FromDate, ToDate))
-            {
-                UIHelper.LogMessage(STRING_CONTRANTS.Validate_FromDateEarlyToDate, UIHelper.MsgType.Msgbox, true);
-                this.Freeze(false);
-                return;
-            }
-
             this.Clear();
+
             if (Bank == Banks.ViettinBank.GetDescription())
             {
-                this.CallVTBAPI();
+                this.CallPayooAPI();
             }
-            else
-            {
-                this.CallBIDVAPI();
-            }
+            //else
+            //{
+            //    this.CallBIDVAPI();
+            //}
             this.Freeze(false);
         }
 
@@ -429,8 +404,8 @@ namespace STDApp.Payoo
                 {
                     actNumber = Bank,// "12010002159887",
                     curr = "VND",
-                    fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"),//"20240901",
-                    toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"),//,
+                    //fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"),//"20240901",
+                    //toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"),//,
                     page = "1"
                 };
                 var symmetricKey = ConfigurationManager.AppSettings["SymmetricKey"];
@@ -537,7 +512,7 @@ namespace STDApp.Payoo
             return result;
         }
 
-        private void CallVTBAPI()
+        private void CallPayooAPI()
         {
             try
             {
@@ -561,8 +536,8 @@ namespace STDApp.Payoo
                     providerId = ConfigurationManager.AppSettings["ProviderId"],
                     model = "2",
                     account = cbbBat.Value,
-                    fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
-                    toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
+                   // fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
+                    //toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
                     accountType = "D",
                     collectionType = "c,d",
                     agencyType = "a",

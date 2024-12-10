@@ -151,6 +151,7 @@ namespace STDApp.Bank
             }
             LoadCurrencyCombobox();
         }
+
         private void LoadCurrencyCombobox()
         {
             UIHelper.ClearSelectValidValues(cbbCur);

@@ -35,6 +35,11 @@ namespace STDApp
         public static string TransferBIDV = $"{UAT_BIDV}/open-banking/domestic-payment/v1";
     }
 
+    public class APIPayooConstant
+    {
+        public static string APILink = "https://bizsandbox.payoo.com.vn/BusinessRestAPI.svc";
+    }
+
     public class GlobalsConfig : SysGlobals
     {
         public AddonUserForm PaymentFormInfo;
@@ -94,6 +99,9 @@ namespace STDApp
 
         public static string Validate_DateSelectNull = "Bộ lọc [Từ Ngày]/[Đến Ngày] phải có giá trị đúng";
         public static string Validate_FromDateEarlyToDate = "Chọn bộ lọc [Từ ngày] phải trước bộ lọc [Đến ngày]";
+
+
+        public static string Validate_TransDateSelectNull = "Bộ lọc Ngày phải có giá trị đúng";
 
         public static string NoData = "Không có dữ liệu";
         public static string NoDataCheck = "Chưa chọn dữ liệu";
