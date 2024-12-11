@@ -37,7 +37,11 @@ namespace STDApp
 
     public class APIPayooConstant
     {
-        public static string APILink = "https://bizsandbox.payoo.com.vn/BusinessRestAPI.svc";
+        public static string APILink = "https://bizsandbox.payoo.com.vn";
+        public static string SettlementTransactionsLink = "/BusinessRestAPI.svc/GetSettlementTransactions";
+        public static string APIUsername = "SB_Stada_BizAPI";
+        public static string APIPassword = "9qW0k9/5khmSqdOE";
+        public static string APISignature = "U5E0ykWrsQSqkjS6xR+Qnj3cbuNUi8YgSC2r6/BcXrpdcjOx6XYh7XNjQf806Yay";
     }
 
     public class GlobalsConfig : SysGlobals

@@ -1,5 +1,4 @@
-﻿using Jose;
-using PN.SmartLib.Helper;
+﻿using PN.SmartLib.Helper;
 using RestSharp;
 using SAPbouiCOM.Framework;
 using SAPCore;
@@ -10,7 +9,6 @@ using STDApp.Common;
 using STDApp.DataReader;
 using STDApp.Models;
 using System;
-using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text.Json;

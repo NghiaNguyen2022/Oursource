@@ -11,6 +11,21 @@ namespace PN.SmartLib.Helper
 {
     public static class CoreExtensions
     {
+        public static object GetEnumValue<T>(int code)
+        {
+            if (!typeof(T).IsEnum)
+            {
+                throw new ArgumentException("T must be an enum type.");
+            }
+
+            if (Enum.IsDefined(typeof(T), code))
+            {
+                return Enum.ToObject(typeof(T), code);
+            }
+
+            return null; // Return null if the code does not match any enum value
+        }
+
         /// <summary>
         /// Get Description for enum
         /// </summary>

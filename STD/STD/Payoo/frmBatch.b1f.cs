@@ -98,7 +98,7 @@ namespace STDApp.Payoo
                 return UIHelper.GetComboValue(cbbBank);
             }
         }
-        private string BatchNumber
+        private string BatchNo
         {
             get
             {
@@ -514,121 +514,98 @@ namespace STDApp.Payoo
 
         private void CallPayooAPI()
         {
+
             try
             {
-                UIHelper.LogMessage($"Bắt đầu vấn gửi yêu cầu tin tài khoản đến ngân hàng", UIHelper.MsgType.StatusBar, false);
+                UIHelper.LogMessage($"Bắt đầu gửi thông tin qua hệ thống Payoo để lấy thanh toán", UIHelper.MsgType.StatusBar, false);
 
-                var options = new RestClientOptions(APIVietinBankConstrant.APIVTB)
+                var options = new RestClientOptions(APIPayooConstant.APILink)
                 {
                     MaxTimeout = -1,
                 };
 
                 var client = new RestClient(options);
-                var request = new RestRequest(APIVietinBankConstrant.InquiryVTB, Method.Post);
-                request.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
-                request.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
+                var request = new RestRequest(APIPayooConstant.SettlementTransactionsLink,  Method.Post);
                 request.AddHeader("Content-Type", "application/json");
-
-                var data = new InquiryRequest()
+                request.AddHeader("APIUsername", APIPayooConstant.APIUsername);
+                request.AddHeader("APIPassword", APIPayooConstant.APIPassword);
+                request.AddHeader("APISignature", APIPayooConstant.APISignature);
+                request.AddHeader("Accept", "application/json");
+                var transDate = DateTime.ParseExact(TransDate, "yyyyMMdd", null).ToString("yyyyMMdd");
+               
+                var requestData = new
                 {
-                    requestId = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                    merchantId = ConfigurationManager.AppSettings["MerchantId"],
-                    providerId = ConfigurationManager.AppSettings["ProviderId"],
-                    model = "2",
-                    account = cbbBat.Value,
-                   // fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
-                    //toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
-                    accountType = "D",
-                    collectionType = "c,d",
-                    agencyType = "a",
-                    transTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                    channel = "ERP",
-                    version = "1",
-                    clientIP = "",
-                    language = "vi",
-                    signature = "", // Giá trị rỗng
-                    fromTime = "00:00:00",
-                    toTime = DateTime.Now.ToString("HH:mm:ss")
+                    SettlementDate = transDate,
+                    BatchNumber = BatchNo,
+                    PageNumber = Page
                 };
-
-                data.signature = (
-                  data.requestId +
-                  data.providerId +
-                  data.merchantId +
-                  data.account
-                  );
-
-                var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
-                
-                data.signature = FPT.SHA256_RSA2048.Encrypt(data.signature, path);
-                var json = JsonSerializer.Serialize(data);
-
-                request.AddParameter("application/json", json, ParameterType.RequestBody);
-                var response = client.Execute(request);
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                var requestDataJson = JsonSerializer.Serialize(requestData);
+                var requestDataFull = new
                 {
-                    UIHelper.LogMessage($"Lỗi {response.ErrorMessage}", UIHelper.MsgType.StatusBar, true);
-                    return;
-                }
+                    RequestData = requestDataJson,
+                    SecureHash = APIUtil.EncryptSHA512(requestDataJson)//  "35b8fd5ca7e314b134126add44ad7be804462e17f0e28956df3bd0d4c673339e856bbf3b83635ada03ee5efd54941a62e8c370931cf3bdd8d9f555e75e5accc9"
+                };
+                var finalRequestJson = JsonSerializer.Serialize(requestDataFull);               
+                request.AddStringBody(finalRequestJson, DataFormat.Json);
+
+                var response = client.Execute(request);
+
                 var result = response.Content;
 
-                var rps = JsonSerializer.Deserialize<VTResponse>(result);
-                if (rps == null)
+                var resp = JsonSerializer.Deserialize<PayooResponse>(result);
+                if(resp == null)
                 {
                     UIHelper.LogMessage($"Lỗi không có phản hồi, vui lòng check lại", UIHelper.MsgType.StatusBar, true);
                     return;
                 }
-                if (rps.status.code == "0")
+                var respDataStr = resp.ResponseData.Replace(@"\", "");
+                var respDataObj = JsonSerializer.Deserialize<PayooResponseData>(respDataStr);
+                if (respDataObj == null)
                 {
-                    UIHelper.LogMessage($"Lỗi {rps.status.message}", UIHelper.MsgType.Msgbox);
+                    UIHelper.LogMessage($"Lỗi không có phản hồi, vui lòng check lại", UIHelper.MsgType.StatusBar, true);
                     return;
                 }
 
-                var inquiry = JsonSerializer.Deserialize<InquiryHeader>(result);
+                PayooResponseCode rpcode = (PayooResponseCode)CoreExtensions.GetEnumValue<PayooResponseCode>(respDataObj.ResponseCode);
+                if(rpcode != PayooResponseCode.Res0)
+                {
+                    UIHelper.LogMessage(rpcode.GetDescription(), UIHelper.MsgType.StatusBar, true);
+                    return;
+                }
+                var rpDataTransaction = JsonSerializer.Deserialize<PayooResponseDataExt>(respDataStr);
+                    
+               // var inquiry = JsonSerializer.Deserialize<InquiryHeader>(result);
 
-                if (inquiry != null)
+                if (rpDataTransaction != null)
                 {
                     if (this.grHdr != null && this.grHdr.DataTable != null)
                     {
                         this.grHdr.DataTable.Rows.Add();
                         var index = grHdr.DataTable.Rows.Count - 1;
-                        //this.grHdr.DataTable.SetValue("BankAccount", index, inquiry.account);
-                        //this.grHdr.DataTable.SetValue("BankName", index, inquiry.companyName);
-                        //this.grHdr.DataTable.SetValue("AccountType", index, inquiry.accountType);
-                        //this.grHdr.DataTable.SetValue("Currency", index, inquiry.curency);
-                        //this.grHdr.DataTable.SetValue("AvaiBalance", index, inquiry.availableBal);
-                        //this.grHdr.DataTable.SetValue("OpeningBalance", index, inquiry.openningBal);
-                        //this.grHdr.DataTable.SetValue("ClosingBalance", index, inquiry.closingBal);
-                        //this.grHdr.DataTable.SetValue("FromDate", index, inquiry.fromDate);
-                        //this.grHdr.DataTable.SetValue("TotalCredit", index, inquiry.totalCredit);
-                        //this.grHdr.DataTable.SetValue("NoCreditTrans", index, inquiry.numberCreditTransaction);
-                        //this.grHdr.DataTable.SetValue("TotalDebit", index, inquiry.totalDebit);
-                        //this.grHdr.DataTable.SetValue("NoDebitTrans", index, inquiry.numberDebitTransaction);
-                        //this.grHdr.DataTable.SetValue("BankAccount", index, inquiry.account);
-                        //this.grHdr.DataTable.SetValue("FromTime", index, inquiry.fromTime);
-                        //this.grHdr.DataTable.SetValue("ToTime", index, inquiry.toTime);
+                        this.grHdr.DataTable.SetValue("BatchNo", index, rpDataTransaction.BatchNo);
+                        this.grHdr.DataTable.SetValue("Amount", index, rpDataTransaction.TotalSettlementAmount);
+                        this.grHdr.DataTable.SetValue("RowCount", index, rpDataTransaction.TotalSettlementRowCount);
+                        this.grHdr.DataTable.SetValue("PageSize", index, rpDataTransaction.PageSize);
                         this.grHdr.AutoResizeColumns();
                     }
 
                     if (this.grDt != null && this.grDt.DataTable != null)
                     {
-                        foreach (var item in inquiry.transactions)
+                        foreach (var item in rpDataTransaction.TransactionList)
                         {
                             this.grDt.DataTable.Rows.Add();
                             var index = grDt.DataTable.Rows.Count - 1;
-                            //this.grDt.DataTable.SetValue("TransDate", index, item.transactionDate);
-                            //this.grDt.DataTable.SetValue("Description", index, item.transactionContent);
-                            //this.grDt.DataTable.SetValue("Debit", index, item.debit ?? "0");
-                            //this.grDt.DataTable.SetValue("Credit", index, item.credit ?? "0");
-                            //this.grDt.DataTable.SetValue("AccountBal", index, item.accountBal);
-                            //this.grDt.DataTable.SetValue("TransNo", index, item.transactionNumber);
-                            //this.grDt.DataTable.SetValue("SenderAccount", index, item.corresponsiveAccount);
-                            //this.grDt.DataTable.SetValue("SenderName", index, item.corresponsiveAccountName);
-                            //this.grDt.DataTable.SetValue("Agency", index, item.agency ?? "");
-                            //this.grDt.DataTable.SetValue("VirtualAccount", index, item.virtualAccount ?? "");
-                            //this.grDt.DataTable.SetValue("SenderBank", index, item.corresponsiveBankName ?? "");
-                            //this.grDt.DataTable.SetValue("SenderBankId", index, item.corresponsiveBankId ?? "");
-                            //this.grDt.DataTable.SetValue("Chanel", index, item.channel);
+                            this.grDt.DataTable.SetValue("OrdeNo", index, item.OrderNo);
+                            this.grDt.DataTable.SetValue("ShopId", index, item.ShopId);
+                            this.grDt.DataTable.SetValue("SellerName", index, item.SellerName);
+                            this.grDt.DataTable.SetValue("TransferAmount", index, item.MoneyAmount);
+                            this.grDt.DataTable.SetValue("InvoiceDate", index, item.PurchaseDate);
+                            this.grDt.DataTable.SetValue("Status", index, item.Status);
+                            this.grDt.DataTable.SetValue("IntegDate", index, DateTime.Now.ToString("yyyyMMdd"));
+                            this.grDt.DataTable.SetValue("IntegTime", index, DateTime.Now.ToString("HHmmss"));
+                            this.grDt.DataTable.SetValue("RecWithBank", index, "Chưa");
+                            this.grDt.DataTable.SetValue("BankRefNo", index, "");
+
                         }
                         this.grDt.AutoResizeColumns();
                     }

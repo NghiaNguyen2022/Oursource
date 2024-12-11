@@ -51,9 +51,6 @@
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
-    <Reference Include="PN.SmartLib">
-      <HintPath>..\Libs\PN.SmartLib.dll</HintPath>
-    </Reference>
     <Reference Include="RestSharp, Version=112.1.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.112.1.0\lib\net48\RestSharp.dll</HintPath>
     </Reference>
@@ -103,6 +100,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessSAP\PaymentViaDI.cs" />
+    <Compile Include="Models\PayooResponse.cs" />
     <Compile Include="Payoo\frmBatch.b1f.cs">
       <DependentUpon>frmBatch.b1f</DependentUpon>
     </Compile>
@@ -153,6 +151,10 @@
     <Compile Include="ViewHelper..cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\PN.Libs\PN.SmartLib.csproj">
+      <Project>{141d8614-7f15-4b5a-994f-a6f960d8a451}</Project>
+      <Name>PN.SmartLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\SAPCore\SAPCore.csproj">
       <Project>{90B593C4-84B2-465F-979B-8D7A5F113243}</Project>
       <Name>SAPCore</Name>
