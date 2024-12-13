@@ -5,6 +5,7 @@ using SAPCore;
 using SAPCore.Config;
 using SAPCore.Helper;
 using STD.DataReader;
+using STDApp.AccessSAP;
 using STDApp.Common;
 using STDApp.DataReader;
 using STDApp.Models;
@@ -52,6 +53,8 @@ namespace STDApp.Bank
             this.DT_Detail_VT = this.UIAPIRawForm.DataSources.DataTables.Item("DT_Dt");
             this.DT_Detail_BI = this.UIAPIRawForm.DataSources.DataTables.Item("DT_dt1");
             this.cbbCur = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbCur").Specific));
+            this.btbClear = ((SAPbouiCOM.Button)(this.GetItem("btbClear").Specific));
+            this.btbClear.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btbClear_ClickBefore);
             this.OnCustomInitialize();
 
         }
@@ -118,19 +121,19 @@ namespace STDApp.Bank
         }
         public static void ShowForm()
         {
-            if (instance == null)
+            try
             {
-                try
+                if (instance == null)
                 {
                     instance = new frmInquiry();
-                    instance.InitControl();
-                    instance.Show();
-                    IsFormOpen = true;
                 }
-                catch (Exception ex)
-                {
+                instance.InitControl();
+                instance.Show();
+                IsFormOpen = true;
+            }
+            catch (Exception ex)
+            {
 
-                }
             }
         }
         private void InitControl()
@@ -153,7 +156,7 @@ namespace STDApp.Bank
         private void LoadCurrencyCombobox()
         {
             UIHelper.ClearSelectValidValues(cbbCur);
-            
+
             var values = DataHelper.ListCurrency();
             if (values != null && values.Length > 0)
             {
@@ -202,8 +205,11 @@ namespace STDApp.Bank
             this.btnLoad.Item.Top = bttTop;
             this.btnLoad.Item.Left = this.cbbCur.Item.Left + this.cbbCur.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
+            this.btbClear.Item.Top = bttTop;
+            this.btbClear.Item.Left = this.btnLoad.Item.Left + this.btnLoad.Item.Width + CoreSetting.UF_HorizontallySpaced;
+
             this.btnClear.Item.Top = bttTop;
-            this.btnClear.Item.Left = this.btnLoad.Item.Left + this.btnLoad.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.btnClear.Item.Left = this.btbClear.Item.Left + this.btbClear.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.grHdr.Item.Left = this.lblBank.Item.Left;
             this.grHdr.Item.Width = maxw - grHdr.Item.Left - 40;
@@ -403,9 +409,9 @@ namespace STDApp.Bank
 
             if (string.IsNullOrEmpty(token))
             {
-                if(string.IsNullOrEmpty(mesage))
-                UIHelper.LogMessage($"Không lấy được token từ phía ngân hàng, vui lòng thử lại",
-                    UIHelper.MsgType.StatusBar, true);
+                if (string.IsNullOrEmpty(mesage))
+                    UIHelper.LogMessage($"Không lấy được token từ phía ngân hàng, vui lòng thử lại",
+                        UIHelper.MsgType.StatusBar, true);
                 else
                     UIHelper.LogMessage(mesage,
                         UIHelper.MsgType.StatusBar, true);
@@ -457,7 +463,7 @@ namespace STDApp.Bank
                 var symmetricKeys = HexToByteArray(symmetricKey);
 
                 var json = JsonSerializer.Serialize(requestData);
-                var encryptData = APIUtil.doEncryptJWE(json, symmetricKey);             
+                var encryptData = APIUtil.doEncryptJWE(json, symmetricKey);
                 request.AddStringBody(encryptData, DataFormat.Json);
 
                 var signature = APIUtil.DoSignatureJWS(encryptData);
@@ -604,7 +610,7 @@ namespace STDApp.Bank
                   );
 
                 var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
-                
+
                 data.signature = FPT.SHA256_RSA2048.Encrypt(data.signature, path);
                 var json = JsonSerializer.Serialize(data);
 
@@ -635,6 +641,7 @@ namespace STDApp.Bank
                 {
                     if (this.grHdr != null && this.grHdr.DataTable != null)
                     {
+                        this.grHdr.DataTable.Rows.Clear();
                         this.grHdr.DataTable.Rows.Add();
                         var index = grHdr.DataTable.Rows.Count - 1;
                         this.grHdr.DataTable.SetValue("BankAccount", index, inquiry.account);
@@ -657,6 +664,7 @@ namespace STDApp.Bank
 
                     if (this.grDt != null && this.grDt.DataTable != null)
                     {
+                        this.grDt.DataTable.Rows.Clear();
                         foreach (var item in inquiry.transactions)
                         {
                             this.grDt.DataTable.Rows.Add();
@@ -674,11 +682,20 @@ namespace STDApp.Bank
                             this.grDt.DataTable.SetValue("SenderBank", index, item.corresponsiveBankName ?? "");
                             this.grDt.DataTable.SetValue("SenderBankId", index, item.corresponsiveBankId ?? "");
                             this.grDt.DataTable.SetValue("Chanel", index, item.channel);
+
+                            var sqlCheckExist = string.Format(QueryString.CheckInquiryExist, this.grDt.GetValueCustom("TransNo", index));
+                            var data1 = dbProvider.QuerySingle(sqlCheckExist);
+                            if (data1 != null && data1["Existed"].ToString() != "Existed")
+                            {
+                                item.InsertData(data.requestId, data.providerId, data.merchantId.ToString());
+                            }
+
                         }
                         this.grDt.AutoResizeColumns();
                     }
                 }
                 // }
+                this.btbClear.Item.Enabled = true;
             }
             catch (Exception ex)
             { }
@@ -691,6 +708,7 @@ namespace STDApp.Bank
             BubbleEvent = true;
             this.Freeze(true);
             this.Clear();
+            this.btbClear.Item.Enabled = false;
             this.Freeze(false);
         }
         private void Clear()
@@ -707,7 +725,7 @@ namespace STDApp.Bank
 
         private void cbbBank_ComboSelectAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
         {
-            if(this.grHdr == null || this.grDt == null)
+            if (this.grHdr == null || this.grDt == null)
             {
                 return;
             }
@@ -853,5 +871,85 @@ namespace STDApp.Bank
         }
 
         private SAPbouiCOM.ComboBox cbbCur;
+        private SAPbouiCOM.Button btbClear;
+
+        private void btbClear_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            this.Freeze(true);
+            try
+            {
+                UIHelper.LogMessage($"Bắt đầu đối soát", UIHelper.MsgType.StatusBar, false);
+                for (var index = 0; index < this.grDt.DataTable.Rows.Count; index++)
+                {
+                    var transNo = this.grDt.DataTable.GetValue("TransNo", index).ToString();
+                    var creditStr = this.grDt.DataTable.GetValue("Credit", index).ToString();
+                    decimal credit = 0;
+                    if (!decimal.TryParse(creditStr, out credit) || credit <= 0)
+                    {
+                        continue;
+                    }
+                    var query = string.Format(QueryString.PaymentClear, transNo);
+                    var hash = dbProvider.QuerySingle(query);
+                    if (hash == null)
+                    {
+                        continue;
+                    }
+                    var diffStr = hash["Diff"].ToString();
+                    decimal diff = 0;
+                    if (decimal.TryParse(diffStr, out diff))
+                    {
+                        if (diff == 0)
+                        {
+                            // clear
+                            var message = string.Empty;
+                            var ret = ClearPayment(hash["BatchNo"].ToString(), ref message);
+
+                            UIHelper.LogMessage(message, UIHelper.MsgType.StatusBar, !ret);
+                            if(ret)
+                            {
+                                query = string.Format(QueryString.UpdateAfterCleae, transNo, hash["BatchNo"].ToString());
+                                var retupdate = dbProvider.ExecuteNonQuery(query);
+                            }
+                        }
+                        else
+                        {
+                            UIHelper.LogMessage($"{hash["BatchNo"].ToString()} lệch {diff}", UIHelper.MsgType.StatusBar, true);
+                            continue;
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                UIHelper.LogMessage($"Lỗi {ex.Message}", UIHelper.MsgType.StatusBar, false);
+            }
+            this.Freeze(false);
+        }
+
+        private bool ClearPayment(string BatchNo, ref string message)
+        {
+            try
+            {
+                var queruCheck = string.Format(QueryString.CheckCardcode, BatchNo);
+                var data = dbProvider.QuerySingle(queruCheck);
+                if(data == null || data["CountCode"].ToString() == "0")
+                {
+                    message = "Hóa đơn không tồn tại trên SAP";
+                    return false;
+                }
+                else if(data["CountCode"].ToString() != "1")
+                {
+                    message = "Những hóa đơn này thuộc nhiều khách hàng";
+                    return false;
+                }
+                return PaymentViaDI.CreateIncommingPayment(BatchNo, ref message);
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return false;
+        }
     }
 }

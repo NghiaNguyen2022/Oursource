@@ -1,0 +1,276 @@
+{
+	"info": {
+		"_postman_id": "deac8c61-b515-43c3-b130-d9a6ed55f0c8",
+		"name": "BIDV",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "26839069",
+		"_collection_link": "https://paulnguyen2023.postman.co/workspace/Team-Workspace~21346ccf-33e1-4672-8e47-4d3ecee880ea/collection/26839069-deac8c61-b515-43c3-b130-d9a6ed55f0c8?action=share&source=collection_link&creator=26839069"
+	},
+	"item": [
+		{
+			"name": "GetToken",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"accept-encoding": true,
+					"accept": true,
+					"connection": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://bidv.net:9303/bidvorg/service/ibank-oauth/oauth2/authorize?response_type=code&client_id=df616d171dae4974042d4d95577c05de&scope=create&redirect_uri=https://azstvntstsapb1db:50000/b1s/v1/BIDV_TEST",
+					"protocol": "https",
+					"host": [
+						"bidv",
+						"net"
+					],
+					"port": "9303",
+					"path": [
+						"bidvorg",
+						"service",
+						"ibank-oauth",
+						"oauth2",
+						"authorize"
+					],
+					"query": [
+						{
+							"key": "response_type",
+							"value": "code"
+						},
+						{
+							"key": "client_id",
+							"value": "df616d171dae4974042d4d95577c05de"
+						},
+						{
+							"key": "scope",
+							"value": "create"
+						},
+						{
+							"key": "redirect_uri",
+							"value": "https://azstvntstsapb1db:50000/b1s/v1/BIDV_TEST"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Inquiry",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {
+					"user-agent": true,
+					"host": true,
+					"accept": true,
+					"content-length": true,
+					"content-type": true,
+					"connection": true,
+					"accept-encoding": true
+				}
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "AAIgZGY2MTZkMTcxZGFlNDk3NDA0MmQ0ZDk1NTc3YzA1ZGU2ZTQkqWTiHhyIgQbSgxR8GZSTwT7OPjxX9VUmPRy13DSmZ-R4Cn_4lFa8w8UTn686nOtAo_hS8sFFr-zQ3aF8_iFI_xj-qF9P2vC9ROhdh-X7dk9SvcphIMstE31I4oU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-API-Interaction-ID",
+						"value": "20241211065103",
+						"type": "text"
+					},
+					{
+						"key": "Timestamp",
+						"value": "202412110651272101",
+						"type": "text"
+					},
+					{
+						"key": "Channel",
+						"value": "IERP",
+						"type": "text"
+					},
+					{
+						"key": "User-Agent",
+						"value": "IERP",
+						"type": "text"
+					},
+					{
+						"key": "Accept",
+						"value": "application/json",
+						"type": "text"
+					},
+					{
+						"key": "X-JWS-Signature",
+						"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..xQXpDCVM0mVEu9IgoEdh-qOdYL6ORvrkPFLBzDqMistlpdrxoE5iKl8eyRZenPUg2YZKi2YLdghPRDvjo6VkNtrUr0pW9KoaF3Qdd_4J7ACzNq5RQ7AX7HOZ7bsT-3-KecF_qgv0Dwb6kVphiZHtJoy4XRiDpVOdsOuJCtDq-UaYPlfsk01lS2-kxinhT0yPgERS_W04zS4T_yVCiu6YSmNg8y6g7jKGtaH9bGJyGgcWorhBfPYV3OL4xsSVALFC3vebIYNSm96R3IsupDE_Y4ZuHd34m0Lj_YNAvgbl3tr6gj6q5HVh4c3lJrxh_EHTlLpDmKzlSBwYaq34cJXszMMU6iJTh1p71o5AhJzHpv5NtILFsaqRPkS7xX36WtFfR8y1xuwrnLKJCcT2SAB8L0z7aYdeMxG1gnygJ3Wp_YiObIQ1OpKfNAohvv5ZUJJvV_SStXzYqkhYy2eBAgJ1RczxkNhksfJTiqfHvHQMpJpAh8KuiC0SffTuNv1wCUHnWlSaXUpbyr-lIQ6VMd8fyl-iC91478cvtTNQesSwMHK858UyBHFtAH9D_I6nSS9QsPoM-3bnRUysqOQJR-Q6Br9hpp2FlJzYLZZeKgVAu1Nvd2_m_6AC9dpPdL5swDOTffZ49g1oBXCVsCJl0hvDoOJKgEioZ0QgUgwD3GeFkms",
+						"type": "text"
+					},
+					{
+						"key": "X-Client-Certificate",
+						"value": "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",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"recipients\": [\r\n        {\r\n            \"header\": {},\r\n            \"encrypted_key\": \"qAcgXGfSUICx1N42jS6Vuy4xZ33ve3Ir\"\r\n        }\r\n    ],\r\n    \"protected\": \"eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMTI4R0NNIn0\",\r\n    \"ciphertext\": \"KR8dskTSmqbS2UgAI-zhGzTn2fa4vRKQp64g_L0y9wXh8UmhHm9BLdtb3MQkqk9nDFRNemO3tmS7VXzyLwCZF2sUy6_JxMjncAXinHdwadSqRoitSdqiIw\",\r\n    \"iv\": \"h01iVEgqCMq4cAJa\",\r\n    \"tag\": \"LoCXiEuwj33fNrAygCEfJw\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://bidv.net:9303/bidvorg/service/open-banking/inquire-account-transaction/v1?Scope=read&JWE=Yes",
+					"protocol": "https",
+					"host": [
+						"bidv",
+						"net"
+					],
+					"port": "9303",
+					"path": [
+						"bidvorg",
+						"service",
+						"open-banking",
+						"inquire-account-transaction",
+						"v1"
+					],
+					"query": [
+						{
+							"key": "Scope",
+							"value": "read"
+						},
+						{
+							"key": "JWE",
+							"value": "Yes"
+						}
+					]
+				}
+			},
+			"response": [
+				{
+					"name": "Inquiry",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-API-Interaction-ID",
+								"value": "20241211065102",
+								"type": "text"
+							},
+							{
+								"key": "Timestamp",
+								"value": "202412110651272101",
+								"type": "text"
+							},
+							{
+								"key": "Channel",
+								"value": "IERP",
+								"type": "text"
+							},
+							{
+								"key": "User-Agent",
+								"value": "IERP",
+								"type": "text"
+							},
+							{
+								"key": "accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "X-JWS-Signature",
+								"value": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..xQXpDCVM0mVEu9IgoEdh-qOdYL6ORvrkPFLBzDqMistlpdrxoE5iKl8eyRZenPUg2YZKi2YLdghPRDvjo6VkNtrUr0pW9KoaF3Qdd_4J7ACzNq5RQ7AX7HOZ7bsT-3-KecF_qgv0Dwb6kVphiZHtJoy4XRiDpVOdsOuJCtDq-UaYPlfsk01lS2-kxinhT0yPgERS_W04zS4T_yVCiu6YSmNg8y6g7jKGtaH9bGJyGgcWorhBfPYV3OL4xsSVALFC3vebIYNSm96R3IsupDE_Y4ZuHd34m0Lj_YNAvgbl3tr6gj6q5HVh4c3lJrxh_EHTlLpDmKzlSBwYaq34cJXszMMU6iJTh1p71o5AhJzHpv5NtILFsaqRPkS7xX36WtFfR8y1xuwrnLKJCcT2SAB8L0z7aYdeMxG1gnygJ3Wp_YiObIQ1OpKfNAohvv5ZUJJvV_SStXzYqkhYy2eBAgJ1RczxkNhksfJTiqfHvHQMpJpAh8KuiC0SffTuNv1wCUHnWlSaXUpbyr-lIQ6VMd8fyl-iC91478cvtTNQesSwMHK858UyBHFtAH9D_I6nSS9QsPoM-3bnRUysqOQJR-Q6Br9hpp2FlJzYLZZeKgVAu1Nvd2_m_6AC9dpPdL5swDOTffZ49g1oBXCVsCJl0hvDoOJKgEioZ0QgUgwD3GeFkms",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"recipients\": [\r\n        {\r\n            \"header\": {},\r\n            \"encrypted_key\": \"uAKhjlZEU6Fd6JnxBVxm84XvVrlqgSsM\"\r\n        }\r\n    ],\r\n    \"protected\": \"eyJhbGciOiJBMjU2S1ciLCJlbmMiOiJBMTI4R0NNIn0\",\r\n    \"ciphertext\": \"8YOOyyo4UN_Hs_uygJI5ve5s7vAplKJ2sGOlCKzsgz3HaCgPA5XHZy7qXb8zxaPEX02RlhU6PNEwJ92fEd6aOeOSzJ0UhFE7rfHHHCGHnk6iTd8JhMRH8g\",\r\n    \"iv\": \"9cW8AUdg2Cy74aag\",\r\n    \"tag\": \"CAfD1RFcwOInsTQfauRjUQ\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "https://bidv.net:9303/bidvorg/service/open-banking/inquire-account-transaction/v1?Scope=read&JWE=Yes",
+							"protocol": "https",
+							"host": [
+								"bidv",
+								"net"
+							],
+							"port": "9303",
+							"path": [
+								"bidvorg",
+								"service",
+								"open-banking",
+								"inquire-account-transaction",
+								"v1"
+							],
+							"query": [
+								{
+									"key": "Scope",
+									"value": "read"
+								},
+								{
+									"key": "JWE",
+									"value": "Yes"
+								}
+							]
+						}
+					},
+					"status": "Error",
+					"code": 400,
+					"_postman_previewlanguage": "xml",
+					"header": [
+						{
+							"key": "X-Backside-Transport",
+							"value": "FAIL FAIL"
+						},
+						{
+							"key": "Content-Type",
+							"value": "text/xml"
+						},
+						{
+							"key": "Connection",
+							"value": "close"
+						}
+					],
+					"cookie": [],
+					"body": null
+				}
+			]
+		}
+	]
+}

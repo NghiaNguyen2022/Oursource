@@ -42,6 +42,8 @@ namespace STDApp
         public static string APIUsername = "SB_Stada_BizAPI";
         public static string APIPassword = "9qW0k9/5khmSqdOE";
         public static string APISignature = "U5E0ykWrsQSqkjS6xR+Qnj3cbuNUi8YgSC2r6/BcXrpdcjOx6XYh7XNjQf806Yay";
+
+        public static string ChecksumKey = "NzlkNTJmZDBhMjcyNDM0MjBkZWQ4NDI0ODNjYjY2YTI=";
     }
 
     public class GlobalsConfig : SysGlobals

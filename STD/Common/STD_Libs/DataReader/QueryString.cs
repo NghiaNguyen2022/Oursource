@@ -201,15 +201,78 @@ namespace STD.DataReader
             get
             {
                 var schema = DBName; //ConfigurationManager.AppSettings["Schema"];
-                return "SELECT Count(*) AS \"Exist\" FROM \"" + schema + "\".\"vw_PaymentUserRole\" WHERE \"Role\" = 'Approver' AND \"UserName\" = '{0}'";
+                return "SELECT Count(*) AS \"Exist\" FROMc\"vw_PaymentUserRole\" WHERE \"Role\" = 'Approver' AND \"UserName\" = '{0}'";
             }
         }
 
+        public static string CheckCardcode
+        {
+            get
+            {
+                var schema = DBName;
+                return "SELECT count (DISTINCT \"CardCode\") \"CountCode\" " +
+                         "FROM  \"" + schema + "\".OINV T0 " +
+                        "WHERE T0.\"DocEntry\" in (select \"OrderNo\" FROM\"" + schema + "\".\"tb_Payoo_BatchDetail\" T0 WHERE T0.\"BatchNo\" = '{0}')";
+            }
+        }
+
+        public static string UpdateAfterCleae
+        {
+            get
+            {
+                var schema = DBName;
+                return "UPDATE \"" + schema + "\".\"tb_Payoo_BatchDetail\" SET \"BankRecStatus\" = 'Y', \"BankRefNo\" = '{0}' where \"BatchNo\" = '{1}'";
+            }
+        }
+
+        public static string GetStatusPayoo
+        {
+            get
+            {
+                var schema = DBName;
+                return " SELECT DISTINCT \"BankRecStatus\", \"BankRefNo\" "+
+                          "FROM \"" + schema + "\".\"tb_Payoo_BatchDetail\" " +
+                          "WHERE \"BatchNo\" = '{0}'";
+            }
+        }
+        public static string PaymentData
+        {
+            get
+            {
+                var schema = DBName;
+                return "SELECT DISTINCT T0.\"CardCode\", T0.\"DocEntry\" , t0.\"DocCur\", T1.\"TransferAmount\" " +
+                         "FROM  \"" + schema + "\".OINV T0 " +
+                         "JOIN \"" + schema + "\".\"tb_Payoo_BatchDetail\" T1 ON T0.\"DocEntry\" = T1.\"OrderNo\"  " +
+                        "WHERE T1.\"BatchNo\" = '{0}' and T0.\"DocStatus\" = 'O'";
+            }
+        }
         public static string CheckOrderExists
         {
             get
             {
                 return CallStoreBySystem("usp_Payoo_CheckOrderExists", "'{0}'");
+            }
+        }
+        public static string CheckBatchExists
+        {
+            get
+            {
+                return CallStoreBySystem("sp_Payoo_BatchExist", "'{0}'");
+            }
+        }
+        public static string CheckInquiryExist
+        {
+            get
+            {
+                return CallStoreBySystem("sp_Bank_InquiryExist", "'{0}'");
+            }
+        }
+
+        public static string PaymentClear
+        {
+            get
+            {
+                return CallStoreBySystem("sp_Bank_PayooClear", "'{0}'");
             }
         }
     }

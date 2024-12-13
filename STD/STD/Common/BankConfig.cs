@@ -47,7 +47,7 @@ namespace STDApp.Common
                 ParentID = FolderInfomation.MenuID,
                 FormType = "STDApp.Payoo.frmBatch"
             };
-            AddForms(InquiryForm, 0);
+            AddForms(BatchForm, 1);
 
 
             PaymentForm = new AddonUserForm()

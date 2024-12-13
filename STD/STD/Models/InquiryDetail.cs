@@ -29,22 +29,22 @@ namespace STDApp.Models
         {
             try
             {
-                var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"InquiryDetail\" VALUES ( ";
+                var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_InquiryDetail\" VALUES ( ";
                 query += $"'{requestId}',";
                 query += $"'{providerId}',";
                 query += $"'{merchantId}',";
                 query += $"'{transactionDate}',";
                 query += $"'{transactionContent}',";
-                query += $"{debit},";
-                query += $"{credit},";
-                query += $"{accountBal},";
+                query += $"{debit??"0"},";
+                query += $"{credit ?? "0"},";
+                query += $"{accountBal ?? "0"},";
                 query += $"'{transactionNumber}',";
                 query += $"'{corresponsiveAccount}',";
                 query += $"'{corresponsiveAccountName}',";
-                query += $"'{agency}',";
-                query += $"'{virtualAccount}',";
-                query += $"'{corresponsiveBankName}',";
-                query += $"'{corresponsiveBankId}',";
+                query += $"'{agency ?? ""}',";
+                query += $"'{virtualAccount ?? ""}',";
+                query += $"'{corresponsiveBankName ?? ""}',";
+                query += $"'{corresponsiveBankId ?? ""}',";
                 query += $"'{channel}'";
                 query += ")";
 

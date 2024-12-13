@@ -3,6 +3,7 @@ using SAPCore;
 using STDApp.Bank;
 using STDApp.Common;
 using STDApp.Payment;
+using STDApp.Payoo;
 using System;
 
 namespace STDApp
@@ -35,6 +36,10 @@ namespace STDApp
                     else if (pVal.MenuUID == bankConfig.PaymentForm.MenuID)
                     {
                         frmPayment.ShowForm();
+                    }
+                    else if (pVal.MenuUID == bankConfig.BatchForm.MenuID)
+                    {
+                        frmBatch.ShowForm();
                     }
                     //else if (pVal.MenuUID == GlobalsConfig.Instance.PaymentReviewFormInfo.MenuID)
                     //{

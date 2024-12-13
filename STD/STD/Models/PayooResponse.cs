@@ -38,6 +38,9 @@ namespace STDApp.Models
         [Description("OK")]
         Res0 = 0,
 
+        [Description("Không có data")]
+        Res8 = 8,
+
         [Description("support./ Lỗi hệ thống.Vui lòng liên hệ kỹ thuật Payoo để được hỗ trợ.")]
         Res1000 = 1000,
 

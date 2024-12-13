@@ -5,6 +5,7 @@ using STDApp.Models;
 using PN.SmartLib.Helper;
 using SAPbobsCOM;
 using SAPCore.SAP.DIAPI;
+using STD.DataReader;
 
 namespace STDApp.AccessSAP
 {
@@ -95,6 +96,61 @@ namespace STDApp.AccessSAP
             DisConnectDI();
             return ret;
         }
+        public static bool CreateIncommingPayment(string BatchNo, ref string message)
+        {
+            if (!ConnectDI(ref message))
+                return false;
+            var query = string.Format(QueryString.PaymentData, BatchNo);
+            var datas = dbProvider.QueryList(query);
+            if(datas != null && datas.Count() > 0)
+            {
+                var cardCode = datas[0]["CardCode"].ToString();
+                var currency = datas[0]["DocCur"].ToString();
+                int lRetCode = -1, lErrCode;
+                SAPbobsCOM.Payments oPayment;
+                oPayment = (SAPbobsCOM.Payments)DIConnection.Instance.Company.GetBusinessObject(BoObjectTypes.oIncomingPayments);
+
+                oPayment.CardCode = cardCode;
+                oPayment.DocCurrency = currency;
+                oPayment.DocDate = DateTime.Now;
+                var objectType = BoRcptInvTypes.it_Invoice;
+                double total = 0;
+                foreach(var item in datas)
+                {
+                    oPayment.Invoices.Add();
+                    oPayment.Invoices.SetCurrentLine(0);
+                    oPayment.Invoices.DocEntry = int.Parse(item["DocEntry"].ToString());
+                    oPayment.Invoices.InvoiceType = objectType;
+                    oPayment.Invoices.SumApplied = double.Parse(item["TransferAmount"].ToString());
+                    total += oPayment.Invoices.SumApplied;
+                }
+                oPayment.TransferSum = total;
+                oPayment.TransferAccount = "112101";
+                var ret1 = -1;
+                ret1 = oPayment.Add();
+                if (ret1 != 0)
+                {
+                    DIConnection.Instance.Company.GetLastError(out lErrCode, out message);
+                    DisConnectDI();
+                    return false;
+                }
+                else
+                {
+                    string newId = string.Empty;
+                    DIConnection.Instance.Company.GetNewObjectCode(out newId);
+                    message = $"Tạo thành đơn id {newId}";
+
+                    DisConnectDI();
+                    return true;
+                }
+            }
+            else
+            {
+                message = "Không có dữ liệu";
+            }
+            DisConnectDI();
+            return false;
+        }
         public static PaymentActionResult CreatePayment(PaymentDetail data, string key, ref string message)
         {
             if (!ConnectDI(ref message))
@@ -125,7 +181,7 @@ namespace STDApp.AccessSAP
                     else
                         oPayment.Invoices.AppliedFC = (double)data.Amount;
                 }
-                oPayment.TransferAccount = "112101";// d;ata.BankAccount;
+                oPayment.TransferAccount = "112101";// d;ata.BankAccount;112101
                 oPayment.TransferSum = (double)data.Amount;
                 oPayment.UserFields.Fields.Item("U_PaymentKey").Value = key;
                 if (data.Cashflow != "-")

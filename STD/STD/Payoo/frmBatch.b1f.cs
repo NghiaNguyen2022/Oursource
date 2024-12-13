@@ -4,12 +4,16 @@ using SAPbouiCOM.Framework;
 using SAPCore;
 using SAPCore.Config;
 using SAPCore.Helper;
+using SAPCore.SAP.DIAPI;
+using STD.DataReader;
 using STDApp.Common;
 using STDApp.Models;
 using System;
 using System.Configuration;
 using System.IO;
+using System.Text;
 using System.Text.Json;
+using System.Web.Script.Serialization;
 
 namespace STDApp.Payoo
 {
@@ -19,7 +23,7 @@ namespace STDApp.Payoo
         public frmBatch()
         {
         }
-        
+
 
         /// <summary>
         /// Initialize components. Called by framework after form created.
@@ -39,8 +43,8 @@ namespace STDApp.Payoo
             this.btnLoad.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnLoad_ClickBefore);
             this.grHdr = ((SAPbouiCOM.Grid)(this.GetItem("grHdr").Specific));
             this.grDt = ((SAPbouiCOM.Grid)(this.GetItem("grDt").Specific));
-            this.btnClear = ((SAPbouiCOM.Button)(this.GetItem("btnClear").Specific));
-            this.btnClear.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnClear_ClickBefore);
+            this.btnSave = ((SAPbouiCOM.Button)(this.GetItem("btnSave").Specific));
+            this.btnSave.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnSave_ClickBefore);
             this.OnCustomInitialize();
 
         }
@@ -83,11 +87,24 @@ namespace STDApp.Payoo
             }
         }
 
-        private string Page
+        private int Page
         {
             get
             {
-                return UIHelper.GetTextboxValue(txtPag);
+                try
+                {
+                    if (string.IsNullOrEmpty(txtPag.Value))
+                        return 1;
+                    var ret = 1;
+                    int.TryParse(txtPag.Value, out ret);
+                    return ret;
+                }
+                catch (Exception ex)
+                {
+
+                }
+                return 1;
+                // return UIHelper.GetTextboxValue(txtPag);
             }
         }
 
@@ -98,36 +115,49 @@ namespace STDApp.Payoo
                 return UIHelper.GetComboValue(cbbBank);
             }
         }
-        private string BatchNo
+        private int BatchNo
         {
             get
             {
-                return UIHelper.GetComboValue(cbbBat);
-            }
-        }
-        public static void ShowForm()
-        {
-            if (instance == null)
-            {
                 try
                 {
-                    instance = new frmBatch();
-                    instance.InitControl();
-                    instance.Show();
-                    IsFormOpen = true;
+                    if (string.IsNullOrEmpty(cbbBat.Value))
+                        return 1;
+                    var ret = 1;
+                    int.TryParse(cbbBat.Value, out ret);
+                    return ret;
                 }
                 catch (Exception ex)
                 {
 
                 }
+                return 1;
+            }
+        }
+        public static void ShowForm()
+        {
+            try
+            {
+                if (instance == null)
+                {
+                    instance = new frmBatch();
+                }
+                instance.InitControl();
+                instance.Show();
+                IsFormOpen = true;
+            }
+            catch (Exception ex)
+            {
+
             }
         }
         private void InitControl()
         {
             SetLocation();
-            
+
             UIHelper.ComboboxSelectDefault(cbbBank);
-            cbbBank.Item.Enabled = false;
+            //this.btnSave.Item.Enabled = false;
+            //cbbBank.Item.Enabled = false;
         }
 
         private void SetLocation()
@@ -154,18 +184,18 @@ namespace STDApp.Payoo
             this.cbbBat.Item.Left = this.lblBat.Item.Left + this.lblBat.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.lblPag.Item.Top = this.lblBank.Item.Top;
-            this.lblPag.Item.Left = this.txtTrDa.Item.Left + this.txtTrDa.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.lblPag.Item.Left = this.cbbBat.Item.Left + this.cbbBat.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.txtPag.Item.Top = this.lblBank.Item.Top;
             this.txtPag.Item.Left = this.lblPag.Item.Left + this.lblPag.Item.Width + CoreSetting.UF_HorizontallySpaced;
-            
+
             var labBottom = this.lblBank.Item.Top + this.lblBank.Item.Height;
             var bttTop = labBottom - this.btnLoad.Item.Height;
             this.btnLoad.Item.Top = bttTop;
             this.btnLoad.Item.Left = this.txtPag.Item.Left + this.txtPag.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
-            this.btnClear.Item.Top = bttTop;
-            this.btnClear.Item.Left = this.btnLoad.Item.Left + this.btnLoad.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.btnSave.Item.Top = bttTop;
+            this.btnSave.Item.Left = this.btnLoad.Item.Left + this.btnLoad.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.grHdr.Item.Left = this.lblBank.Item.Left;
             this.grHdr.Item.Width = maxw - grHdr.Item.Left - 40;
@@ -358,9 +388,9 @@ namespace STDApp.Payoo
 
             if (string.IsNullOrEmpty(token))
             {
-                if(string.IsNullOrEmpty(mesage))
-                UIHelper.LogMessage($"Không lấy được token từ phía ngân hàng, vui lòng thử lại",
-                    UIHelper.MsgType.StatusBar, true);
+                if (string.IsNullOrEmpty(mesage))
+                    UIHelper.LogMessage($"Không lấy được token từ phía ngân hàng, vui lòng thử lại",
+                        UIHelper.MsgType.StatusBar, true);
                 else
                     UIHelper.LogMessage(mesage,
                         UIHelper.MsgType.StatusBar, true);
@@ -412,7 +442,7 @@ namespace STDApp.Payoo
                 var symmetricKeys = HexToByteArray(symmetricKey);
 
                 var json = JsonSerializer.Serialize(requestData);
-                var encryptData = APIUtil.doEncryptJWE(json, symmetricKey);             
+                var encryptData = APIUtil.doEncryptJWE(json, symmetricKey);
                 request.AddStringBody(encryptData, DataFormat.Json);
 
                 var signature = APIUtil.DoSignatureJWS(encryptData);
@@ -525,35 +555,58 @@ namespace STDApp.Payoo
                 };
 
                 var client = new RestClient(options);
-                var request = new RestRequest(APIPayooConstant.SettlementTransactionsLink,  Method.Post);
+                var request = new RestRequest(APIPayooConstant.SettlementTransactionsLink, Method.Post);
                 request.AddHeader("Content-Type", "application/json");
                 request.AddHeader("APIUsername", APIPayooConstant.APIUsername);
                 request.AddHeader("APIPassword", APIPayooConstant.APIPassword);
                 request.AddHeader("APISignature", APIPayooConstant.APISignature);
                 request.AddHeader("Accept", "application/json");
                 var transDate = DateTime.ParseExact(TransDate, "yyyyMMdd", null).ToString("yyyyMMdd");
-               
-                var requestData = new
+
+                var obj = new PayooGetSettlement
                 {
-                    SettlementDate = transDate,
                     BatchNumber = BatchNo,
-                    PageNumber = Page
+                    PageNumber = Page,
+                    SettlementDate = transDate
                 };
-                var requestDataJson = JsonSerializer.Serialize(requestData);
-                var requestDataFull = new
-                {
-                    RequestData = requestDataJson,
-                    SecureHash = APIUtil.EncryptSHA512(requestDataJson)//  "35b8fd5ca7e314b134126add44ad7be804462e17f0e28956df3bd0d4c673339e856bbf3b83635ada03ee5efd54941a62e8c370931cf3bdd8d9f555e75e5accc9"
-                };
-                var finalRequestJson = JsonSerializer.Serialize(requestDataFull);               
-                request.AddStringBody(finalRequestJson, DataFormat.Json);
+                var objJson = new JavaScriptSerializer();
+                var objBody = objJson.Serialize(obj);
+
+                var oRequest = new PayoRequest();
+                oRequest.RequestData = objBody;
+                // sign data
+                oRequest.SecureHash = APIUtil.EncryptSHA512(APIPayooConstant.ChecksumKey + oRequest.RequestData);
+                var objJsonFinal = new JavaScriptSerializer();
+                string temp = objJsonFinal.Serialize(oRequest);
+
+                request.AddParameter("application/json", temp, ParameterType.RequestBody);
+
+                //var requestData = new
+                //{
+                //    SettlementDate = transDate,
+                //    BatchNumber = BatchNo,
+                //    PageNumber = Page
+                //};
+                //var requestDataJson = JsonSerializer.Serialize(requestData);
+                //var requestDataFull = new
+                //{
+                //    RequestData = requestDataJson,
+                //    SecureHash = APIUtil.EncryptSHA512(APIPayooConstant.ChecksumKey + requestDataJson)//  "35b8fd5ca7e314b134126add44ad7be804462e17f0e28956df3bd0d4c673339e856bbf3b83635ada03ee5efd54941a62e8c370931cf3bdd8d9f555e75e5accc9"
+                //};
+                //var finalRequestJson = JsonSerializer.Serialize(requestDataFull);
+                //finalRequestJson = @"{
+                //                ""RequestData"": " + @"""" + requestDataJson + @"""
+                //                ""SecureHash"": " + @"""" + APIUtil.EncryptSHA512(APIPayooConstant.ChecksumKey + requestDataJson) + @"""
+                //            }
+                //";
+                //request.AddStringBody(finalRequestJson, DataFormat.Json);
 
                 var response = client.Execute(request);
 
                 var result = response.Content;
 
                 var resp = JsonSerializer.Deserialize<PayooResponse>(result);
-                if(resp == null)
+                if (resp == null)
                 {
                     UIHelper.LogMessage($"Lỗi không có phản hồi, vui lòng check lại", UIHelper.MsgType.StatusBar, true);
                     return;
@@ -567,19 +620,20 @@ namespace STDApp.Payoo
                 }
 
                 PayooResponseCode rpcode = (PayooResponseCode)CoreExtensions.GetEnumValue<PayooResponseCode>(respDataObj.ResponseCode);
-                if(rpcode != PayooResponseCode.Res0)
+                if (rpcode != PayooResponseCode.Res0)
                 {
                     UIHelper.LogMessage(rpcode.GetDescription(), UIHelper.MsgType.StatusBar, true);
                     return;
                 }
                 var rpDataTransaction = JsonSerializer.Deserialize<PayooResponseDataExt>(respDataStr);
-                    
-               // var inquiry = JsonSerializer.Deserialize<InquiryHeader>(result);
+
+                // var inquiry = JsonSerializer.Deserialize<InquiryHeader>(result);
 
                 if (rpDataTransaction != null)
                 {
                     if (this.grHdr != null && this.grHdr.DataTable != null)
                     {
+                        this.grHdr.DataTable.Rows.Clear();
                         this.grHdr.DataTable.Rows.Add();
                         var index = grHdr.DataTable.Rows.Count - 1;
                         this.grHdr.DataTable.SetValue("BatchNo", index, rpDataTransaction.BatchNo);
@@ -591,11 +645,21 @@ namespace STDApp.Payoo
 
                     if (this.grDt != null && this.grDt.DataTable != null)
                     {
+                        this.grDt.DataTable.Rows.Clear();
+                        var status = "N";
+                        var refBank =string.Empty;
+                        var query = string.Format(QueryString.GetStatusPayoo, rpDataTransaction.BatchNo);
+                        var data = dbProvider.QuerySingle(query);
+                        if(data != null)
+                        {
+                            status = data["BankRecStatus"].ToString();
+                            refBank = data["BankRefNo"].ToString();
+                        }
                         foreach (var item in rpDataTransaction.TransactionList)
                         {
                             this.grDt.DataTable.Rows.Add();
                             var index = grDt.DataTable.Rows.Count - 1;
-                            this.grDt.DataTable.SetValue("OrdeNo", index, item.OrderNo);
+                            this.grDt.DataTable.SetValue("OrderNo", index, item.OrderNo);
                             this.grDt.DataTable.SetValue("ShopId", index, item.ShopId);
                             this.grDt.DataTable.SetValue("SellerName", index, item.SellerName);
                             this.grDt.DataTable.SetValue("TransferAmount", index, item.MoneyAmount);
@@ -603,12 +667,14 @@ namespace STDApp.Payoo
                             this.grDt.DataTable.SetValue("Status", index, item.Status);
                             this.grDt.DataTable.SetValue("IntegDate", index, DateTime.Now.ToString("yyyyMMdd"));
                             this.grDt.DataTable.SetValue("IntegTime", index, DateTime.Now.ToString("HHmmss"));
-                            this.grDt.DataTable.SetValue("RecWithBank", index, "Chưa");
-                            this.grDt.DataTable.SetValue("BankRefNo", index, "");
+                            this.grDt.DataTable.SetValue("RecWithBank", index, status);
+                            this.grDt.DataTable.SetValue("BankRefNo", index, refBank);
 
                         }
                         this.grDt.AutoResizeColumns();
                     }
+
+                    this.btnSave.Item.Enabled = true;
                 }
                 // }
             }
@@ -616,13 +682,62 @@ namespace STDApp.Payoo
             { }
         }
 
-        private SAPbouiCOM.Button btnClear;
+        private SAPbouiCOM.Button btnSave;
 
-        private void btnClear_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        private void btnSave_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
         {
             BubbleEvent = true;
             this.Freeze(true);
-            this.Clear();
+            try
+            {
+                
+
+                if (grHdr != null && grHdr.DataTable != null && grHdr.DataTable.Rows.Count > 0)
+                {
+                    var sqlCheckExist = string.Format(QueryString.CheckBatchExists, this.grHdr.GetValueCustom("BatchNo", 0));
+                    var data = dbProvider.QuerySingle(sqlCheckExist);
+                    if (data != null && data["Existed"].ToString() == "Existed")
+                    {
+                        UIHelper.LogMessage($"Batch này đã được lưu", UIHelper.MsgType.StatusBar, false);
+
+                        this.Freeze(false);
+                        return;
+                    }
+
+                    var insertHd = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Payoo_BatchHeader\" VALUES ( ";
+                    insertHd += $"'{this.grHdr.GetValueCustom("BatchNo", 0)}',";
+                    insertHd += $"{this.grHdr.GetValueCustom("Amount", 0)},";
+                    insertHd += $"{this.grHdr.GetValueCustom("RowCount", 0)},";
+                    insertHd += $"{this.grHdr.GetValueCustom("PageSize", 0)}";
+                    insertHd += ")";
+                    var retHeader = dbProvider.ExecuteNonQuery(insertHd);
+
+                    for (var index = 0; index < this.grDt.DataTable.Rows.Count; index++)
+                    {
+                        var insertdt = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Payoo_BatchDetail\" VALUES ( ";
+                        insertdt += $"'{this.grHdr.GetValueCustom("BatchNo", 0)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("OrderNo", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("ShopId", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("SellerName", index)}',";
+                        insertdt += $"{this.grDt.GetValueCustom("TransferAmount", index)},";
+                        insertdt += $"'{this.grDt.GetValueCustom("InvoiceDate", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("Status", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("IntegDate", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("IntegTime", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("RecWithBank", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("BankRefNo", index)}'";
+                        insertdt += ")";
+                        var retDetail = dbProvider.ExecuteNonQuery(insertdt);
+                    }
+                }
+                UIHelper.LogMessage($"Lưu hoàn tất", UIHelper.MsgType.StatusBar, false);
+
+            }
+            catch (Exception ex)
+            {
+
+            }
+            //this.Clear();
             this.Freeze(false);
         }
         private void Clear()
@@ -635,6 +750,7 @@ namespace STDApp.Payoo
             {
                 this.grDt.DataTable.Rows.Clear();
             }
+            this.btnSave.Item.Enabled = false;
         }
 
         private void cbbBank_ComboSelectAfter(object sboObject, SAPbouiCOM.SBOItemEventArg pVal)
@@ -645,7 +761,7 @@ namespace STDApp.Payoo
             //}
             //this.Freeze(true);
 
-          
+
             //this.Freeze(false);
         }
     }
