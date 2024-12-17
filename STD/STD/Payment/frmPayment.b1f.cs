@@ -573,7 +573,7 @@ namespace STDApp.Payment
                 oCol1 = (SAPbouiCOM.EditTextColumn)this.grHdr.Columns.Item("PaymentEntry");
                 oCol1.LinkedObjectType = SAPObjectType.oVendorPayments;
 
-              //  this.grHdr.CollapseLevel = 1;
+                //  this.grHdr.CollapseLevel = 1;
                 this.grHdr.AutoResizeColumns();
                 SAPbouiCOM.EditTextColumn oCol = null;
                 oCol = (SAPbouiCOM.EditTextColumn)this.grHdr.Columns.Item("CardCode");
@@ -918,18 +918,70 @@ namespace STDApp.Payment
                 query += ")";
 
                 var ret1 = dbProvider.ExecuteNonQuery(query);
+                var receiverBank = this.grData.GetValueCustom("ReceiveBankName", index);
+                var receiverName = this.grData.GetValueCustom("ReceiveAccountName", index);
+                var receiverBankID = this.grData.GetValueCustom("ReceiveBankCode", index);
+                var receiverBranch = "";
+                var receiverAccount = this.grData.GetValueCustom("ReceiveAccount", index);
+                var type = "";
+                var senderBankId = this.grData.GetValueCustom("SenderBankCode", index);
+                if (senderBankId == receiverBankID)
+                {
+                    type = "in";
+                }
+                else
+                {
+                    if (amount > 300000000)
+                    {
+                        type = "ou";
+                    }
+                    else
+                    {
+                        type = "np";
+                    }
+                }
+
+                // code test 
+                var valueTxT = this.txtNote.Value;
+                if (valueTxT == "napas")
+                {
+                    receiverBank = "vietinbank";
+                    receiverName = "Nguyen van napas";
+                    receiverBankID = "970406";
+                    receiverBranch = "";
+                    receiverAccount = "0129837294";
+                    type = "np";
+                }
+                else if (valueTxT == "citad")
+                {
+                    receiverBank = "ngân hàng nông nghiệp viet nam";
+                    receiverName = "mat tran to quoc viet nam";
+                    receiverBankID = "01204001";
+                    receiverBranch = "01204001";
+                    receiverAccount = "1483201009159";
+                    type = "ou";
+                }
+                else if (valueTxT == "in")
+                {
+                    receiverBank = this.grData.GetValueCustom("ReceiveBankName", index);
+                    receiverName = this.grData.GetValueCustom("ReceiveAccountName", index);
+                    receiverBankID = this.grData.GetValueCustom("ReceiveBankCode", index);
+                    receiverBranch = "";
+                    receiverAccount = this.grData.GetValueCustom("ReceiveAccount", index);
+                    type = "in";
+                }
 
                 var record = new TransferRecord
                 {
                     transId = transId, //mã giao dịch
                     approver = ConfigurationManager.AppSettings["USER_APPROVE"],
-                    transType = "in",
+                    transType = type,
                     amount = amount.ToString(),
-                    recvAcctId = this.grData.GetValueCustom("ReceiveAccount", index),
-                    recvBankId = this.grData.GetValueCustom("ReceiveBankCode", index),
-                    recvBranchId = "",
-                    recvBankName = this.grData.GetValueCustom("ReceiveBankName", index),
-                    recvAcctName = this.grData.GetValueCustom("ReceiveAccountName", index),
+                    recvAcctId = receiverAccount,
+                    recvBankId = receiverBankID,
+                    recvBranchId = receiverBranch,
+                    recvBankName = receiverBank,
+                    recvAcctName = receiverName,
                     recvAddr = "",
                     currencyCode = this.grData.GetValueCustom("DocCur", index),
                     remark = "test",// this.grData.GetValueCustom("JrnlMemo", index),
@@ -1035,7 +1087,8 @@ namespace STDApp.Payment
             var currency = string.Empty;
 
             UIHelper.LogMessage("Bắt đầu lấy dữ liệu", UIHelper.MsgType.StatusBar, false);
-           // var keyLog = $"PM_{DateTime.Now.ToString("yyMMddHHmmss")}";
+            // var keyLog = $"PM_{DateTime.Now.ToString("yyMMddHHmmss")}";
+
             var request = new TransferRequest
             {
                 model = "2",
@@ -1129,7 +1182,7 @@ namespace STDApp.Payment
             if (rps.status.code == "0")
             {
                 UIHelper.LogMessage($"Lỗi {rps.status.message}", UIHelper.MsgType.StatusBar, true);
-                return;
+                //return;
             }
             var dataResponse = JsonSerializer.Deserialize<TransferHeader>(result);
 
@@ -1171,8 +1224,8 @@ namespace STDApp.Payment
                 }
 
                 CreatePayment(index);
-             }
-            
+            }
+
             UIHelper.LogMessage("Hoàn tất gửi yêu cầu thanh toán", UIHelper.MsgType.StatusBar, false);
             LoadDataGridCreate();
 
@@ -1421,7 +1474,7 @@ namespace STDApp.Payment
 
                 var values = DataHelper.ListBanks;
                 var bank = values.FirstOrDefault();
-                if(bank != null)
+                if (bank != null)
                 {
                     this.grData.DataTable.SetValue("SenderBankCode", index, bank["SenderBankCode"].ToString());
                     this.grData.DataTable.SetValue("SenderAccount", index, bank["Account"].ToString());
@@ -1713,7 +1766,7 @@ namespace STDApp.Payment
                 UpdateBankStatus(index, ref status, ref requestID);
                 var message = string.Empty;
                 var isReturn = false;
-               // status = this.grData.DataTable.GetValue("BankStatus", index).ToString();
+                // status = this.grData.DataTable.GetValue("BankStatus", index).ToString();
                 //requestID = this.grData.DataTable.GetValue("requestId", index).ToString();
                 if (status != "05")
                 {
@@ -1744,6 +1797,11 @@ namespace STDApp.Payment
                 // requestID = "";
                 //status = this.grData.DataTable.GetValue("BankStatus", index).ToString();
                 requestID = this.grData.DataTable.GetValue("requestId", index).ToString();
+                var order = this.grData.DataTable.GetValue("DocNum", index).ToString();
+                if (order == "239")
+                {
+
+                }
 
                 UIHelper.LogMessage("Bắt đầu cập nhật trạng thái thanh toán", UIHelper.MsgType.StatusBar, false);
                 TransferInqRequest request = new TransferInqRequest

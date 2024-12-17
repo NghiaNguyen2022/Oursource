@@ -41,6 +41,10 @@ namespace STDApp
                     {
                         frmBatch.ShowForm();
                     }
+                    else if (pVal.MenuUID == bankConfig.RateForm.MenuID)
+                    {
+                        frmRate.ShowForm();
+                    }
                     //else if (pVal.MenuUID == GlobalsConfig.Instance.PaymentReviewFormInfo.MenuID)
                     //{
                     //    frmPaymentReview.ShowForm();

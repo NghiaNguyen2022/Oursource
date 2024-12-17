@@ -8,9 +8,9 @@ namespace STDApp.Common
         { }
 
         public AddonUserForm InquiryForm { get; set; }
+        public AddonUserForm RateForm { get; set; }
         public AddonUserForm BatchForm { get; set; }
         public AddonUserForm PaymentForm { get; set; }
-
         public AddonUserForm PaymentDetailFormInfo { get; set; }
 
 
@@ -28,6 +28,16 @@ namespace STDApp.Common
         protected override void AddMenus()
         {
 
+            RateForm = new AddonUserForm()
+            {
+                FormID = "Rate_F",
+                MenuID = "PM_Rate_M",
+                MenuName = "Tích hợp tỉ giá ngoại tệ",
+                ParentID = FolderInfomation.MenuID,
+                FormType = "STDApp.Bank.frmRate"
+            };
+            AddForms(RateForm, 0);
+
             InquiryForm = new AddonUserForm()
             {
                 FormID = "Inquiry_F",
@@ -36,8 +46,7 @@ namespace STDApp.Common
                 ParentID = FolderInfomation.MenuID,
                 FormType = "STDApp.Bank.frmInquiry"
             };
-            AddForms(InquiryForm, 0);
-
+            AddForms(InquiryForm, 1);
 
             BatchForm = new AddonUserForm()
             {
@@ -47,7 +56,7 @@ namespace STDApp.Common
                 ParentID = FolderInfomation.MenuID,
                 FormType = "STDApp.Payoo.frmBatch"
             };
-            AddForms(BatchForm, 1);
+            AddForms(BatchForm, 2);
 
 
             PaymentForm = new AddonUserForm()
@@ -58,7 +67,7 @@ namespace STDApp.Common
                 ParentID = FolderInfomation.MenuID,
                 FormType = "STDApp.Payment.frmPayment"
             };
-            AddForms(PaymentForm, 2);
+            AddForms(PaymentForm, 3);
 
             PaymentDetailFormInfo = new AddonUserForm()
             {

@@ -77,11 +77,33 @@ namespace STDApp.Common
             var payloadRequest = JsonConvert.SerializeObject(jwePayload);          
             return payloadRequest;
         }
+        //public static String doSignatureJWS(String payloadRequest)
+        //{
+        //    //--lay thong tin truyen vao header JWS
+        //    RSA rsaAlg = RSA.Create();
+        //    byte[] privateKeyByte = getRsaPrivateKeyEncodedFromPem(loadRsaPrivateKeyPem());
+        //    int _out;
+        //    rsaAlg.ImportPkcs8PrivateKey(privateKeyByte, out _out);
+        //    string TXT_DATA = Jose.JWT.Encode(payloadRequest, rsaAlg, Jose.JwsAlgorithm.RS256);
+        //    char[] delimiterChars = { '.' };
+        //    string[] words = TXT_DATA.Split(delimiterChars);
+        //    string X_JWS_SIGNATURE = words[0] + ".." + words[2];
+        //    Console.WriteLine(X_JWS_SIGNATURE);
+        //    return X_JWS_SIGNATURE;
+        //}
 
         public static string DoSignatureJWS(string payloadRequest)
         {
-            string privateKeyPem = loadRsaPrivateKeyPem();
+            var privateKeyPem = loadRsaPrivateKeyPem();
+            //privateKeyPem = privateKeyPem.Replace("-----BEGIN PRIVATE KEY-----", "").Replace("-----END PRIVATE KEY-----", "").Replace("\n", "")
+            //            .Replace("\r", "")
+            //        .Trim();
+            string rsaPrivateKeyHeaderPem = "-----BEGIN PRIVATE KEY-----";
+            string rsaPrivateKeyFooterPem = "-----END PRIVATE KEY-----";
+            privateKeyPem = privateKeyPem.Replace(rsaPrivateKeyHeaderPem, "").Replace(rsaPrivateKeyFooterPem, "").Replace("\n", "").Replace("\r", "").Trim();
+
             AsymmetricKeyParameter keyParameter;
+            byte[] data = getRsaPrivateKeyEncodedFromPem(privateKeyPem);
             using (var reader = new System.IO.StringReader(privateKeyPem))
             {
                 var pemReader = new PemReader(reader);
@@ -117,13 +139,13 @@ namespace STDApp.Common
         {
             string rsaPrivateKeyHeaderPem = "-----BEGIN PRIVATE KEY-----";
             string rsaPrivateKeyFooterPem = "-----END PRIVATE KEY-----";
-            string rsaPrivateKeyDataPem = rsaPrivateKeyPem.Replace(rsaPrivateKeyHeaderPem, "").Replace(rsaPrivateKeyFooterPem, "").Replace("\n", "");
+            string rsaPrivateKeyDataPem = rsaPrivateKeyPem.Replace(rsaPrivateKeyHeaderPem, "").Replace(rsaPrivateKeyFooterPem, "").Replace("\n", "").Replace("\r", "").Trim();
             return Base64Decoding(rsaPrivateKeyDataPem);
         }
 
         private static string loadRsaPrivateKeyPem()
         {
-            var certPath = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private.pem";
+            var certPath = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "private1.pem";
             var text = File.ReadAllText(certPath);
             return text;
            

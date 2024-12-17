@@ -10,6 +10,7 @@ namespace STDApp
         public static string APIVTB = "https://api-uat.vietinbank.vn";
         public static string UAT_VTB = "/vtb-api-uat/development/erp/v1";
         public static string InquiryVTB = $"{UAT_VTB}/statement/inquiry";
+        public static string RateVTB = $"vtb-api-uat/development/v1/fxrate/ForeignExchangeRate_Inq";
         public static string TransferVTB = $"{UAT_VTB}//payment/transfer";
         public static string TransferInqVTB = $"{UAT_VTB}//payment/transferInq";
 

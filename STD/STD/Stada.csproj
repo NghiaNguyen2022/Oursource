@@ -100,8 +100,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AccessSAP\PaymentViaDI.cs" />
+    <Compile Include="Bank\frmRate.b1f.cs">
+      <DependentUpon>frmRate.b1f</DependentUpon>
+    </Compile>
     <Compile Include="Models\PayooGetSettlement.cs" />
     <Compile Include="Models\PayooResponse.cs" />
+    <Compile Include="Models\RateRequest.cs" />
+    <Compile Include="Models\RateResponse.cs" />
     <Compile Include="Payoo\frmBatch.b1f.cs">
       <DependentUpon>frmBatch.b1f</DependentUpon>
     </Compile>
@@ -169,6 +174,12 @@
   <ItemGroup>
     <None Include="app.config">
       <SubType>Designer</SubType>
+    </None>
+    <None Include="Bank\frmRate.b1f">
+      <FormCategory>UserForm</FormCategory>
+    </None>
+    <None Include="Info\private1.pem">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Include="Payoo\frmBatch.b1f">
       <FormCategory>UserForm</FormCategory>
