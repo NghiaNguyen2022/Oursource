@@ -176,6 +176,7 @@
     </Compile>
     <Compile Include="Models\API\UserToken.cs" />
     <Compile Include="Models\BIDV_Accesstoken.cs" />
+    <Compile Include="Models\Payoo_InvoiceRes.cs" />
     <Compile Include="Models\Payoo_Payment.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

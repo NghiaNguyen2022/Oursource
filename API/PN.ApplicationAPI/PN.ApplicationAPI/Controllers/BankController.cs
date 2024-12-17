@@ -3,6 +3,8 @@ using PN.ApplicationAPI.APICore.Controller;
 using PN.ApplicationAPI.Models;
 using SAPCore.Config;
 using STD.DataReader;
+using System;
+using System.Configuration;
 using System.Web.Http;
 
 namespace PN.ApplicationAPI.Controllers
@@ -11,9 +13,9 @@ namespace PN.ApplicationAPI.Controllers
     {
         //[BasicAuthentication]
         [System.Web.Http.HttpPost]
-        public IHttpActionResult Create([FromBody]BIDV_Accesstoken input)
+        public IHttpActionResult Create(string code)
         {
-            if (input == null)
+            if (string.IsNullOrEmpty(code))
             {
                 return Ok(ResponseFaild("Data chưa đúng cấu trúc và định dạng"));
             }
@@ -25,9 +27,40 @@ namespace PN.ApplicationAPI.Controllers
             //    return Ok(ResponseFaild("Order No đã tồn tại"));
             //}
             var message = string.Empty;
-            if (input.InsertData(ref message))
+            if (InsertData(code, ref message))
                 return Ok(ResponseSuccessed(message));
             return Ok(ResponseFaild(message));
+        }
+
+        private bool InsertData(string code, ref string message)
+        {
+            //using(var trans)
+            try
+            {
+                var dbName = CoreSetting.System == SystemType.SAP_HANA ?
+                    ConfigurationManager.AppSettings["Schema"] + "\"." : ConfigurationManager.AppSettings["Schema"] + "\"..";
+                var query = "INSERT INTO \"" + dbName + "\"tb_Bank_BIDV_AccesstokenINT\" VALUES ( ";
+                query += $"'{code}',";
+                query += $"'{DateTime.Now.ToString("yyyyMMdd")}',";
+                query += $"'{DateTime.Now.ToString("HHmmss")}'";
+                query += ")";
+
+                var ret1 = dbProvider.ExecuteNonQuery(query);
+                if (ret1 == 1)
+                {
+                    message = "Lưu thành công";
+                }
+                else
+                {
+                    message = "Lưu thất bại";
+                }
+                return ret1 == 1;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return false;
         }
     }
 }
