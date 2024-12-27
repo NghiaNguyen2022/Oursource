@@ -15,13 +15,17 @@ BEGIN
 	DECLARE _BankName NVARCHAR(100);
 	DECLARE _Account NVARCHAR(50);
 	
-	SELECT T1."BankCode" AS "Code", 
+	SELECT "Code", "Name", "Account"
+	INTO _BankCode, _BankName, _Account
+	  FROM "vw_Bank_BankAccount" 
+	 WHERE "Account" = :v_Account; 
+	/*SELECT T1."BankCode" AS "Code", 
 	   	   T1."BankName" AS "Name", 
 	       T0."Account" AS "Account"	  
  	  INTO _BankCode, _BankName, _Account
 	  FROM DSC1 t0 
 	  JOIN ODSC T1  ON T0."BankCode" = T1."BankCode"
-	  WHERE  T0."AcctName" = 'PYMEPHARCO';
+	  WHERE  T0."AcctName" = 'PYMEPHARCO';*/
 	  			
 	SELECT T."CardCode",
 		   T."CardName",
@@ -47,7 +51,7 @@ BEGIN
 		   T."InsTotalFC",	      
 		   CAST(CASE WHEN T."MustPay" > 0 THEN T."MustPay"
 		   	   	ELSE 0 
-		   	END AS DECIMAL) AS "MustPay",  
+		   	END AS DECIMAL (19,2)) AS "MustPay",  
 		   T."DocEntry",
 		   t."JrnlMemo",
 		   t."Content",
@@ -74,9 +78,9 @@ BEGIN
 					T2."DflAccount",
 					T4."AcctName",
 					t2."HouseBank",
-					'Thanh toan' || t2."CardName" ||T1."DueDate" AS "Content",
-				    CASE WHEN COALESCE(T5."status", 'N') = 'N' THEN '01'
-		   				 ELSE '02'
+					'Thanh toan' || t2."CardName" ||T1."DueDate" AS "Content", 
+		   			CASE WHEN COALESCE(T5."status", 'N') = '1' THEN '02'
+		   				 ELSE '01'
 					 END AS "SAPStatus",
 					COALESCE(T5."bankStatus", '') AS "BankStatus",
 					COALESCE(T5."Message", '') AS "Message",
@@ -98,10 +102,12 @@ BEGIN
 										   MAX("transId") AS "transId"
 									  FROM "tb_Bank_TransferRecord"
 									 WHERE COALESCE("DocEntry", '') != ''
+									   AND "bank" = 'VT'
 									 GROUP BY "CardCode",
 										   "DocEntry") t1 ON T0."CardCode" = T1."CardCode"
 										   				 AND T0."DocEntry" = T1."DocEntry"
 										   				 AND T0."transId" = T1."transId"
+							WHERE T0."bank" = 'VT'
 						  ) T5 ON T2."CardCode" = T5."CardCode"
 							  AND T0."DocEntry" = t5."DocEntry"
 				WHERE T1."DueDate" BETWEEN :v_FromDate AND :v_ToDate
@@ -128,8 +134,8 @@ BEGIN
 					t2."HouseBank",
 					'Thanh toan' || t2."CardName" --||T1."DueDate"
 						 AS "Content",
-				    CASE WHEN COALESCE(T1."status", 'N') = 'N' THEN '01'
-		   				 ELSE '02'
+				    CASE WHEN COALESCE(T1."status", 'N') = '1' THEN '02'
+		   				 ELSE '01'
 					 END AS "SAPStatus",
 					COALESCE(T1."bankStatus", '') AS "BankStatus",
 					COALESCE(T1."Message", '') AS "Message",
@@ -147,6 +153,7 @@ BEGIN
 				WHERE  COALESCE(T1."DocEntry", '') = '' --T1."DueDate" BETWEEN :v_FromDate AND :v_ToDate
 				  --AND T1."InsTotal" - T1."PaidToDate" > 0		
 				 AND  (:v_Account = 'All' OR t2."HousBnkAct" = :v_Account)
+				 AND T1. "bank" = 'VT'
 				--ORDER BY T0."CardCode"
 			) T
 										--AND (:v_RequestID = '' OR T1."requestId" = :v_RequestID)

@@ -20,6 +20,7 @@ AS
 		   '10698' AS "SenderBankCode"
 	  FROM DSC1 t0 
 	  JOIN ODSC T1  ON T0."BankCode" = T1."BankCode"
-	 WHERE T1."BankCode" = 'BIDV') T
+	 WHERE T1."BankCode" = 'BIDV' 
+	 and T0."AcctName" = 'PYMEPHARCO') T
 
 

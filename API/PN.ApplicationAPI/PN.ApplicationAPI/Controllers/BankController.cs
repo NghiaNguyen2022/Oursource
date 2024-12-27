@@ -37,24 +37,24 @@ namespace PN.ApplicationAPI.Controllers
             //using(var trans)
             try
             {
-                var dbName = CoreSetting.System == SystemType.SAP_HANA ?
-                    ConfigurationManager.AppSettings["Schema"] + "\"." : ConfigurationManager.AppSettings["Schema"] + "\"..";
-                var query = "INSERT INTO \"" + dbName + "\"tb_Bank_BIDV_AccesstokenINT\" VALUES ( ";
-                query += $"'{code}',";
-                query += $"'{DateTime.Now.ToString("yyyyMMdd")}',";
-                query += $"'{DateTime.Now.ToString("HHmmss")}'";
-                query += ")";
+                //var dbName = CoreSetting.System == SystemType.SAP_HANA ?
+                //    ConfigurationManager.AppSettings["Schema"] + "\"." : ConfigurationManager.AppSettings["Schema"] + "\"..";
+                //var query = "INSERT INTO \"" + dbName + "\"tb_Bank_BIDV_AccesstokenINT\" VALUES ( ";
+                //query += $"'{code}',";
+                //query += $"'{DateTime.Now.ToString("yyyyMMdd")}',";
+                //query += $"'{DateTime.Now.ToString("HHmmss")}'";
+                //query += ")";
 
-                var ret1 = dbProvider.ExecuteNonQuery(query);
-                if (ret1 == 1)
-                {
-                    message = "Lưu thành công";
-                }
-                else
-                {
-                    message = "Lưu thất bại";
-                }
-                return ret1 == 1;
+                //var ret1 = dbProvider.ExecuteNonQuery(query);
+                //if (ret1 == 1)
+                //{
+                //    message = "Lưu thành công";
+                //}
+                //else
+                //{
+                //    message = "Lưu thất bại";
+                //}
+                return true;
             }
             catch (Exception ex)
             {

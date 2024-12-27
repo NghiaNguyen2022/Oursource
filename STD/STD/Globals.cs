@@ -24,6 +24,7 @@ namespace STDApp
         public static string APILink = "https://www.bidv.net:9303";
         public static string UAT_BIDV = "/bidvorg/service";
         public static string InquiryBIDV = $"{UAT_BIDV}/open-banking/inquire-account-transaction/v1";
+        //public static string TransferBIDV = "";
         public static string AuthenBIDV = $"{UAT_BIDV}/ibank-oauth/oauth2/token";
 
         public static string ChannelBIDVAPI = "IERP";

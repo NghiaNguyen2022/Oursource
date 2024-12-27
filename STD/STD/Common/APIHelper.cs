@@ -47,9 +47,9 @@ namespace STDApp.Common
                 request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
                 request.AddParameter("grant_type", "authorization_code");
                 request.AddParameter("client_id", APIBIDVConstrant.ClientID);// ConfigurationManager.AppSettings["ClientIDBIDV"]);
-                request.AddParameter("client_secret", APIBIDVConstrant.ClientSecret);//ConfigurationManager.AppSettings["ClientSecretBIDV"]);
+                //request.AddParameter("client_secret", APIBIDVConstrant.ClientSecret);//ConfigurationManager.AppSettings["ClientSecretBIDV"]);
                 request.AddParameter("code", code);
-                request.AddParameter("redirect_uri", APIBIDVConstrant.URL_Redirect);// ConfigurationManager.AppSettings["redirect_uri"]);
+                //request.AddParameter("redirect_uri", APIBIDVConstrant.URL_Redirect);// ConfigurationManager.AppSettings["redirect_uri"]);
 
                 var response = client.Execute(request);
                 if (response.StatusCode != System.Net.HttpStatusCode.OK)

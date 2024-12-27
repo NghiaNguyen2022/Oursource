@@ -212,16 +212,22 @@ namespace STD.DataReader
                 var schema = DBName;
                 return "SELECT count (DISTINCT \"CardCode\") \"CountCode\" " +
                          "FROM  \"" + schema + "\".OINV T0 " +
-                        "WHERE T0.\"DocEntry\" in (select \"OrderNo\" FROM\"" + schema + "\".\"tb_Payoo_BatchDetail\" T0 WHERE T0.\"BatchNo\" = '{0}')";
+                        "WHERE T0.\"DocNum\" in (select \"OrderNo\" FROM\"" + schema + "\".\"tb_Payoo_BatchDetail\" T0 WHERE T0.\"BatchNo\" = '{0}')";
             }
         }
 
-        public static string UpdateAfterCleae
+        public static string UpdateAfterClear
         {
             get
             {
                 var schema = DBName;
-                return "UPDATE \"" + schema + "\".\"tb_Payoo_BatchDetail\" SET \"BankRecStatus\" = 'Y', \"BankRefNo\" = '{0}' where \"BatchNo\" = '{1}'";
+                return "UPDATE \"" + schema + "\".\"tb_Payoo_BatchDetail\" "+
+                          "SET \"BankRecStatus\" = '{0}', "+
+                              "\"BankRefNo\" = '{1}', " +
+                              "\"Message\" = '{2}', " +
+                              "\"PaymentID\" = '{3}'" +
+                       " WHERE \"BatchNo\" = '{4}' " + 
+                          "AND \"OrderNo\" = '{5}'";
             }
         }
 
@@ -240,9 +246,9 @@ namespace STD.DataReader
             get
             {
                 var schema = DBName;
-                return "SELECT DISTINCT T0.\"CardCode\", T0.\"DocEntry\" , t0.\"DocCur\", T1.\"TransferAmount\" " +
+                return "SELECT DISTINCT T0.\"CardCode\", T0.\"DocEntry\" , t0.\"DocCur\", T1.\"TransferAmount\", T1.\"OrderNo\" " +
                          "FROM  \"" + schema + "\".OINV T0 " +
-                         "JOIN \"" + schema + "\".\"tb_Payoo_BatchDetail\" T1 ON T0.\"DocEntry\" = T1.\"OrderNo\"  " +
+                         "JOIN \"" + schema + "\".\"tb_Payoo_BatchDetail\" T1 ON T0.\"DocNum\" = T1.\"OrderNo\"  " +
                         "WHERE T1.\"BatchNo\" = '{0}' and T0.\"DocStatus\" = 'O'";
             }
         }
@@ -265,6 +271,13 @@ namespace STD.DataReader
             get
             {
                 return CallStoreBySystem("sp_Bank_InquiryExist", "'{0}'");
+            }
+        }
+        public static string CheckInquiryBIDVExist
+        {
+            get
+            {
+                return CallStoreBySystem("sp_Bankbidv_InquiryExist", "'{0}'");
             }
         }
 

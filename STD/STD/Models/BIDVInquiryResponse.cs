@@ -1,4 +1,6 @@
-﻿using System;
+﻿using SAPCore.SAP.DIAPI;
+using STD.DataReader;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -21,13 +23,35 @@ namespace STDApp.Models
     }
     public class InquiryResponseTran
     {
-        public int seq { get; set; }
+        public string seq { get; set; }
         public string tranDate { get; set; }
         public string remark { get; set; }
         public string debitAmount { get; set; }
         public string creditAmount { get; set; }
         public string @ref { get; set; }
         public string currCode { get; set; }
+
+        internal void InsertData(string requestId)
+        {
+            try
+            {
+                var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_BIDVInquiryTran\" VALUES ( ";
+                query += $"'{requestId}',";
+                query += $"'{seq}',";
+                query += $"'{tranDate}',";
+                query += $"'{remark}',";
+                query += $"'{debitAmount ?? "0"}',";
+                query += $"'{creditAmount ?? "0"}',";
+                query += $"'{@ref ?? "0"}',";
+                query += $"'{currCode}'";
+                query += ")";
+
+                var ret1 = dbProvider.ExecuteNonQuery(query);
+            }
+            catch (Exception ex)
+            {
+            }
+        }
     }
 
     public class BIDVResponse401Error
@@ -60,8 +84,8 @@ namespace STDApp.Models
     }
     public class DetailedError
     {
-        public int errorCode { get; set; }
-        public string desc { get; set; }
+        public string errorCode { get; set; }
+        public string description { get; set; }
     }
     public class BIDVResponse500Error
     {

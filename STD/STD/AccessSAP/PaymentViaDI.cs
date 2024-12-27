@@ -6,6 +6,8 @@ using PN.SmartLib.Helper;
 using SAPbobsCOM;
 using SAPCore.SAP.DIAPI;
 using STD.DataReader;
+using System.Globalization;
+using SAPCore;
 
 namespace STDApp.AccessSAP
 {
@@ -97,16 +99,39 @@ namespace STDApp.AccessSAP
             return ret;
         }
         public static bool CreateIncommingPayment(string BatchNo, ref string message)
-        {
-            if (!ConnectDI(ref message))
-                return false;
+        {            
             var query = string.Format(QueryString.PaymentData, BatchNo);
             var datas = dbProvider.QueryList(query);
-            if(datas != null && datas.Count() > 0)
+            var invoices = new List<InvoicePayment>();
+            if (datas != null && datas.Count() > 0)
             {
-                var cardCode = datas[0]["CardCode"].ToString();
-                var currency = datas[0]["DocCur"].ToString();
-                int lRetCode = -1, lErrCode;
+                foreach (var itm in datas)
+                {
+                    var inv = new InvoicePayment();
+                    inv.CardCode = itm["CardCode"].ToString();
+                    inv.DocEntry = itm["DocEntry"].ToString();
+                    inv.DocCur = itm["DocCur"].ToString();
+                    inv.OrderNo = itm["OrderNo"].ToString();
+                    inv.TransferAmount = itm["TransferAmount"].ToString();
+                    invoices.Add(inv);
+                }
+            }
+            if (invoices.Count <= 0)
+            { 
+                message = "Không có dữ liệu";
+            }
+
+            if (!ConnectDI(ref message))
+                return false;
+            int lErrCode = -1 ;
+            foreach (var cardcode in invoices.Select(x => x.CardCode).Distinct())
+            {
+                lErrCode = -1;
+
+                var invs = invoices.Where(x => x.CardCode == cardcode);
+                var cardCode = cardcode;
+                var currency = invs.Select(x => x.DocCur).Distinct().FirstOrDefault();
+            
                 SAPbobsCOM.Payments oPayment;
                 oPayment = (SAPbobsCOM.Payments)DIConnection.Instance.Company.GetBusinessObject(BoObjectTypes.oIncomingPayments);
 
@@ -115,62 +140,87 @@ namespace STDApp.AccessSAP
                 oPayment.DocDate = DateTime.Now;
                 var objectType = BoRcptInvTypes.it_Invoice;
                 double total = 0;
-                foreach(var item in datas)
+                foreach (var item in invs)
                 {
                     oPayment.Invoices.Add();
                     oPayment.Invoices.SetCurrentLine(0);
-                    oPayment.Invoices.DocEntry = int.Parse(item["DocEntry"].ToString());
+                    oPayment.Invoices.DocEntry = int.Parse(item.DocEntry);
                     oPayment.Invoices.InvoiceType = objectType;
-                    oPayment.Invoices.SumApplied = double.Parse(item["TransferAmount"].ToString());
+                    oPayment.Invoices.SumApplied = double.Parse(item.TransferAmount);
                     total += oPayment.Invoices.SumApplied;
                 }
                 oPayment.TransferSum = total;
                 oPayment.TransferAccount = "112101";
+
+                var name = cardCode;
+                var wuer = "SELECT \"CardName\" FROM \"" + DIConnection.Instance.CompanyDB + "\".OCRD WHERE \"CardCode\" = '" + cardCode + "'";
+                var hash = dbProvider.QuerySingle(wuer);
+                if (hash != null)
+                    name = hash["CardName"].ToString();
+                oPayment.Remarks = "Khách hàng " + name + " Thanh toán";
+
                 var ret1 = -1;
                 ret1 = oPayment.Add();
+
+                var newId = string.Empty;
                 if (ret1 != 0)
                 {
                     DIConnection.Instance.Company.GetLastError(out lErrCode, out message);
-                    DisConnectDI();
-                    return false;
+
                 }
                 else
                 {
-                    string newId = string.Empty;
                     DIConnection.Instance.Company.GetNewObjectCode(out newId);
                     message = $"Tạo thành đơn id {newId}";
+                }
+                UIHelper.LogMessage(message, UIHelper.MsgType.StatusBar, ret1 != 0);
 
-                    DisConnectDI();
-                    return true;
+                foreach (var item in invs)
+                {
+                    query = string.Format(QueryString.UpdateAfterClear,
+                                            ret1 == 0 ? "Y": "N", 
+                                            "",
+                                            message,
+                                            newId,
+                                            BatchNo, 
+                                            item.OrderNo);
+                    var retupdate = dbProvider.ExecuteNonQuery(query);
                 }
             }
-            else
-            {
-                message = "Không có dữ liệu";
-            }
             DisConnectDI();
-            return false;
+            return true;
         }
-        public static PaymentActionResult CreatePayment(PaymentDetail data, string key, ref string message)
+        public static PaymentActionResult CreatePayment(PaymentDetail data, string key, string date, ref string message)
         {
             if (!ConnectDI(ref message))
                 return null;
             var result = new PaymentActionResult();
             try
-            {                
+            {
                 result.CardCode = data.CardCode;
-             
+
                 int lRetCode = -1, lErrCode;
                 SAPbobsCOM.Payments oPayment;
                 oPayment = (SAPbobsCOM.Payments)DIConnection.Instance.Company.GetBusinessObject(BoObjectTypes.oVendorPayments);
 
                 oPayment.CardCode = data.CardCode;
                 oPayment.DocCurrency = data.Currency;
-                oPayment.DocDate = data.DocDate;
-                oPayment.Remarks = data.Remark;
-                var objectType =   BoRcptInvTypes.it_PurchaseInvoice;
-              
-                if(data.DocNum != string.Empty)
+
+                // oPayment.DocDate = data.DocDate;
+                DateTime date1;
+                if (DateTime.TryParseExact(date, "dd/MM/yyyy HH:mm:ss", CultureInfo.InvariantCulture, DateTimeStyles.None, out date1))
+                    oPayment.DocDate = date1;
+                else
+                    oPayment.DocDate = data.DocDate;
+                var name = data.CardCode;
+                var wuer = "SELECT \"CardName\" FROM \"" + DIConnection.Instance.CompanyDB + "\".OCRD WHERE \"CardCode\" = " + data.CardCode;
+                var hash = dbProvider.QuerySingle(wuer);
+                if (hash != null)
+                    name = hash["CardName"].ToString();
+                oPayment.Remarks = "Thanh toán cho " + name;
+                var objectType = BoRcptInvTypes.it_PurchaseInvoice;
+
+                if (data.DocNum != string.Empty)
                 {
                     oPayment.Invoices.Add();
                     oPayment.Invoices.SetCurrentLine(0);
@@ -186,18 +236,18 @@ namespace STDApp.AccessSAP
                 oPayment.UserFields.Fields.Item("U_PaymentKey").Value = key;
                 if (data.Cashflow != "-")
                 {
-                    
-                        oPayment.PrimaryFormItems.Add();
-                        oPayment.PrimaryFormItems.SetCurrentLine(0);
-                        oPayment.PrimaryFormItems.CashFlowLineItemID = int.Parse(data.Cashflow);
-                        if (data.Currency != GlobalsConfig.Instance.LocalCurrencyDefault)
-                            oPayment.PrimaryFormItems.AmountFC = (double) data.Amount;
-                        else
-                            oPayment.PrimaryFormItems.AmountLC = (double)data.Amount;                    
-                            oPayment.PrimaryFormItems.PaymentMeans = PaymentMeansTypeEnum.pmtBankTransfer;
-                   
+
+                    oPayment.PrimaryFormItems.Add();
+                    oPayment.PrimaryFormItems.SetCurrentLine(0);
+                    oPayment.PrimaryFormItems.CashFlowLineItemID = int.Parse(data.Cashflow);
+                    if (data.Currency != GlobalsConfig.Instance.LocalCurrencyDefault)
+                        oPayment.PrimaryFormItems.AmountFC = (double)data.Amount;
+                    else
+                        oPayment.PrimaryFormItems.AmountLC = (double)data.Amount;
+                    oPayment.PrimaryFormItems.PaymentMeans = PaymentMeansTypeEnum.pmtBankTransfer;
+
                 }
-             
+
                 var ret1 = -1;
                 ret1 = oPayment.Add();
                 if (ret1 != 0)
@@ -226,7 +276,7 @@ namespace STDApp.AccessSAP
             return result;
         }
 
-        
+
 
         //public static List<PaymentApproveResult> ApprovePayment(List<int> datas, ApprovalStatus status, string remark, ref string message)
         //{

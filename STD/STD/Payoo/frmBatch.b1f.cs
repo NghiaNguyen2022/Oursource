@@ -45,6 +45,8 @@ namespace STDApp.Payoo
             this.grDt = ((SAPbouiCOM.Grid)(this.GetItem("grDt").Specific));
             this.btnSave = ((SAPbouiCOM.Button)(this.GetItem("btnSave").Specific));
             this.btnSave.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnSave_ClickBefore);
+            this.btnReload = ((SAPbouiCOM.Button)(this.GetItem("btnRel").Specific));
+            this.btnReload.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnReload_ClickBefore);
             this.OnCustomInitialize();
 
         }
@@ -234,6 +236,20 @@ namespace STDApp.Payoo
                 UIHelper.LogMessage(STRING_CONTRANTS.Validate_TransDateSelectNull, UIHelper.MsgType.Msgbox, true);
                 this.Freeze(false);
                 return;
+            }
+
+            var batchno = $"SP{TransDate.Substring(2, 6)}0{BatchNo}";
+            var query = "SELECT COUNT(*) AS \"Exists\" FROM \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Payoo_BatchHeader\" WHERE \"BatchNo\" = '" + batchno + "'";
+            var dataHash = dbProvider.QuerySingle(query);
+            if(dataHash != null)
+            {
+                var exist = dataHash["Exists"].ToString();
+                if(exist != "0")
+                {
+                    UIHelper.LogMessage($"Batch {batchno} đã tồn tại", UIHelper.MsgType.Msgbox, true);
+                    this.Freeze(false);
+                    return;
+                }
             }
             this.Clear();
 
@@ -580,6 +596,7 @@ namespace STDApp.Payoo
                         insertdt += $"'{this.grDt.GetValueCustom("IntegTime", index)}',";
                         insertdt += $"'{this.grDt.GetValueCustom("RecWithBank", index)}',";
                         insertdt += $"'{this.grDt.GetValueCustom("BankRefNo", index)}'";
+                        insertdt += $"''";
                         insertdt += ")";
                         var retDetail = dbProvider.ExecuteNonQuery(insertdt);
                     }
@@ -617,6 +634,27 @@ namespace STDApp.Payoo
 
 
             //this.Freeze(false);
+        }
+
+        private SAPbouiCOM.Button btnReload;
+
+        private void btnReload_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
+        {
+            BubbleEvent = true;
+            this.Freeze(true);
+            if (string.IsNullOrEmpty(TransDate))
+            {
+                UIHelper.LogMessage(STRING_CONTRANTS.Validate_TransDateSelectNull, UIHelper.MsgType.Msgbox, true);
+                this.Freeze(false);
+                return;
+            }
+
+            var batchno = $"SP{TransDate.Substring(2, 6)}0{BatchNo}";
+          
+            if (Bank == Banks.ViettinBank.GetDescription())
+            {
+            }
+            this.Freeze(false);
         }
     }
 }

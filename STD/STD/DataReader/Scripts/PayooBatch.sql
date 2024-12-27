@@ -17,7 +17,9 @@ CREATE TABLE "tb_Payoo_BatchDetail"
     "IntDate"  NVARCHAR(10),
     "IntTime"  NVARCHAR(10),
     "BankRecStatus"  NVARCHAR(10),
-    "BankRefNo"  NVARCHAR(100)
+    "BankRefNo"  NVARCHAR(100),
+    "PaymentID"  NVARCHAR(10),
+    "Message"  NVARCHAR(100)
 )
 
 CREATE PROCEDURE "sp_Payoo_BatchExist"

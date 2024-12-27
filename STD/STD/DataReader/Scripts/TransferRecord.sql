@@ -5,8 +5,9 @@
     "transId" NVARCHAR(30),
     "amount" DECIMAL(19,2),
     "status" NVARCHAR(30),
-    "c" NVARCHAR(30),
-    "Message" NVARCHAR(300)
+    "bankStatus" NVARCHAR(30),
+    "Message" NVARCHAR(300),
+    "bank" NVARCHAR(30)
 )
 
 

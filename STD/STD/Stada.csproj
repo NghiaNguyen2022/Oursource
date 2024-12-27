@@ -35,9 +35,12 @@
   <PropertyGroup>
     <StartupObject>STDApp.Program</StartupObject>
   </PropertyGroup>
+  <PropertyGroup>
+    <AutoGenerateBindingRedirects>false</AutoGenerateBindingRedirects>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="BouncyCastle.Crypto">
-      <HintPath>..\Libs\BouncyCastle.Crypto.dll</HintPath>
+      <HintPath>Libs\BouncyCastle.Crypto.dll</HintPath>
     </Reference>
     <Reference Include="FPT">
       <HintPath>..\Libs\FPT.dll</HintPath>
@@ -58,10 +61,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Sap.Data.Hana.v4.5.dll</HintPath>
     </Reference>
-    <Reference Include="SAPBusinessOneSDK, Version=1.1.0.1, Culture=neutral, PublicKeyToken=c7c3cb60e45d119f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\SAPBusinessOneSDK.dll</HintPath>
-    </Reference>
+    <Reference Include="SAPBusinessOneSDK, Version=1.1.0.1, Culture=neutral, PublicKeyToken=c7c3cb60e45d119f, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -103,6 +103,8 @@
     <Compile Include="Bank\frmRate.b1f.cs">
       <DependentUpon>frmRate.b1f</DependentUpon>
     </Compile>
+    <Compile Include="Models\BIDVTransferRequest.cs" />
+    <Compile Include="Models\InvoicePayment.cs" />
     <Compile Include="Models\PayooGetSettlement.cs" />
     <Compile Include="Models\PayooResponse.cs" />
     <Compile Include="Models\RateRequest.cs" />
@@ -212,6 +214,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DataReader\Scripts\tb_Bank_BIDVInquiryTran.sql" />
     <Content Include="DataReader\Scripts\InquiryDetail.sql" />
     <Content Include="DataReader\Scripts\PayooBatch.sql" />
     <Content Include="DataReader\Scripts\tb_Bank_PaymentOnAccount.sql" />

@@ -272,7 +272,8 @@ namespace STDApp.Bank
         private void CallBIDVAPI()
         {
             var mesage = string.Empty;
-            var token = APIHelper.GetToken(ref mesage);
+            var token = //"AAIgZGY2MTZkMTcxZGFlNDk3NDA0MmQ0ZDk1NTc3YzA1ZGWSbqjiOsRKelnejyrZ1uS6CiyPSTeRL6-ZzVBbMGOOOdXUo8SJ7JXzh8v5L3NRKwP458cupOTUAXpW4plViYDeISLeu1ZjniZENth3lgJdVtKAkchnKIEhsJC88tjClfg";
+                        APIHelper.GetToken(ref mesage);
 
             if (string.IsNullOrEmpty(token))
             {
@@ -285,55 +286,45 @@ namespace STDApp.Bank
 
                 return;
             }
-            var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "certificate.cer";
-            var certificate = string.Empty;
+            // var path = AppDomain.CurrentDomain.BaseDirectory + @"\Info\" + "certificate.cer";
+            var certificate = APIUtil.GetData();// string.Empty;
             try
             {
                 UIHelper.LogMessage($"Bắt đầu vấn gửi yêu cầu tin tài khoản đến ngân hàng",
                     UIHelper.MsgType.StatusBar, false);
-                certificate = File.ReadAllText(path);
-                if (string.IsNullOrEmpty(certificate))
-                {
-                    UIHelper.LogMessage($"Không đọc được certificate, vui lòng kiểm tra lại",
-                        UIHelper.MsgType.StatusBar, true);
-                    return;
-                }
-                var rsaPrivateKeyHeaderPem = "-----BEGIN CERTIFICATE-----";
-                var rsaPrivateKeyFooterPem = "-----END CERTIFICATE-----";
-                certificate = certificate.Replace(rsaPrivateKeyHeaderPem, "").Replace(rsaPrivateKeyFooterPem, "").Replace("\n\r", "").Replace("\r\n", "");
                 var options = new RestClientOptions(APIBIDVConstrant.APILink);
                 var client = new RestClient(options);
-                var request = new RestRequest(APIBIDVConstrant.InquiryBIDV + "?Scope=read&JWE=Yes", Method.Post);
+                var request = new RestRequest(APIBIDVConstrant.InquiryBIDV + "?scope=create read &JWE=Yes", Method.Post);
                 request.AddHeader("Content-Type", "application/json");
-                request.AddHeader("X-API-Interaction-ID", DateTime.Now.ToString("yyyyMMddHHmmss"));
-                request.AddHeader("Timestamp", DateTime.Now.ToString("yyyyMMddHHmmssffff"));
+                request.AddHeader("Timestamp", DateTime.Now.ToString("yyyy-MM-ddTHH:mm:ss.fffzzz"));
                 request.AddHeader("Channel", APIBIDVConstrant.ChannelBIDVAPI);// ConfigurationManager.AppSettings["ChannelBIDVAPI"]);
                 request.AddHeader("User-Agent", APIBIDVConstrant.UserAgentIDVAPI);// ConfigurationManager.AppSettings["UserAgentIDVAPI"]);
                 request.AddHeader("accept", "application/json");
-                //OPTION: request.AddHeader("X-Idempotency-Key", "REPLACE_THIS_VALUE");
-                //OPTION: request.AddHeader("X-Customer-IP-Address", "REPLACE_THIS_VALUE");
-                //request.AddStringBody("REPLACE_BODY", "text/plain");
 
                 request.AddHeader("Authorization", $"Bearer {token}");
                 request.AddHeader("X-Client-Certificate", certificate);
 
-
+                var requestId = DateTime.Now.ToString("yyyyMMddHHmmss");
+                request.AddHeader("X-API-Interaction-ID", requestId);
                 var requestData = new BIDVInquiryRequest()
                 {
-                    actNumber = Bank,// "12010002159887",
+                    actNumber = Account,// "12010002159887",
                     curr = "VND",
-                    fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"),//"20240901",
-                    toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"),//,
+                    fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("yyyyMMdd"),//"20240901",
+                    toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("yyyyMMdd"),//,
                     page = "1"
                 };
                 var symmetricKey = ConfigurationManager.AppSettings["SymmetricKey"];
-                var symmetricKeys = HexToByteArray(symmetricKey);
+                var symmetricKeys = APIUtil.HexToByteArray(symmetricKey);
 
-                var json = JsonSerializer.Serialize(requestData);
-                var encryptData = APIUtil.doEncryptJWE(json, symmetricKey);
+                //var json = "{\"body\":{\"actNumber\":\"22222333\",\"curr\":\"VND\",\"fromDate\":\"20240901\",\"toDate\":\"20240930\",\"page\":\"1\"}}";
+                string payload = "{\"body\":"+ JsonSerializer.Serialize(requestData) + "}";
+               // string payload = "{\"serviceId\": \"05I001\",\"code\": \"BBA230342\",\"name\": \"VQ7\",\"amount\": \"100000\",\"description\": \"BIDV\"}";
+
+                var encryptData = APIUtil.doEncryptJWE(payload, symmetricKey);
                 request.AddStringBody(encryptData, DataFormat.Json);
 
-                var signature = APIUtil.DoSignatureJWS(encryptData);
+                var signature = APIUtil.doSignatureJWS(encryptData);
                 if (string.IsNullOrEmpty(signature))
                 {
                     UIHelper.LogMessage($"Không tạo được chữ ký, vui lòng kiểm tra lại",
@@ -343,32 +334,47 @@ namespace STDApp.Bank
                 request.AddHeader("X-JWS-Signature", signature);
 
                 var response = client.Execute(request);
-                //var result = response.Content;
 
-                if (response.StatusCode != System.Net.HttpStatusCode.OK)
+                var result = response.Content;
+                try
                 {
-                    var status = response.StatusCode;
-                    if (status == System.Net.HttpStatusCode.InternalServerError)
+                    if (response.StatusCode != System.Net.HttpStatusCode.OK)
                     {
-                        UIHelper.LogMessage($"Lỗi kết nối. Vui lòng thử lại", UIHelper.MsgType.StatusBar, true);
-                        return;
+                        var status = response.StatusCode;
+                        if (status == System.Net.HttpStatusCode.InternalServerError)
+                        {
+                            var errorResp = JsonSerializer.Deserialize<BIDVResponse500Error>(result);
+                            if (errorResp != null)
+                            {
+                                if( errorResp.errorResponse.additionalInfo != null 
+                                    && errorResp.errorResponse.additionalInfo.detailedError != null)
+                                    UIHelper.LogMessage(errorResp.errorResponse.additionalInfo.detailedError.description, UIHelper.MsgType.StatusBar, true);
+                            }
+                            else
+                            {
+                                UIHelper.LogMessage($"Lỗi kết nối. Vui lòng thử lại", UIHelper.MsgType.StatusBar, true);
+                            }
+                            return;
+                        }
+                        if (status == System.Net.HttpStatusCode.Unauthorized)
+                        {
+                            UIHelper.LogMessage($"Lỗi chứng thực. Vui lòng kiểm tra thông tin chứng thực và kết nối", UIHelper.MsgType.StatusBar, true);
+                            return;
+                        }
+                        if (status == System.Net.HttpStatusCode.BadRequest)
+                        {
+                            UIHelper.LogMessage($"Gửi yêu cầu thất bại, vui lòng thử lại", UIHelper.MsgType.StatusBar, true);
+                            return;
+                        }
                     }
-                    if (status == System.Net.HttpStatusCode.Unauthorized)
-                    {
-                        UIHelper.LogMessage($"Lỗi chứng thực. Vui lòng kiểm tra thông tin chứng thực và kết nối", UIHelper.MsgType.StatusBar, true);
-                        return;
-                    }
-                    if (status == System.Net.HttpStatusCode.BadRequest)
-                    {
-                        UIHelper.LogMessage($"Gửi yêu cầu thất bại, vui lòng thử lại", UIHelper.MsgType.StatusBar, true);
-                        return;
-                    }
+                }
+                catch (Exception ex)
+                {
+
 
                     UIHelper.LogMessage($"Lỗi {response.ErrorMessage}", UIHelper.MsgType.StatusBar, true);
                     return;
                 }
-
-                var result = response.Content;
 
                 var rps = JsonSerializer.Deserialize<BIDVInquiryResponse>(result);
                 if (rps == null)
@@ -387,11 +393,11 @@ namespace STDApp.Bank
                 {
                     this.grHdr.DataTable.Rows.Add();
                     var index = grHdr.DataTable.Rows.Count - 1;
-                    this.grHdr.DataTable.SetValue("BankAccount", index, Bank);
+                    this.grHdr.DataTable.SetValue("BankAccount", index, Account);
                     this.grHdr.DataTable.SetValue("Currency", index, "VND");
                     this.grHdr.DataTable.SetValue("BankName", index, "");
-                    this.grHdr.DataTable.SetValue("OpeningBalance", index, data.startingBal);
-                    this.grHdr.DataTable.SetValue("ClosingBalance", index, data.endingBal);
+                    this.grHdr.DataTable.SetValue("OpeningBalance", index, data.startingBal.ToString());
+                    this.grHdr.DataTable.SetValue("ClosingBalance", index, data.endingBal.ToString());
                     this.grHdr.AutoResizeColumns();
                 }
 
@@ -408,26 +414,19 @@ namespace STDApp.Bank
                         this.grDt.DataTable.SetValue("TransNo", index, item.seq);
                         this.grDt.DataTable.SetValue("Ref", index, item.@ref);
                         this.grDt.DataTable.SetValue("Currency", index, item.currCode);
+                        
+                        var sqlCheckExist = string.Format(QueryString.CheckInquiryBIDVExist, this.grDt.GetValueCustom("TransNo", index));
+                        var data1 = dbProvider.QuerySingle(sqlCheckExist);
+                        if (data1 != null && data1["Existed"].ToString() != "Existed")
+                        {
+                            item.InsertData(requestId);
+                        }
                     }
                     this.grDt.AutoResizeColumns();
                 }
             }
             catch (Exception ex)
             { }
-        }
-
-        private byte[] HexToByteArray(string hex)
-        {
-            if (hex.Length % 2 != 0)
-                throw new ArgumentException("Hex string must have an even length.");
-
-            byte[] result = new byte[hex.Length / 2];
-            for (int i = 0; i < hex.Length; i += 2)
-            {
-                result[i / 2] = Convert.ToByte(hex.Substring(i, 2), 16);
-            }
-
-            return result;
         }
 
         private void CallVTBAPI()
@@ -597,7 +596,18 @@ namespace STDApp.Bank
                 return;
             }
             this.Freeze(true);
+            //var account = ConfigurationManager.AppSettings["Account"];
 
+            if (cbbAcc != null)
+            {
+                var data = DataProvider.QuerySingle(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
+                if (data != null)
+                {
+                    UIHelper.ClearSelectValidValues(cbbAcc);
+                    this.cbbAcc.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
+                    UIHelper.ComboboxSelectDefault(cbbAcc);
+                }
+            }
             if (Bank == Banks.ViettinBank.GetDescription())
             {
                 this.grHdr.DataTable = DT_Header_VT;
@@ -750,18 +760,14 @@ namespace STDApp.Bank
                 for (var index = 0; index < this.grDt.DataTable.Rows.Count; index++)
                 {
                     var transNo = this.grDt.DataTable.GetValue("TransNo", index).ToString();
-                    //var creditStr = this.grDt.DataTable.GetValue("Credit", index).ToString();
-                    //decimal credit = 0;
-                    //if (!decimal.TryParse(creditStr, out credit) || credit <= 0)
-                    //{
-                    //    continue;
-                    //}
+                   
                     var query = string.Format(QueryString.PaymentClear, transNo);
                     var hash = dbProvider.QuerySingle(query);
                     if (hash == null)
                     {
                         continue;
                     }
+
                     var diffStr = hash["Diff"].ToString();
                     decimal diff = 0;
                     if (decimal.TryParse(diffStr, out diff))
@@ -772,12 +778,8 @@ namespace STDApp.Bank
                             var message = string.Empty;
                             var ret = ClearPayment(hash["BatchNo"].ToString(), ref message);
 
-                            UIHelper.LogMessage(message, UIHelper.MsgType.StatusBar, !ret);
-                            if(ret)
-                            {
-                                query = string.Format(QueryString.UpdateAfterCleae, transNo, hash["BatchNo"].ToString());
-                                var retupdate = dbProvider.ExecuteNonQuery(query);
-                            }
+                           // UIHelper.LogMessage(message, UIHelper.MsgType.StatusBar, !ret);
+                            
                         }
                         else
                         {
@@ -798,18 +800,6 @@ namespace STDApp.Bank
         {
             try
             {
-                var queruCheck = string.Format(QueryString.CheckCardcode, BatchNo);
-                var data = dbProvider.QuerySingle(queruCheck);
-                if(data == null || data["CountCode"].ToString() == "0")
-                {
-                    message = "Hóa đơn không tồn tại trên SAP";
-                    return false;
-                }
-                else if(data["CountCode"].ToString() != "1")
-                {
-                    message = "Những hóa đơn này thuộc nhiều khách hàng";
-                    return false;
-                }
                 return PaymentViaDI.CreateIncommingPayment(BatchNo, ref message);
             }
             catch (Exception ex)
