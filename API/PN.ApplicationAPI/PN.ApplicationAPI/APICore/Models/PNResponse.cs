@@ -11,14 +11,16 @@ namespace PN.ApplicationAPI.APICore.Models
         Succeed = 0,
         Pending = 1
     }
+    
+
     public class BaseResponse
     {
-        public int ResponseCode { get; set; }
-        public string Message { get; set; }
+        public int returncode { get; set; }
+        public string description { get; set; }
         public BaseResponse(int code, string message)
         {
-            ResponseCode = code;
-            Message = message;
+            returncode = code;
+            description = message;
         }
     }
     public class PNResponse : BaseResponse

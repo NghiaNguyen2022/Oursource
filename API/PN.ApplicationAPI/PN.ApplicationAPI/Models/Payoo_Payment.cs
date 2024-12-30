@@ -30,9 +30,8 @@ namespace PN.ApplicationAPI.Models
             //using(var trans)
             try
             {
-                var dbName = CoreSetting.System == SystemType.SAP_HANA  ? 
-                    ConfigurationManager.AppSettings["Schema"] + "\"." : ConfigurationManager.AppSettings["Schema"] + "\"..";
-                var query = "INSERT INTO \"" + dbName + "\"tb_Payoo_PaymentINT\" VALUES ( ";
+                var dbName = ConfigurationManager.AppSettings["Schema"];
+                var query = "INSERT INTO \"" + dbName + "\".\"tb_Payoo_PaymentINT\" VALUES ( ";
                 query += $"{PaymentMethod},";
                 query += $"'{PaymentMethodName}',";
                 query += $"'{PurDate}',";
@@ -58,12 +57,15 @@ namespace PN.ApplicationAPI.Models
                 if(ret1 == 1)
                 {
                     message = "Lưu thành công";
+                    query = "UPDATE \"" + dbName + "\".OINV SET \"U_PayooMark\" = 'PAYOOQR' WHERE \"DocNum\" = " + OrderNo;
+                    ret1 = dbProvider.ExecuteNonQuery(query);
+                    return true;
                 }
                 else
                 {
                     message = "Lưu thất bại";
                 }
-                return ret1 == 1;
+                return false;
             }
             catch (Exception ex)
             {

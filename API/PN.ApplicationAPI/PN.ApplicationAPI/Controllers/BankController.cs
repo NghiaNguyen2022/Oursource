@@ -20,12 +20,6 @@ namespace PN.ApplicationAPI.Controllers
                 return Ok(ResponseFaild("Data chưa đúng cấu trúc và định dạng"));
             }
 
-            //var query = string.Format(QueryString.CheckOrderExists, input.OrderNo);
-            //var data = DataProvider.QuerySingle(CoreSetting.DataConnection, query);
-            //if (data != null && data["Existed"].ToString() == "Existed")
-            //{
-            //    return Ok(ResponseFaild("Order No đã tồn tại"));
-            //}
             var message = string.Empty;
             if (InsertData(code, ref message))
                 return Ok(ResponseSuccessed(message));
@@ -37,23 +31,22 @@ namespace PN.ApplicationAPI.Controllers
             //using(var trans)
             try
             {
-                //var dbName = CoreSetting.System == SystemType.SAP_HANA ?
-                //    ConfigurationManager.AppSettings["Schema"] + "\"." : ConfigurationManager.AppSettings["Schema"] + "\"..";
-                //var query = "INSERT INTO \"" + dbName + "\"tb_Bank_BIDV_AccesstokenINT\" VALUES ( ";
-                //query += $"'{code}',";
-                //query += $"'{DateTime.Now.ToString("yyyyMMdd")}',";
-                //query += $"'{DateTime.Now.ToString("HHmmss")}'";
-                //query += ")";
+                var dbName = ConfigurationManager.AppSettings["Schema"];
+                var query = "INSERT INTO \"" + dbName + "\".\"tb_Bank_BIDV_AccesstokenINT\" VALUES ( ";
+                query += $"'{code}',";
+                query += $"'{DateTime.Now.ToString("yyyyMMdd")}',";
+                query += $"'{DateTime.Now.ToString("HHmmss")}'";
+                query += ")";
 
-                //var ret1 = dbProvider.ExecuteNonQuery(query);
-                //if (ret1 == 1)
-                //{
-                //    message = "Lưu thành công";
-                //}
-                //else
-                //{
-                //    message = "Lưu thất bại";
-                //}
+                var ret1 = dbProvider.ExecuteNonQuery(query);
+                if (ret1 == 1)
+                {
+                    message = "Lưu thành công";
+                }
+                else
+                {
+                    message = "Lưu thất bại";
+                }
                 return true;
             }
             catch (Exception ex)

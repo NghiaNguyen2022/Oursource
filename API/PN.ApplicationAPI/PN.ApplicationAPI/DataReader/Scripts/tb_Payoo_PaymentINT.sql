@@ -22,7 +22,7 @@ CREATE TABLE "tb_Payoo_PaymentINT"
 	"IntDate" DATE,
 	"IntTime" NVARCHAR(6) -- 'HHmmss'
 )
-CREATE PROCEDURE "usp_Payoo_CheckOrderExists"
+ALTER PROCEDURE "usp_Payoo_CheckOrderExists"
 (
 	IN v_OrderNo NVARCHAR(50)
 )
@@ -30,11 +30,19 @@ LANGUAGE SQLSCRIPT
 AS
 BEGIN
 	IF EXISTS (SELECT 1
-				 FROM "tb_Payoo_PaymentINT" 
-			    WHERE "OrderNo" = :v_OrderNo)
+				 FROM OINV 
+				WHERE CAST("DocNum" AS NVARCHAR(50)) = :v_OrderNo)
 	THEN
-		SELECT 'Existed' AS "Existed" FROM DUMMY;
-	ELSE	
-		SELECT 'No' AS "Existed" FROM DUMMY;
+		IF EXISTS (SELECT 1
+					 FROM "tb_Payoo_PaymentINT" 
+				    WHERE "OrderNo" = :v_OrderNo)
+		THEN
+			SELECT 'Existed' AS "Existed" FROM DUMMY;
+		ELSE	
+			SELECT 'No' AS "Existed" FROM DUMMY;
+		END IF;
+	ELSE
+		SELECT '-1' AS "Existed" FROM DUMMY;
 	END IF;
+	
 END
