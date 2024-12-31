@@ -45,13 +45,13 @@ namespace STDApp.Payment
                 return UIHelper.GetTextboxValue(txtTDate);
             }
         }
-        private string PostingDate
-        {
-            get
-            {
-                return UIHelper.GetTextboxValue(txtPosDa, DateTime.Now.ToString("yyyyMMdd"));
-            }
-        }
+        //private string PostingDate
+        //{
+        //    get
+        //    {
+        //        return UIHelper.GetTextboxValue(txtPosDa, DateTime.Now.ToString("yyyyMMdd"));
+        //    }
+        //}
 
         private string Note
         {
@@ -65,11 +65,12 @@ namespace STDApp.Payment
         {
             get
             {
-                var query = "SELECT \"Key\" FROM \"" + DIConnection.Instance.CompanyDB + "\".\"vw_Bank_BankAccount\" WHERE \"Account\" = '" + BankAccount + "'";
-                var data = dbProvider.QuerySingle(query);
-                if (data != null)
-                    return data["Key"].ToString();
-                return "VT";
+                //var query = "SELECT \"Key\" FROM \"" + DIConnection.Instance.CompanyDB + "\".\"vw_Bank_BankAccount\" WHERE \"Account\" = '" + BankAccount + "'";
+                //var data = dbProvider.QuerySingle(query);
+                //if (data != null)
+                //    return data["Key"].ToString();
+                //return "VT";
+                return UIHelper.GetComboValue(cbbBank);
             }
         }
 
@@ -78,7 +79,7 @@ namespace STDApp.Payment
             get
             {
                 // if(cbbBank)
-                return UIHelper.GetComboValue(cbbBankAccount);
+                return UIHelper.GetComboValue(cbbAccount);
             }
         }
         private FeeType _FeeType
@@ -110,21 +111,21 @@ namespace STDApp.Payment
             }
         }
 
-        private PaymentDocumentType _PaymentDocumentType
-        {
-            get
-            {
-                if (cbbPmTyp != null && cbbPmTyp.Selected != null)
-                {
-                    var type = cbbPmTyp.Selected.Value.GetEnumValueByDescription<PaymentDocumentType>();
+        //private PaymentDocumentType _PaymentDocumentType
+        //{
+        //    get
+        //    {
+        //        if (cbbAccount != null && cbbAccount.Selected != null)
+        //        {
+        //            var type = cbbAccount.Selected.Value.GetEnumValueByDescription<PaymentDocumentType>();
 
-                    return type;// PaymentDocumentType.UC;
-                    //return cbbPmTyp.Selected.Value == "PT" ? PaymentDocumentType.PT : PaymentType.C;
-                }
+        //            return type;// PaymentDocumentType.UC;
+        //            //return cbbPmTyp.Selected.Value == "PT" ? PaymentDocumentType.PT : PaymentType.C;
+        //        }
 
-                return PaymentDocumentType.PT;
-            }
-        }
+        //        return PaymentDocumentType.PT;
+        //    }
+        //}
 
         private string FromDateReport
         {
@@ -162,7 +163,7 @@ namespace STDApp.Payment
             this.txtTDate = ((SAPbouiCOM.EditText)(this.GetItem("txtTDa").Specific));
             this.lblType = ((SAPbouiCOM.StaticText)(this.GetItem("lblTy").Specific));
             this.cbbType = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbTy").Specific));
-            // this.cbbType.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cbbType_ComboSelectAfter);
+            //    this.cbbType.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cbbType_ComboSelectAfter);
             this.btnFind = ((SAPbouiCOM.Button)(this.GetItem("btnFind").Specific));
             this.btnFind.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnFind_ClickBefore);
             this.grData = ((SAPbouiCOM.Grid)(this.GetItem("grData").Specific));
@@ -175,8 +176,8 @@ namespace STDApp.Payment
             this.lblFeeType = ((SAPbouiCOM.StaticText)(this.GetItem("lblFeeT").Specific));
             this.cbbFeeType = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbFeeT").Specific));
             this.cbbFeeType.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cbbFeeT_ComboSelectAfter);
-            this.lblPmTyp = ((SAPbouiCOM.StaticText)(this.GetItem("lblPT").Specific));
-            this.cbbPmTyp = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbPT").Specific));
+            this.lblAccount = ((SAPbouiCOM.StaticText)(this.GetItem("lblAcc").Specific));
+            this.cbbAccount = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbAcc").Specific));
             this.lblFDateL = ((SAPbouiCOM.StaticText)(this.GetItem("lblFDaL").Specific));
             this.lblTDateL = ((SAPbouiCOM.StaticText)(this.GetItem("lblTDaL").Specific));
             this.txtFDateL = ((SAPbouiCOM.EditText)(this.GetItem("txtFDaL").Specific));
@@ -193,7 +194,8 @@ namespace STDApp.Payment
             this.ckbGr = ((SAPbouiCOM.CheckBox)(this.GetItem("ckbGr").Specific));
             this.ckbGr.PressedAfter += new SAPbouiCOM._ICheckBoxEvents_PressedAfterEventHandler(this.CheckBox0_PressedAfter);
             this.lblBankAccount = ((SAPbouiCOM.StaticText)(this.GetItem("lblBank").Specific));
-            this.cbbBankAccount = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbBank").Specific));
+            this.cbbBank = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbBank").Specific));
+            this.cbbBank.ComboSelectAfter += new SAPbouiCOM._IComboBoxEvents_ComboSelectAfterEventHandler(this.cbbBank_ComboSelectAfter);
             this.lblCFlow = ((SAPbouiCOM.StaticText)(this.GetItem("lblCF").Specific));
             this.cbbCFlow = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbCF").Specific));
             this.txtRate = ((SAPbouiCOM.EditText)(this.GetItem("txtRate").Specific));
@@ -205,20 +207,20 @@ namespace STDApp.Payment
             this.btnChAl.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnChAl_ClickBefore);
             this.btnUnck = ((SAPbouiCOM.Button)(this.GetItem("btnUnck").Specific));
             this.btnUnck.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnUnck_ClickBefore);
-            this.lblPosDa = ((SAPbouiCOM.StaticText)(this.GetItem("lblPos").Specific));
-            this.txtPosDa = ((SAPbouiCOM.EditText)(this.GetItem("txtPos").Specific));
+            this.lblPaymentType = ((SAPbouiCOM.StaticText)(this.GetItem("lblPmTy").Specific));
             this.txtNote = ((SAPbouiCOM.EditText)(this.GetItem("txtNote").Specific));
             this.lblNote = ((SAPbouiCOM.StaticText)(this.GetItem("lblNote").Specific));
             this.lblCusVen = ((SAPbouiCOM.StaticText)(this.GetItem("lblCV").Specific));
             this.txtCusVen = ((SAPbouiCOM.EditText)(this.GetItem("txtCV").Specific));
-            //   this.txtCusVen.LostFocusAfter += new SAPbouiCOM._IEditTextEvents_LostFocusAfterEventHandler(this.txtCusVen_LostFocusAfter);
+            //      this.txtCusVen.LostFocusAfter += new SAPbouiCOM._IEditTextEvents_LostFocusAfterEventHandler(this.txtCusVen_LostFocusAfter);
             this.btnFilter = ((SAPbouiCOM.Button)(this.GetItem("btnFil").Specific));
             this.btnFilter.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnFilter_ClickBefore);
             this.DataTableCbb = this.UIAPIRawForm.DataSources.DataTables.Item("DT_FT");
             this.btnHis = ((SAPbouiCOM.Button)(this.GetItem("btnHis").Specific));
-            //   this.btnHis.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnHis_ClickBefore);
+            //      this.btnHis.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnHis_ClickBefore);
             this.btnUpd = ((SAPbouiCOM.Button)(this.GetItem("btnUpd").Specific));
             this.btnUpd.ClickBefore += new SAPbouiCOM._IButtonEvents_ClickBeforeEventHandler(this.btnUpd_ClickBefore);
+            this.cbbPaymentType = ((SAPbouiCOM.ComboBox)(this.GetItem("cbbPmty").Specific));
             this.OnCustomInitialize();
 
         }
@@ -299,42 +301,43 @@ namespace STDApp.Payment
             this.lblBankAccount.Item.Left = this.txtTDate.Item.Left + this.txtTDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
             this.lblBankAccount.Item.Top = this.lblFDate.Item.Top;
 
-            this.cbbBankAccount.Item.Top = this.lblFDate.Item.Top;
-            this.cbbBankAccount.Item.Left = this.lblBankAccount.Item.Left + this.lblBankAccount.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.cbbBank.Item.Top = this.lblFDate.Item.Top;
+            this.cbbBank.Item.Left = this.lblBankAccount.Item.Left + this.lblBankAccount.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
-            this.lblFeeType.Item.Left = this.cbbBankAccount.Item.Left + this.cbbBankAccount.Item.Width + CoreSetting.UF_HorizontallySpaced;
-            this.lblFeeType.Item.Top = this.lblFDate.Item.Top;
 
-            this.cbbFeeType.Item.Top = this.lblFDate.Item.Top;
-            this.cbbFeeType.Item.Left = this.lblFeeType.Item.Left + this.lblFeeType.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.lblAccount.Item.Left = this.cbbBank.Item.Left + this.cbbBank.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.lblAccount.Item.Top = this.lblFDate.Item.Top;
+
+            this.cbbAccount.Item.Top = this.lblFDate.Item.Top;
+            this.cbbAccount.Item.Left = this.lblAccount.Item.Left + this.lblAccount.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             var labBottom = this.lblFDate.Item.Top + this.lblFDate.Item.Height;
             var bttTop = labBottom - this.btnFind.Item.Height;
             this.btnFind.Item.Top = bttTop;
             this.btnFind.Item.Left = maxw - btnFind.Item.Width - CoreSetting.UF_HorMargin;// this.txtCusVen.Item.Left + this.txtCusVen.Item.Width + 10;
 
-            this.lblPmTyp.Item.Top = this.lblFDate.Item.Top + this.lblFDate.Item.Height + CoreSetting.UF_VerticallySpaced;
-            this.lblPmTyp.Item.Left = this.lblFDate.Item.Left;
-            this.lblPmTyp.Item.Width = this.lblTDate.Item.Width + this.txtFDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.lblFeeType.Item.Top = this.lblFDate.Item.Top + this.lblFDate.Item.Height + CoreSetting.UF_VerticallySpaced;
+            this.lblFeeType.Item.Left = this.lblFDate.Item.Left;
+            this.lblFeeType.Item.Width = this.lblTDate.Item.Width + this.txtFDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
-            this.cbbPmTyp.Item.Top = this.lblPmTyp.Item.Top;
-            this.cbbPmTyp.Item.Left = this.lblTDate.Item.Left;
-            this.cbbPmTyp.Item.Width = this.lblTDate.Item.Width + this.txtTDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.cbbFeeType.Item.Top = this.lblFeeType.Item.Top;
+            this.cbbFeeType.Item.Left = this.lblTDate.Item.Left;
+            this.cbbFeeType.Item.Width = this.lblTDate.Item.Width + this.txtTDate.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
-            this.lblCFlow.Item.Top = this.cbbPmTyp.Item.Top;
+            this.lblCFlow.Item.Top = this.cbbAccount.Item.Top;
             this.lblCFlow.Item.Left = this.lblBankAccount.Item.Left;
             this.lblCFlow.Item.Width = this.lblBankAccount.Item.Width;// + cbbType.Item.Width + 20;
 
             this.cbbCFlow.Item.Top = this.lblCFlow.Item.Top;
-            this.cbbCFlow.Item.Left = this.cbbBankAccount.Item.Left;
-            this.cbbCFlow.Item.Width = this.cbbBankAccount.Item.Width;// + this.cbbBr.Item.Width + 20;
+            this.cbbCFlow.Item.Left = this.cbbBank.Item.Left;
+            this.cbbCFlow.Item.Width = this.cbbBank.Item.Width;// + this.cbbBr.Item.Width + 20;
 
-            this.lblPosDa.Item.Top = this.cbbCFlow.Item.Top;// this.txtPosDa.Item.Top;
-            this.lblPosDa.Item.Left = this.lblFeeType.Item.Left;// - this.lblPosDa.Item.Width;
-            this.lblPosDa.Item.Width = this.lblFeeType.Item.Width;
+            this.lblPaymentType.Item.Top = this.cbbCFlow.Item.Top;// this.txtPosDa.Item.Top;
+            this.lblPaymentType.Item.Left = this.lblFeeType.Item.Left;// - this.lblPosDa.Item.Width;
+            this.lblPaymentType.Item.Width = this.lblFeeType.Item.Width;
 
-            this.txtPosDa.Item.Top = this.cbbCFlow.Item.Top;// this.grData.Item.Top - this.txtPosDa.Item.Height - 10;
-            this.txtPosDa.Item.Left = this.lblPosDa.Item.Left + this.lblPosDa.Item.Width + 10;// maxw - this.txtPosDa.Item.Width - 20;
+            this.cbbPaymentType.Item.Top = this.cbbCFlow.Item.Top;// this.grData.Item.Top - this.txtPosDa.Item.Height - 10;
+            this.cbbPaymentType.Item.Left = this.lblPaymentType.Item.Left + this.lblPaymentType.Item.Width + 10;// maxw - this.txtPosDa.Item.Width - 20;
 
             this.btnCreate.Item.Left = this.btnFind.Item.Left;// this.txtPosDa.Item.Left + this.txtPosDa.Item.Width + 10;
                                                               //var labBottom1 = this.lblPmTyp.Item.Top + this.lblPmTyp.Item.Height;
@@ -347,11 +350,11 @@ namespace STDApp.Payment
             this.btnUpd.Item.Width = this.btnFind.Item.Width;
 
             this.lblNote.Item.Left = this.txtFDate.Item.Left;
-            this.lblNote.Item.Top = this.lblPmTyp.Item.Top + this.lblPmTyp.Item.Height + CoreSetting.UF_VerticallySpaced;
+            this.lblNote.Item.Top = this.lblAccount.Item.Top + this.lblAccount.Item.Height + CoreSetting.UF_VerticallySpaced;
 
             this.txtNote.Item.Left = this.lblTDate.Item.Left;
             this.txtNote.Item.Top = this.lblNote.Item.Top;
-            var lblNoteWidth = (this.txtPosDa.Item.Left + this.txtPosDa.Item.Width) - this.lblTDate.Item.Left;
+            var lblNoteWidth = (this.cbbPaymentType.Item.Left + this.cbbPaymentType.Item.Width) - this.lblTDate.Item.Left;
             this.txtNote.Item.Width = lblNoteWidth;
 
             this.btnAddL.Item.Left = this.lblFDate.Item.Left;
@@ -386,8 +389,8 @@ namespace STDApp.Payment
         private SAPbouiCOM.ComboBox cbbBr;
         private SAPbouiCOM.StaticText lblFeeType;
         private SAPbouiCOM.ComboBox cbbFeeType;
-        private SAPbouiCOM.StaticText lblPmTyp;
-        private SAPbouiCOM.ComboBox cbbPmTyp;
+        private SAPbouiCOM.StaticText lblAccount;
+        private SAPbouiCOM.ComboBox cbbAccount;
         private SAPbouiCOM.StaticText lblFDateL;
         private SAPbouiCOM.StaticText lblTDateL;
         private SAPbouiCOM.EditText txtFDateL;
@@ -398,7 +401,7 @@ namespace STDApp.Payment
         private SAPbouiCOM.Button btnAddL;
         private SAPbouiCOM.Button btnRem;
         private StaticText lblBankAccount;
-        private ComboBox cbbBankAccount;
+        private ComboBox cbbBank;
         private StaticText lblCFlow;
         private ComboBox cbbCFlow;
 
@@ -424,12 +427,11 @@ namespace STDApp.Payment
             this.folderCreate.Select();
 
             UIHelper.ComboboxSelectDefault(this.cbbFeeType);
-            UIHelper.ComboboxSelectDefault(this.cbbPmTyp);
+            UIHelper.ComboboxSelectDefault(this.cbbAccount);
 
+            UIHelper.ComboboxSelectDefault(this.cbbBank);
             LoadBankAccountCombobox();
             LoadCashflowCombobox();
-
-            this.txtPosDa.Value = DateTime.Now.ToString("yyyyMMdd");
 
             if (this.grData != null && this.grData.DataTable != null)
             {
@@ -441,20 +443,22 @@ namespace STDApp.Payment
             }
         }
 
+
         private void LoadBankAccountCombobox()
         {
-            UIHelper.ClearSelectValidValues(cbbBankAccount);
-            this.cbbBankAccount.ValidValues.Add(STRING_CONTRANTS.AllOption, STRING_CONTRANTS.AllOptionDesc);
+            UIHelper.LoadAccount(cbbAccount, Bank);
+            //this.cbbAccount.ValidValues.Add(STRING_CONTRANTS.AllOption, STRING_CONTRANTS.AllOptionDesc);
 
-            var values = DataHelper.ListBanks;
-            if (values != null && values.Count() > 0)
-            {
-                foreach (var data in values)
-                {
-                    this.cbbBankAccount.ValidValues.Add(data["Account"].ToString(), data["Name"].ToString());
-                }
-                UIHelper.ComboboxSelectDefault(cbbBankAccount);
-            }
+            //var datas = DataProvider.QueryList(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
+            //if (datas != null && datas.Count() > 0)
+            //{
+            //    foreach (var data in datas)
+            //    {
+            //        this.cbbAccount.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
+            //    }
+            //    UIHelper.ComboboxSelectDefault(cbbAccount);
+            //}
+
         }
 
         private void LoadCashflowCombobox()
@@ -609,7 +613,7 @@ namespace STDApp.Payment
                 var query = string.Format(QueryString.LoadInvoicesToPayment,
                                                                  FromDate,
                                                                  ToDate,
-                                                                 _PaymentDocumentType.GetDescription(),
+                                                                 Bank,
                                                                  BankAccount,
                                                                  _FeeType.GetDescription(),
                                                                  "");
@@ -1052,16 +1056,16 @@ namespace STDApp.Payment
                     data.DocNum = string.Empty;
                 }
                 DateTime duedate;
-                var postingDate = string.Empty;
-                if (!string.IsNullOrEmpty(PostingDate))
-                    postingDate = PostingDate;
-                else
-                    postingDate = this.grData.GetValueCustom("DueDate", index);
+                //var postingDate = string.Empty;
+                //if (!string.IsNullOrEmpty(PostingDate))
+                //    postingDate = PostingDate;
+                //else
+                //    postingDate = this.grData.GetValueCustom("DueDate", index);
 
-                if (DateTime.TryParseExact(postingDate, "yyyyMMdd", CultureInfo.CurrentCulture, DateTimeStyles.None, out duedate))
-                {
-                    data.PaymentDate = duedate;
-                }
+                //if (DateTime.TryParseExact(postingDate, "yyyyMMdd", CultureInfo.CurrentCulture, DateTimeStyles.None, out duedate))
+                //{
+                //    data.PaymentDate = duedate;
+                //}
                 data.Remark = Note;
 
                 decimal total = 0;
@@ -1341,7 +1345,7 @@ namespace STDApp.Payment
                     return;
                 }
                 var data = rps.body;
-                if (data != null && string.IsNullOrEmpty(data.PaymentID))
+                if (data != null && !string.IsNullOrEmpty(data.PaymentID))
                 {
                     try
                     {
@@ -1987,8 +1991,7 @@ namespace STDApp.Payment
             this.Freeze(false);
         }
 
-        private StaticText lblPosDa;
-        private EditText txtPosDa;
+        private StaticText lblPaymentType;
         private EditText txtNote;
         private StaticText lblNote;
         private StaticText lblCusVen;
@@ -2178,9 +2181,17 @@ namespace STDApp.Payment
                     UIHelper.LogMessage($"Lỗi không có phản hồi, vui lòng check lại", UIHelper.MsgType.StatusBar, true);
                     return;
                 }
+
                 if (rps.status.code == "0")
                 {
                     UIHelper.LogMessage($"Lỗi {rps.status.message}", UIHelper.MsgType.StatusBar, true);
+
+                    var query = "UPDATE \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_TransferRecord\" ";
+                    query += "SET \"Message\" = '" + rps.status.message + "' ";
+                    query += "WHERE \"requestId\" = '" + request.requestId + "' ";
+                    query += "AND \"bank\" = 'VT' ";
+
+                    var ret = dbProvider.ExecuteNonQuery(query);
                     return;
                 }
                 var dataResponse = JsonSerializer.Deserialize<TransferInq>(result);
@@ -2208,6 +2219,13 @@ namespace STDApp.Payment
             {
                 UIHelper.LogMessage($"Lỗi {ex.Message}", UIHelper.MsgType.StatusBar, true);
             }
+        }
+
+        private ComboBox cbbPaymentType;
+
+        private void cbbBank_ComboSelectAfter(object sboObject, SBOItemEventArg pVal)
+        {
+            LoadBankAccountCombobox();
         }
     }
 }

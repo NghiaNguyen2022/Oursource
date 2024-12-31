@@ -143,13 +143,15 @@ namespace STDApp.Bank
             //var account = ConfigurationManager.AppSettings["Account"];
             UIHelper.ComboboxSelectDefault(cbbBank);
 
-            var data = DataProvider.QuerySingle(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
-            if (data != null)
-            {
-                UIHelper.ClearSelectValidValues(cbbAcc);
-                this.cbbAcc.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
-                UIHelper.ComboboxSelectDefault(cbbAcc);
-            }
+            UIHelper.LoadAccount(cbbAcc, Bank);
+
+            //var data = DataProvider.QuerySingle(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
+            //if (data != null)
+            //{
+            //    UIHelper.ClearSelectValidValues(cbbAcc);
+            //    this.cbbAcc.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
+            //    UIHelper.ComboboxSelectDefault(cbbAcc);
+            //}
             LoadCurrencyCombobox();
         }
 
@@ -598,16 +600,17 @@ namespace STDApp.Bank
             this.Freeze(true);
             //var account = ConfigurationManager.AppSettings["Account"];
 
-            if (cbbAcc != null)
-            {
-                var data = DataProvider.QuerySingle(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
-                if (data != null)
-                {
-                    UIHelper.ClearSelectValidValues(cbbAcc);
-                    this.cbbAcc.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
-                    UIHelper.ComboboxSelectDefault(cbbAcc);
-                }
-            }
+            UIHelper.LoadAccount(cbbAcc, Bank);
+            //if (cbbAcc != null)
+            //{
+            //    var data = DataProvider.QuerySingle(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
+            //    if (data != null)
+            //    {
+            //        UIHelper.ClearSelectValidValues(cbbAcc);
+            //        this.cbbAcc.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
+            //        UIHelper.ComboboxSelectDefault(cbbAcc);
+            //    }
+            //}
             if (Bank == Banks.ViettinBank.GetDescription())
             {
                 this.grHdr.DataTable = DT_Header_VT;

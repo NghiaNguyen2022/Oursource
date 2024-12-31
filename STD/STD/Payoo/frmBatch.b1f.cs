@@ -4,6 +4,7 @@ using SAPbouiCOM.Framework;
 using SAPCore;
 using SAPCore.Config;
 using SAPCore.Helper;
+using SAPCore.SAP;
 using SAPCore.SAP.DIAPI;
 using STD.DataReader;
 using STDApp.Common;
@@ -194,10 +195,13 @@ namespace STDApp.Payoo
             var labBottom = this.lblBank.Item.Top + this.lblBank.Item.Height;
             var bttTop = labBottom - this.btnLoad.Item.Height;
             this.btnLoad.Item.Top = bttTop;
-            this.btnLoad.Item.Left = this.txtPag.Item.Left + this.txtPag.Item.Width + CoreSetting.UF_HorizontallySpaced;
+            this.btnLoad.Item.Left = this.cbbBat.Item.Left + this.cbbBat.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.btnSave.Item.Top = bttTop;
             this.btnSave.Item.Left = this.btnLoad.Item.Left + this.btnLoad.Item.Width + CoreSetting.UF_HorizontallySpaced;
+
+            this.btnReload.Item.Top = bttTop;
+            this.btnReload.Item.Left = this.btnSave.Item.Left + this.btnSave.Item.Width + CoreSetting.UF_HorizontallySpaced;
 
             this.grHdr.Item.Left = this.lblBank.Item.Left;
             this.grHdr.Item.Width = maxw - grHdr.Item.Left - 40;
@@ -507,9 +511,18 @@ namespace STDApp.Payoo
                         this.grHdr.DataTable.Rows.Add();
                         var index = grHdr.DataTable.Rows.Count - 1;
                         this.grHdr.DataTable.SetValue("BatchNo", index, rpDataTransaction.BatchNo);
-                        this.grHdr.DataTable.SetValue("Amount", index, rpDataTransaction.TotalSettlementAmount);
+                        this.grHdr.DataTable.SetValue("TotalAmount", index, rpDataTransaction.TotalSettlementAmount);
                         this.grHdr.DataTable.SetValue("RowCount", index, rpDataTransaction.TotalSettlementRowCount);
                         this.grHdr.DataTable.SetValue("PageSize", index, rpDataTransaction.PageSize);
+
+                        this.grHdr.Columns.Item("BatchNo").TitleObject.Caption = "Số Batch";
+                        this.grHdr.Columns.Item("BatchNo").Editable = false;
+                        this.grHdr.Columns.Item("TotalAmount").TitleObject.Caption = "Tổng tiền giao dịch thanh toán";
+                        this.grHdr.Columns.Item("TotalAmount").Editable = false;
+                        this.grHdr.Columns.Item("RowCount").TitleObject.Caption = "Tổng dòng giao dịch thanh toán";
+                        this.grHdr.Columns.Item("RowCount").Editable = false;
+                        this.grHdr.Columns.Item("PageSize").TitleObject.Caption = "Số lượng giao dịch của một trang";
+                        this.grHdr.Columns.Item("PageSize").Editable = false;
                         this.grHdr.AutoResizeColumns();
                     }
 
@@ -535,12 +548,45 @@ namespace STDApp.Payoo
                             this.grDt.DataTable.SetValue("TransferAmount", index, item.MoneyAmount);
                             this.grDt.DataTable.SetValue("InvoiceDate", index, item.PurchaseDate);
                             this.grDt.DataTable.SetValue("Status", index, item.Status);
-                            this.grDt.DataTable.SetValue("IntegDate", index, DateTime.Now.ToString("yyyyMMdd"));
-                            this.grDt.DataTable.SetValue("IntegTime", index, DateTime.Now.ToString("HHmmss"));
-                            this.grDt.DataTable.SetValue("RecWithBank", index, status);
+                            this.grDt.DataTable.SetValue("IntDate", index, DateTime.Now.ToString("yyyyMMdd"));
+                            this.grDt.DataTable.SetValue("IntTime", index, DateTime.Now.ToString("HHmmss"));
+                            this.grDt.DataTable.SetValue("BankRecStatus", index, status);
                             this.grDt.DataTable.SetValue("BankRefNo", index, refBank);
-
+                            
                         }
+                        this.grDt.Columns.Item("OrderNo").TitleObject.Caption = "Mã đơn hàng";
+                        this.grDt.Columns.Item("OrderNo").Editable = false;
+
+                        this.grDt.Columns.Item("ShopId").TitleObject.Caption = "Mã cửa hàng";
+                        this.grDt.Columns.Item("ShopId").Editable = false;
+
+                        this.grDt.Columns.Item("SellerName").TitleObject.Caption = "Tài khoản Đối tác";
+                        this.grDt.Columns.Item("SellerName").Editable = false;
+
+                        this.grDt.Columns.Item("TransferAmount").TitleObject.Caption = "Số tiền giao dịch";
+                        this.grDt.Columns.Item("TransferAmount").Editable = false;
+
+                        this.grDt.Columns.Item("InvoiceDate").TitleObject.Caption = "Ngày mua hàng";
+                        this.grDt.Columns.Item("InvoiceDate").Editable = false;
+
+                        this.grDt.Columns.Item("Status").TitleObject.Caption = "Trạng thái";
+                        this.grDt.Columns.Item("Status").Editable = false;
+
+                        this.grDt.Columns.Item("IntDate").TitleObject.Caption = "Ngày tích hợp";
+                        this.grDt.Columns.Item("IntDate").Editable = false;
+
+                        this.grDt.Columns.Item("IntTime").TitleObject.Caption = "Giờ tích hợp";
+                        this.grDt.Columns.Item("IntTime").Editable = false;
+
+                        this.grDt.Columns.Item("BankRefNo").Visible = false;
+                        this.grDt.Columns.Item("PaymnetID").Visible = false;
+
+                        this.grDt.Columns.Item("BankRecStatus").TitleObject.Caption = "Đã Clear";
+                        this.grDt.Columns.Item("BankRecStatus").Editable = false;
+                        this.grDt.Columns.Item("PaymentID").TitleObject.Caption = "Mã thanh toán";
+                        this.grDt.Columns.Item("PaymentID").Editable = false;
+                        this.grDt.Columns.Item("Message").TitleObject.Caption = "Thông điệp";
+                        this.grDt.Columns.Item("Message").Editable = false;
                         this.grDt.AutoResizeColumns();
                     }
 
@@ -576,7 +622,7 @@ namespace STDApp.Payoo
 
                     var insertHd = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Payoo_BatchHeader\" VALUES ( ";
                     insertHd += $"'{this.grHdr.GetValueCustom("BatchNo", 0)}',";
-                    insertHd += $"{this.grHdr.GetValueCustom("Amount", 0)},";
+                    insertHd += $"{this.grHdr.GetValueCustom("TotalAmount", 0)},";
                     insertHd += $"{this.grHdr.GetValueCustom("RowCount", 0)},";
                     insertHd += $"{this.grHdr.GetValueCustom("PageSize", 0)}";
                     insertHd += ")";
@@ -592,11 +638,11 @@ namespace STDApp.Payoo
                         insertdt += $"{this.grDt.GetValueCustom("TransferAmount", index)},";
                         insertdt += $"'{this.grDt.GetValueCustom("InvoiceDate", index)}',";
                         insertdt += $"'{this.grDt.GetValueCustom("Status", index)}',";
-                        insertdt += $"'{this.grDt.GetValueCustom("IntegDate", index)}',";
-                        insertdt += $"'{this.grDt.GetValueCustom("IntegTime", index)}',";
-                        insertdt += $"'{this.grDt.GetValueCustom("RecWithBank", index)}',";
-                        insertdt += $"'{this.grDt.GetValueCustom("BankRefNo", index)}'";
-                        insertdt += $"''";
+                        insertdt += $"'{this.grDt.GetValueCustom("IntDate", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("IntTime", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("BankRecStatus", index)}',";
+                        insertdt += $"'{this.grDt.GetValueCustom("BankRefNo", index)}', ";
+                        insertdt += $"'', '', ''";
                         insertdt += ")";
                         var retDetail = dbProvider.ExecuteNonQuery(insertdt);
                     }
@@ -650,9 +696,86 @@ namespace STDApp.Payoo
             }
 
             var batchno = $"SP{TransDate.Substring(2, 6)}0{BatchNo}";
-          
-            if (Bank == Banks.ViettinBank.GetDescription())
+            var query = "SELECT COUNT(*) AS \"Exists\" FROM \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Payoo_BatchHeader\" WHERE \"BatchNo\" = '" + batchno + "'";
+            var dataHash = dbProvider.QuerySingle(query);
+            if (dataHash != null)
             {
+                var exist = dataHash["Exists"].ToString();
+                if (exist == "0")
+                {
+                    UIHelper.LogMessage($"Batch {batchno} chưa tồn tại", UIHelper.MsgType.Msgbox, true);
+                    this.Freeze(false);
+                    return;
+                }
+            }
+            this.Clear();
+
+            var queryHeader = "SELECT * FROM \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Payoo_BatchHeader\" WHERE \"BatchNo\" = '" + batchno + "'";
+
+            if (this.grHdr != null && this.grHdr.DataTable != null)
+            {
+
+                this.grHdr.DataTable.Rows.Clear();
+                this.grHdr.DataTable.ExecuteQuery(queryHeader);
+
+                this.grHdr.Columns.Item("BatchNo").TitleObject.Caption = "Số Batch";
+                this.grHdr.Columns.Item("BatchNo").Editable = false;
+                this.grHdr.Columns.Item("TotalAmount").TitleObject.Caption = "Tổng tiền giao dịch thanh toán";
+                this.grHdr.Columns.Item("TotalAmount").Editable = false;
+                this.grHdr.Columns.Item("RowCount").TitleObject.Caption = "Tổng dòng giao dịch thanh toán";
+                this.grHdr.Columns.Item("RowCount").Editable = false;
+                this.grHdr.Columns.Item("PageSize").TitleObject.Caption = "Số lượng giao dịch của một trang";
+                this.grHdr.Columns.Item("PageSize").Editable = false;
+
+                this.grHdr.AutoResizeColumns();
+            }
+
+            var queryDetail = "SELECT * FROM \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Payoo_BatchDetail\" WHERE \"BatchNo\" = '" + batchno + "'";
+            if (this.grDt != null && this.grDt.DataTable != null)
+            {
+                this.grDt.DataTable.Rows.Clear();
+                this.grDt.DataTable.ExecuteQuery(queryDetail);
+
+                this.grDt.Columns.Item("OrderNo").TitleObject.Caption = "Mã đơn hàng";
+                this.grDt.Columns.Item("OrderNo").Editable = false;
+
+                this.grDt.Columns.Item("ShopId").TitleObject.Caption = "Mã cửa hàng";
+                this.grDt.Columns.Item("ShopId").Editable = false;
+
+                this.grDt.Columns.Item("SellerName").TitleObject.Caption = "Tài khoản Đối tác";
+                this.grDt.Columns.Item("SellerName").Editable = false;
+
+                this.grDt.Columns.Item("TransferAmount").TitleObject.Caption = "Số tiền giao dịch";
+                this.grDt.Columns.Item("TransferAmount").Editable = false;
+
+                this.grDt.Columns.Item("InvoiceDate").TitleObject.Caption = "Ngày mua hàng";
+                this.grDt.Columns.Item("InvoiceDate").Editable = false;
+
+                this.grDt.Columns.Item("Status").TitleObject.Caption = "Trạng thái";
+                this.grDt.Columns.Item("Status").Editable = false;
+
+                this.grDt.Columns.Item("IntDate").TitleObject.Caption = "Ngày tích hợp";
+                this.grDt.Columns.Item("IntDate").Editable = false;
+
+                this.grDt.Columns.Item("IntTime").TitleObject.Caption = "Giờ tích hợp";
+                this.grDt.Columns.Item("IntTime").Editable = false;
+
+                this.grDt.Columns.Item("BankRefNo").Visible = false;
+                this.grDt.Columns.Item("PaymnetID").Visible = false;
+
+                this.grDt.Columns.Item("BankRecStatus").TitleObject.Caption = "Đã Clear";
+                this.grDt.Columns.Item("BankRecStatus").Editable = false;
+                this.grDt.Columns.Item("PaymentID").TitleObject.Caption = "Mã thanh toán";
+                this.grDt.Columns.Item("PaymentID").Editable = false;
+                this.grDt.Columns.Item("Message").TitleObject.Caption = "Thông điệp";
+                this.grDt.Columns.Item("Message").Editable = false;
+
+                SAPbouiCOM.EditTextColumn oCol1 = null;
+                oCol1 = (SAPbouiCOM.EditTextColumn)this.grDt.Columns.Item("PaymentID");
+                oCol1.LinkedObjectType = SAPObjectType.oIncomingPayments;
+
+                this.grDt.AutoResizeColumns();
+
             }
             this.Freeze(false);
         }

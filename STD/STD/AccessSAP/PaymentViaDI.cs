@@ -140,6 +140,7 @@ namespace STDApp.AccessSAP
                 oPayment.DocDate = DateTime.Now;
                 var objectType = BoRcptInvTypes.it_Invoice;
                 double total = 0;
+                var docEntry = string.Empty;
                 foreach (var item in invs)
                 {
                     oPayment.Invoices.Add();
@@ -148,6 +149,7 @@ namespace STDApp.AccessSAP
                     oPayment.Invoices.InvoiceType = objectType;
                     oPayment.Invoices.SumApplied = double.Parse(item.TransferAmount);
                     total += oPayment.Invoices.SumApplied;
+                    docEntry += item + ";";
                 }
                 oPayment.TransferSum = total;
                 oPayment.TransferAccount = "112101";
@@ -157,8 +159,8 @@ namespace STDApp.AccessSAP
                 var hash = dbProvider.QuerySingle(wuer);
                 if (hash != null)
                     name = hash["CardName"].ToString();
-                oPayment.Remarks = "Khách hàng " + name + " Thanh toán";
-
+                oPayment.Remarks = "Khách hàng " + name + " chuyển tiền hóa đơn " + docEntry;
+            
                 var ret1 = -1;
                 ret1 = oPayment.Add();
 

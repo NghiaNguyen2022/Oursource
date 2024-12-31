@@ -5,6 +5,10 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using ComboBox = SAPbouiCOM.ComboBox;
+using PN.SmartLib.Helper;
+using SAPCore.Config;
+using SAPCore.SAP.DIAPI;
+using System.Linq;
 
 namespace SAPCore
 {
@@ -179,6 +183,21 @@ namespace SAPCore
             form.Freeze(false);
         }
 
+        public static void LoadAccount(ComboBox cbbAccount, string bank)
+        {
+            ClearSelectValidValues(cbbAccount);
+           //cbbAccount.ValidValues.Add("All", "Tất cả");
+            var query = "SELECT * FROM  \"" + DIConnection.Instance.CompanyDB + "\".\"vw_Bank_BankAccount\" WHERE \"Key\" = '"+ bank + "'";
+            var datas = DataProvider.QueryList(CoreSetting.DataConnection, query);
+            if (datas != null && datas.Count() > 0)
+            {
+                foreach (var data in datas)
+                {
+                    cbbAccount.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
+                }
+                ComboboxSelectDefault(cbbAccount);
+            }
+        }
         public static void ComboboxSelectDefault(ComboBox comboBox, int defValue = 0)
         {
             comboBox.Select(defValue, SAPbouiCOM.BoSearchKey.psk_Index);

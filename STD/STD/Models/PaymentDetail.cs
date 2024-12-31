@@ -49,7 +49,7 @@ namespace STDApp.Models
         public string DocEntry { get; set; }
         //public string InvCode { get; set; }
         public DateTime DocDate { get; set; }
-        public DateTime PaymentDate { get; set; }
+        //public DateTime PaymentDate { get; set; }
         public decimal Amount { get; set; }
        // public decimal AmountBank { get; set; }
       //  public decimal AmountCash { get; set; }

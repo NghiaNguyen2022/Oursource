@@ -1,6 +1,5 @@
 ﻿using SAPCore.Helper;
 using SAPCore.SAP.DIAPI;
-using System.Configuration;
 
 namespace STD.DataReader
 {
@@ -8,7 +7,7 @@ namespace STD.DataReader
     {
         public static string DBName
         {
-            get { return ConfigurationManager.AppSettings["Schema"]; }
+            get { return DIConnection.Instance.CompanyDB; }
         }
         private static string CallStoreBySystem(string query, string param = "")
         {

@@ -18,14 +18,9 @@ BEGIN
 	SELECT "Code", "Name", "Account"
 	INTO _BankCode, _BankName, _Account
 	  FROM "vw_Bank_BankAccount" 
-	 WHERE "Account" = :v_Account; 
-	/*SELECT T1."BankCode" AS "Code", 
-	   	   T1."BankName" AS "Name", 
-	       T0."Account" AS "Account"	  
- 	  INTO _BankCode, _BankName, _Account
-	  FROM DSC1 t0 
-	  JOIN ODSC T1  ON T0."BankCode" = T1."BankCode"
-	  WHERE  T0."AcctName" = 'PYMEPHARCO';*/
+	 WHERE "Account" = :v_Account
+	   AND "Key" = :v_Type ; 
+	
 	  			
 	SELECT T."CardCode",
 		   T."CardName",
@@ -79,7 +74,8 @@ BEGIN
 					T4."AcctName",
 					t2."HouseBank",
 					'Thanh toan' || t2."CardName" ||T1."DueDate" AS "Content", 
-		   			CASE WHEN COALESCE(T5."status", 'N') = '1' THEN '02'
+		   			CASE WHEN t5."bank" = 'VT' AND COALESCE(T5."status", 'N') = '1' THEN '02'
+		   				 WHEN t5."bank" = 'BI' AND COALESCE(T5."status", 'N') = '11' THEN '02'
 		   				 ELSE '01'
 					 END AS "SAPStatus",
 					COALESCE(T5."bankStatus", '') AS "BankStatus",
@@ -94,25 +90,28 @@ BEGIN
 				LEFT JOIN OCRB T4 ON T4."CardCode" = t2."CardCode"
 								 AND T4."BankCode" = T2."BankCode"
 								 AND T4."Account" = T2."DflAccount"
+								
 				LEFT JOIN (					  	
 							SELECT T0.* 
 							  FROM "tb_Bank_TransferRecord" T0
 							  JOIN (SELECT "CardCode",
-										   "DocEntry",
+										   "DocEntry","bank",
 										   MAX("transId") AS "transId"
 									  FROM "tb_Bank_TransferRecord"
 									 WHERE COALESCE("DocEntry", '') != ''
-									   AND "bank" = 'VT'
+									   --AND "bank" = 'VT'
 									 GROUP BY "CardCode",
-										   "DocEntry") t1 ON T0."CardCode" = T1."CardCode"
+										   "DocEntry", "bank") t1 ON T0."CardCode" = T1."CardCode"
 										   				 AND T0."DocEntry" = T1."DocEntry"
 										   				 AND T0."transId" = T1."transId"
-							WHERE T0."bank" = 'VT'
+										   				 AND T0."bank" = T1."bank"
+							--WHERE T0."bank" = 'VT'
 						  ) T5 ON T2."CardCode" = T5."CardCode"
 							  AND T0."DocEntry" = t5."DocEntry"
 				WHERE T1."DueDate" BETWEEN :v_FromDate AND :v_ToDate
 				  AND T1."InsTotal" - T1."PaidToDate" > 0		
 				  AND (:v_Account = 'All' OR t2."HousBnkAct" = :v_Account)
+				  AND T2."BankCode" = :_BankCode
 			UNION ALL
 			SELECT T1."CardCode",
 					T2."CardName",
@@ -134,7 +133,8 @@ BEGIN
 					t2."HouseBank",
 					'Thanh toan' || t2."CardName" --||T1."DueDate"
 						 AS "Content",
-				    CASE WHEN COALESCE(T1."status", 'N') = '1' THEN '02'
+				    CASE WHEN t1."bank" = 'VT' AND COALESCE(T1."status", 'N') = '1' THEN '02'
+		   				 WHEN t1."bank" = 'BI' AND COALESCE(T1."status", 'N') = '11' THEN '02'
 		   				 ELSE '01'
 					 END AS "SAPStatus",
 					COALESCE(T1."bankStatus", '') AS "BankStatus",
@@ -153,7 +153,8 @@ BEGIN
 				WHERE  COALESCE(T1."DocEntry", '') = '' --T1."DueDate" BETWEEN :v_FromDate AND :v_ToDate
 				  --AND T1."InsTotal" - T1."PaidToDate" > 0		
 				 AND  (:v_Account = 'All' OR t2."HousBnkAct" = :v_Account)
-				 AND T1. "bank" = 'VT'
+				 --AND T1. "bank" = 'VT'				 
+				 AND T2."BankCode" = :_BankCode
 				--ORDER BY T0."CardCode"
 			) T
 										--AND (:v_RequestID = '' OR T1."requestId" = :v_RequestID)
