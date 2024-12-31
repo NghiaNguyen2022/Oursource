@@ -76,36 +76,6 @@ namespace ERPService.BackJob
 			}
 		}
 
-		//private void OnElapsedTime(object source, ElapsedEventArgs e)
-  //      {
-		//	try
-		//	{
-		//		DateTime now = DateTime.Now;
-		//		TimeSpan currentTime = now.TimeOfDay;
-		//		DateTime fromTime, toTime;
-		//		// Match the current time to the configured times
-		//		if (currentTime.Hours == timeRun1.Value.Hours && currentTime.Minutes == timeRun1.Value.Minutes)
-		//		{
-		//			// timeRun1 match: from = timeRun2 of yesterday, to = timeRun1 of today
-		//			fromTime = DateTime.Today.AddDays(-1).Add(timeRun2.Value); // Yesterday's timeRun2
-		//			toTime = DateTime.Today.Add(timeRun1.Value);              // Today's timeRun1
-		//			Console.WriteLine($"Matched timeRun1: From {fromTime} to {toTime}");
-		//		}
-		//		else if (currentTime.Hours == timeRun2.Value.Hours && currentTime.Minutes == timeRun2.Value.Minutes)
-		//		{
-		//			// timeRun2 match: from = timeRun1 of today, to = timeRun2 of today
-		//			fromTime = DateTime.Today.Add(timeRun1.Value);            // Today's timeRun1
-		//			toTime = DateTime.Today.Add(timeRun2.Value);              // Today's timeRun2
-		//			Console.WriteLine($"Matched timeRun2: From {fromTime} to {toTime}");
-		//		}
-		//	}
-		//	catch (Exception ex)
-		//	{
-  //              Utils.WriteToFile($"Error catching runTime and generate fromDate toDate: {ex.Message}");
-		//		return;
-		//	}
-		//}
-
         private void DisConnect()
         {
            //DIServiceConnection.Instance.DIDisconnect();

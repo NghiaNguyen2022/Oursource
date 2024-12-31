@@ -32,9 +32,11 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>
+    </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <PlatformTarget>x64</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -278,7 +280,7 @@
       <Name>SAPCore</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\STD\Common\STD_Libs\STDLibs.csproj">
-      <Project>{ec3efff1-96f7-4c61-af02-bf2d79ea97b5}</Project>
+      <Project>{EC3EFFF1-96F7-4C61-AF02-BF2D79EA97B5}</Project>
       <Name>STDLibs</Name>
     </ProjectReference>
   </ItemGroup>

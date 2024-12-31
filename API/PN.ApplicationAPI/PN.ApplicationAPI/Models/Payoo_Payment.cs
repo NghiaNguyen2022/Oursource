@@ -5,6 +5,12 @@ using System.Configuration;
 
 namespace PN.ApplicationAPI.Models
 {
+    public class PaypooRequest
+    {
+        public string ResponseData { get; set; }
+        public string SecureHash { get; set; }
+    }
+
     public class Payoo_Payment
     {
         public int PaymentMethod { get; set; }

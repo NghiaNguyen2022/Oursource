@@ -41,20 +41,12 @@
     <Reference Include="Microsoft.Bcl.AsyncInterfaces, Version=8.0.0.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462\Microsoft.Bcl.AsyncInterfaces.dll</HintPath>
     </Reference>
-    <Reference Include="PN.SmartLib, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\STD\Common\SAPCore\bin\PN.SmartLib.dll</HintPath>
-    </Reference>
     <Reference Include="RestSharp, Version=112.1.0.0, Culture=neutral, PublicKeyToken=598062e77f915f75, processorArchitecture=MSIL">
       <HintPath>..\packages\RestSharp.112.1.0\lib\net48\RestSharp.dll</HintPath>
     </Reference>
     <Reference Include="SAPBusinessOneSDK, Version=1.1.0.1, Culture=neutral, PublicKeyToken=c7c3cb60e45d119f, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\STD\Libs\SAPBusinessOneSDK.dll</HintPath>
-    </Reference>
-    <Reference Include="SAPCore, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\STD\Common\SAPCore\bin\SAPCore.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Buffers, Version=4.0.3.0, Culture=neutral, PublicKeyToken=cc7b13ffcd2ddd51, processorArchitecture=MSIL">
@@ -147,7 +139,16 @@
       <DependentUpon>ServiceInstaller.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\..\STD\Common\PN.Libs\PN.SmartLib.csproj">
+      <Project>{141d8614-7f15-4b5a-994f-a6f960d8a451}</Project>
+      <Name>PN.SmartLib</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\STD\Common\SAPCore\SAPCore.csproj">
+      <Project>{90b593c4-84b2-465f-979b-8d7a5f113243}</Project>
+      <Name>SAPCore</Name>
+    </ProjectReference>
+  </ItemGroup>
   <ItemGroup>
     <Content Include="Libs\FPT.dll" />
     <Content Include="Scripts\InquiryDetail.sql" />

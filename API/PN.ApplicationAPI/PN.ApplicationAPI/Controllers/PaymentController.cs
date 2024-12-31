@@ -7,22 +7,33 @@ using STD.DataReader;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Web.Http;
+using System.Web.Script.Serialization;
 
 namespace PN.ApplicationAPI.Controllers
 {
     public class PaymentController : BaseController
     {
-        //[BasicAuthentication]
+        [BasicAuthentication]
         [System.Web.Http.HttpPost]
         //[Route("get1/{param1}")]
-        public IHttpActionResult Create([FromBody]Payoo_Payment input)
+        public IHttpActionResult Create([FromBody]PaypooRequest input)
         {
             if (input == null)
             {
                 return Ok(ResponseFaild("Data chưa đúng cấu trúc và định dạng"));
             }
+            var objJson = new JavaScriptSerializer();
+            var objBody = objJson.Deserialize<Payoo_Payment>(input.ResponseData);
+            if(objBody == null)
+            {
+                if (string.IsNullOrEmpty(input.ResponseData))
+                {
+                    return Ok(ResponseFaild("Data chưa đúng cấu trúc và định dạng"));
+                }
+            }
 
-            var query = string.Format(QueryString.CheckOrderExists, input.OrderNo);
+            var dbName = ConfigurationManager.AppSettings["Schema"];
+            var query = "CALL \"" + dbName + "\".\"usp_Payoo_CheckOrderExists\" ('" + objBody.OrderNo + "')";
             var data = dbProvider.QuerySingle(query);
             if (data != null)
             {
@@ -39,7 +50,7 @@ namespace PN.ApplicationAPI.Controllers
                 }
             }
             var message = string.Empty;
-            if (input.InsertData(ref message))
+            if (objBody.InsertData(ref message))
                 return Ok(ResponseSuccessed(message));
             return Ok(ResponseFaild(message));
             //return Ok(ResponseSuccessed("OK"));
