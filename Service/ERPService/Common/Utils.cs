@@ -67,7 +67,7 @@ namespace ERPService.Common
                     fromTime = DateTime.Today.Add(timeRun1);            // Today's timeRun1
                     toTime = DateTime.Today.Add(timeRun2);              // Today's timeRun2
                     Console.WriteLine($"Matched timeRun2: From {fromTime} to {toTime}");
-                }
+                }   
             }
             catch (Exception ex)
             {

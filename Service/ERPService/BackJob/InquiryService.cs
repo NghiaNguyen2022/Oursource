@@ -72,7 +72,7 @@ namespace ERPService.BackJob
 				timer.Elapsed += new ElapsedEventHandler(Utils.OnElapsedTime);
 				timer.Interval = 60000;
 				timer.Enabled = true;
-				timer.Start();
+				//timer.Start();
 			}
 		}
 

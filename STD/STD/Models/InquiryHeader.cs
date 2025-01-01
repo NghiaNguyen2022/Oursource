@@ -31,7 +31,7 @@ namespace STDApp.Models
             //using(var trans)
             try
             {
-                var query = "INSERT INTO CCC.\"InquiryHeader\" VALUES ( ";
+                var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"InquiryHeader\" VALUES ( ";
                 query += $"'{requestId}',";
                 query += $"'{providerId}',";
                 query += $"'{merchantId}',";
