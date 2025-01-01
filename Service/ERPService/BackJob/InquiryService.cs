@@ -1,24 +1,15 @@
-﻿using System;
+﻿using ERPService.Common;
+using ERPService.DataReader;
+using ERPService.Models;
+using RestSharp;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Globalization;
-using System.IO;
 using System.Linq;
 using System.ServiceProcess;
 using System.Text.Json;
 using System.Timers;
-using System.Web.Script.Serialization;
-using ERPService.Common;
-using ERPService.DataReader;
-using ERPService.Models;
-using PN.SmartLib.Helper;
-using RestSharp;
-using SAPbobsCOM;
-using SAPCore;
-using SAPCore.Config;
-using SAPCore.SAP.DIAPI;
-using static System.Net.WebRequestMethods;
 
 namespace ERPService.BackJob
 {
@@ -43,6 +34,9 @@ namespace ERPService.BackJob
 			try
 			{
                 Utils.WriteToFile($"On Start");
+                if (GlobalConfig.InquiryRunner == null)
+                    GlobalConfig.InquiryRunner = new RunnerTime();
+
 				string timeRun1String = ConfigurationManager.AppSettings["timeRun1"];
 				string timeRun2String = ConfigurationManager.AppSettings["timeRun2"];
 				timeRun1 = TimeSpan.Parse(timeRun1String);

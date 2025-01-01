@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ERPService
 {
@@ -28,5 +24,14 @@ namespace ERPService
         public string POOAPIUsername = "SB_Stada_BizAPI";
         public string POOAPIPassword = "9qW0k9/5khmSqdOE";
         public string POOAPISignature = "U5E0ykWrsQSqkjS6xR+Qnj3cbuNUi8YgSC2r6/BcXrpdcjOx6XYh7XNjQf806Yay";
+
+        public static RunnerTime InquiryRunner;
+
+    }
+
+    public class RunnerTime
+    {
+        public DateTime RunDate { get; set; }
+        public int Timer { get; set; }
     }
 }

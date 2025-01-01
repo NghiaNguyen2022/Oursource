@@ -53,21 +53,36 @@ namespace ERPService.Common
                 DateTime now = DateTime.Now;
                 TimeSpan currentTime = now.TimeOfDay;
                 DateTime fromTime, toTime;
-                // Match the current time to the configured times
-                if (currentTime.Hours == timeRun1.Hours && currentTime.Minutes == timeRun1.Minutes)
+
+                if (GlobalConfig.InquiryRunner != null)
                 {
-                    // timeRun1 match: from = timeRun2 of yesterday, to = timeRun1 of today
-                    fromTime = DateTime.Today.AddDays(-1).Add(timeRun2); // Yesterday's timeRun2
-                    toTime = DateTime.Today.Add(timeRun1);              // Today's timeRun1
-                    Console.WriteLine($"Matched timeRun1: From {fromTime} to {toTime}");
+                    if(GlobalConfig.InquiryRunner.RunDate.Date != now.Date)
+                    {
+                        GlobalConfig.InquiryRunner.RunDate = now;
+                        GlobalConfig.InquiryRunner.Timer = 0;                        
+                    }
+                    
+                    // Match the current time to the configured times
+                    if (currentTime.Hours == timeRun1.Hours && currentTime.Minutes >= timeRun1.Minutes 
+                        && GlobalConfig.InquiryRunner.Timer == 0)
+                    {
+                        // timeRun1 match: from = timeRun2 of yesterday, to = timeRun1 of today
+                        fromTime = DateTime.Today.AddDays(-1).Add(timeRun2); // Yesterday's timeRun2
+                        toTime = DateTime.Today.Add(timeRun1);              // Today's timeRun1
+                        Console.WriteLine($"Matched timeRun1: From {fromTime} to {toTime}");
+
+                        GlobalConfig.InquiryRunner.Timer = 1;
+                    }
+                    else if (currentTime.Hours == timeRun2.Hours && currentTime.Minutes >= timeRun2.Minutes
+                        && GlobalConfig.InquiryRunner.Timer == 1)
+                    {
+                        // timeRun2 match: from = timeRun1 of today, to = timeRun2 of today
+                        fromTime = DateTime.Today.Add(timeRun1);            // Today's timeRun1
+                        toTime = DateTime.Today.Add(timeRun2);              // Today's timeRun2
+                        Console.WriteLine($"Matched timeRun2: From {fromTime} to {toTime}");
+                        GlobalConfig.InquiryRunner.Timer = 2;
+                    }
                 }
-                else if (currentTime.Hours == timeRun2.Hours && currentTime.Minutes == timeRun2.Minutes)
-                {
-                    // timeRun2 match: from = timeRun1 of today, to = timeRun2 of today
-                    fromTime = DateTime.Today.Add(timeRun1);            // Today's timeRun1
-                    toTime = DateTime.Today.Add(timeRun2);              // Today's timeRun2
-                    Console.WriteLine($"Matched timeRun2: From {fromTime} to {toTime}");
-                }   
             }
             catch (Exception ex)
             {
