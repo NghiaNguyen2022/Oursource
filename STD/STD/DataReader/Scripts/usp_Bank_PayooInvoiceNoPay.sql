@@ -6,7 +6,7 @@ ALTER PROCEDURE "usp_Bank_PayooInvoiceNoPay"
 LANGUAGE SQLSCRIPT
 AS
 BEGIN	
-	SELECT T0."DocNum",
+	SELECT T0."DocNum" AS "DocEntry",
 	 	   CASE WHEN T0."NumAtCard" LIKE '%.%' THEN T0."NumAtCard"
 	 	   		ELSE ''
 	 	   	END AS "VatInvoiceNumber",
