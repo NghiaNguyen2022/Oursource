@@ -215,6 +215,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DataReader\Scripts\tb_Addon_Config.sql" />
     <Content Include="DataReader\Scripts\tb_Bank_BIDVInquiryTran.sql" />
     <Content Include="DataReader\Scripts\InquiryDetail.sql" />
     <Content Include="DataReader\Scripts\PayooBatch.sql" />

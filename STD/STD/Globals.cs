@@ -1,51 +1,236 @@
 ﻿using SAPCore.Config;
 using SAPCore.Form;
 using SAPCore.SAP.DIAPI;
+using STDLibs.Models;
+using System.Linq;
 
 namespace STDApp
 {
     
     public class APIVietinBankConstrant
     {
-        public static string APIVTB = "https://api-uat.vietinbank.vn";
-        public static string UAT_VTB = "/vtb-api-uat/development/erp/v1";
-        public static string InquiryVTB = $"{UAT_VTB}/statement/inquiry";
-        public static string RateVTB = $"vtb-api-uat/development/v1/fxrate/ForeignExchangeRate_Inq";
-        public static string TransferVTB = $"{UAT_VTB}//payment/transfer";
-        public static string TransferInqVTB = $"{UAT_VTB}//payment/transferInq";
+        public static string APIVTB
+        {
+            get
+            {
+                return Configs.AddonConfigurations["APIVTB"];
+            }
+        } // = "https://api-uat.vietinbank.vn";
+        //public static string UAT_VTB
+        //{
+        //} = "/vtb-api-uat/development/erp/v1";
+        public static string InquiryVTB
+        {
+            get
+            {
+                return Configs.AddonConfigurations["InquiryVTB"];
+            }
+        }// = $"{UAT_VTB}/statement/inquiry";
+         //public static string RateVTB = $"vtb-api-uat/development/v1/fxrate/ForeignExchangeRate_Inq";
+         //public static string TransferVTB = $"{UAT_VTB}//payment/transfer";
+         //public static string TransferInqVTB = $"{UAT_VTB}//payment/transferInq";
 
-        public static string ClientID = $"fbbf1989a3ad0de68446317f5f104df0";
-        public static string ClientSecret = $"2cd7b943f4d7c5115d44b81487497ae3";
-        public static string AccountRecv = $"108004261279";
-        public static string Account = $"112000002609";
+        //public static string ClientID = $"fbbf1989a3ad0de68446317f5f104df0";
+        //public static string ClientSecret = $"2cd7b943f4d7c5115d44b81487497ae3";
+        //public static string AccountRecv = $"108004261279";
+        //public static string Account = $"112000002609";
+
+        public static string RateVTB
+        {
+            get
+            {
+                return Configs.AddonConfigurations["RateVTB"];
+            }
+        }// = $"vtb-api-uat/development/v1/fxrate/ForeignExchangeRate_Inq";
+        public static string TransferVTB
+        {
+            get
+            {
+                return Configs.AddonConfigurations["TransferVTB"];
+            }
+        }// = $"{UAT_VTB}//payment/transfer";
+        public static string TransferInqVTB
+        {
+            get
+            {
+                return Configs.AddonConfigurations["TransferInqVTB"];
+            }
+        }// = $"{UAT_VTB}//payment/transferInq";
+
+        public static string ClientID
+        {
+            get
+            {
+                return Configs.AddonConfigurations["ClientIDVTB"];
+            }
+        }//            = $"fbbf1989a3ad0de68446317f5f104df0";
+        public static string ClientSecret
+        {
+            get
+            {
+                return Configs.AddonConfigurations["ClientSecretVTB"];
+            }
+        }// = $"2cd7b943f4d7c5115d44b81487497ae3";
+
+        public static string USER_APPROVE
+        {
+            get
+            {
+                return Configs.AddonConfigurations["USER_APPROVE"];
+            }
+        }
+        public static string USER_CREATE
+        {
+            get
+            {
+                return Configs.AddonConfigurations["USER_CREATE"];
+            }
+        }
+        public static string ProviderId
+        {
+            get
+            {
+                return Configs.AddonConfigurations["ProviderId"];
+            }
+        }
+        public static string MerchantId
+        {
+            get
+            {
+                return Configs.AddonConfigurations["MerchantId"];
+            }
+        }
+        public static string ClientIP
+        {
+            get
+            {
+                return Configs.AddonConfigurations["ClientIP"];
+            }
+        }
     }
     public class APIBIDVConstrant
     {
-        public static string APILink = "https://www.bidv.net:9303";
-        public static string UAT_BIDV = "/bidvorg/service";
-        public static string InquiryBIDV = $"{UAT_BIDV}/open-banking/inquire-account-transaction/v1";
+        public static string APILink
+        {
+            get
+            {
+                return Configs.AddonConfigurations["APILinkBIDV"];
+            }
+        }// = "https://www.bidv.net:9303";
+         // public static string UAT_BIDV = "/bidvorg/service";
+        public static string InquiryBIDV
+        {
+            get
+            {
+                return Configs.AddonConfigurations["InquiryBIDV"];
+            }
+        }// = $"{UAT_BIDV}/open-banking/inquire-account-transaction/v1";
         //public static string TransferBIDV = "";
-        public static string AuthenBIDV = $"{UAT_BIDV}/ibank-oauth/oauth2/token";
+        public static string AuthenBIDV
+        {
+            get
+            {
+                return Configs.AddonConfigurations["AuthenBIDV"];
+            }
+        }// = $"{UAT_BIDV}/ibank-oauth/oauth2/token";
 
-        public static string ChannelBIDVAPI = "IERP";
-        public static string UserAgentIDVAPI = "IERP";
-        public static string SymmetricKey = "2094508740466af766392a869e92ac81229e15ec3e75b0476d8fbdbc9d924f65";
-        public static string ClientID = $"df616d171dae4974042d4d95577c05de";
-        public static string ClientSecret = $"9adc6d5f750dcdfc898c74aec2d0e0c7";
-        public static string URL_Redirect = $"https://azstvntstsapb1db:50000/b1s/v1/BIDV_TEST";
+        public static string ChannelBIDVAPI
+        {
+            get
+            {
+                return Configs.AddonConfigurations["ChannelBIDVAPI"];
+            }
+        }// = "IERP";
+        public static string UserAgentIDVAPI
+        {
+            get
+            {
+                return Configs.AddonConfigurations["UserAgentIDVAPI"];
+            }
+        }// = "IERP";
+        public static string SymmetricKey
+        {
+            get
+            {
+                return Configs.AddonConfigurations["SymmetricKey"];
+            }
+        }// = "2094508740466af766392a869e92ac81229e15ec3e75b0476d8fbdbc9d924f65";
+        public static string ClientID
+        {
+            get
+            {
+                return Configs.AddonConfigurations["ClientIDBIDV"];
+            }
+        }// = $"df616d171dae4974042d4d95577c05de";
+        public static string ClientSecret
+        {
+            get
+            {
+                return Configs.AddonConfigurations["ClientSecretBIDV"];
+            }
+        }// = $"9adc6d5f750dcdfc898c74aec2d0e0c7";
+        public static string URL_Redirect
+        {
+            get
+            {
+                return Configs.AddonConfigurations["URL_Redirect"];
+            }
+        }// = $"https://azstvntstsapb1db:50000/b1s/v1/BIDV_TEST";
 
-        public static string TransferBIDV = $"{UAT_BIDV}/open-banking/domestic-payment/v1";
+        public static string TransferBIDV
+        {
+            get
+            {
+                return Configs.AddonConfigurations["TransferBIDV"];
+            }
+        }// = $"{UAT_BIDV}/open-banking/domestic-payment/v1";
     }
 
     public class APIPayooConstant
     {
-        public static string APILink = "https://bizsandbox.payoo.com.vn";
-        public static string SettlementTransactionsLink = "/BusinessRestAPI.svc/GetSettlementTransactions";
-        public static string APIUsername = "SB_Stada_BizAPI";
-        public static string APIPassword = "9qW0k9/5khmSqdOE";
-        public static string APISignature = "U5E0ykWrsQSqkjS6xR+Qnj3cbuNUi8YgSC2r6/BcXrpdcjOx6XYh7XNjQf806Yay";
+        public static string APILink
+        {
+            get
+            {
+                return Configs.AddonConfigurations["APILinkPY"];
+            }
+        }// = "https://bizsandbox.payoo.com.vn";
+        public static string SettlementTransactionsLink
+        {
+            get
+            {
+                return Configs.AddonConfigurations["SettlementTransactionsLink"];
+            }
+        }// = "/BusinessRestAPI.svc/GetSettlementTransactions";
+        public static string APIUsername
+        {
+            get
+            {
+                return Configs.AddonConfigurations["APIUsernamePY"];
+            }
+        }// = "SB_Stada_BizAPI";
+        public static string APIPassword
+        {
+            get
+            {
+                return Configs.AddonConfigurations["APIPasswordPY"];
+            }
+        }// = "9qW0k9/5khmSqdOE";
+        public static string APISignature
+        {
+            get
+            {
+                return Configs.AddonConfigurations["APISignaturePY"];
+            }
+        }// = "U5E0ykWrsQSqkjS6xR+Qnj3cbuNUi8YgSC2r6/BcXrpdcjOx6XYh7XNjQf806Yay";
 
-        public static string ChecksumKey = "NzlkNTJmZDBhMjcyNDM0MjBkZWQ4NDI0ODNjYjY2YTI=";
+        public static string ChecksumKey
+        {
+            get
+            {
+                return Configs.AddonConfigurations["ChecksumKeyPY"];
+            }
+        }// = "NzlkNTJmZDBhMjcyNDM0MjBkZWQ4NDI0ODNjYjY2YTI=";
     }
 
     public class GlobalsConfig : SysGlobals

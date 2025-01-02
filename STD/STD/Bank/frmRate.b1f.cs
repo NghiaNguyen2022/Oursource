@@ -117,12 +117,14 @@ namespace STDApp.Bank
                 var requestData = new RateRequest
                 {
                     requestId = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                    providerId = ConfigurationManager.AppSettings["ProviderId"],
-                    merchantId = ConfigurationManager.AppSettings["MerchantId"],
+                    //providerId = ConfigurationManager.AppSettings["ProviderId"],
+                    //merchantId = ConfigurationManager.AppSettings["MerchantId"],
+                    merchantId = APIVietinBankConstrant.MerchantId,// ConfigurationManager.AppSettings["MerchantId"],
+                    providerId = APIVietinBankConstrant.ProviderId,// ConfigurationManager.AppSettings["ProviderId"],
                     version = "1.0.1",
                     language = "vi",
                     trans_date = DateTime.ParseExact(DateRate, "yyyyMMdd", null).ToString("MM/dd/yyyy"),// "12/14/2024",
-                    clientIP = ConfigurationManager.AppSettings["ClientIP"],
+                    clientIP = APIVietinBankConstrant.ClientIP,//  ConfigurationManager.AppSettings["ClientIP"],
                     channel = "ERP",
                     signature = ""//,
                                   // transTime = DateTime.Now.ToString("yyyyMMddHHmmss")

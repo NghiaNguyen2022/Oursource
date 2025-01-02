@@ -19,8 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\</OutputPath>
-    <DefineConstants>
-    </DefineConstants>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <PlatformTarget>x64</PlatformTarget>
@@ -51,6 +50,7 @@
     <Compile Include="DataReader\QueryString_CostCalc.cs" />
     <Compile Include="DataReader\QueryString.cs" />
     <Compile Include="Models\Account.cs" />
+    <Compile Include="Models\AddonConfig.cs" />
     <Compile Include="Models\Bank.cs" />
     <Compile Include="Models\Branch.cs" />
     <Compile Include="Models\CashFlow.cs" />
@@ -64,9 +64,6 @@
       <Project>{90B593C4-84B2-465F-979B-8D7A5F113243}</Project>
       <Name>SAPCore</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="API\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

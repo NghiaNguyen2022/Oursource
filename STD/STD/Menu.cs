@@ -1,10 +1,12 @@
 ﻿using SAPbouiCOM.Framework;
 using SAPCore;
+using SAPCore.SAP.DIAPI;
 using STDApp.Bank;
 using STDApp.Common;
 using STDApp.Payment;
 using STDApp.Payoo;
 using System;
+using System.Configuration;
 
 namespace STDApp
 {
@@ -14,10 +16,15 @@ namespace STDApp
 
         public Menu()
         {
-            UIHelper.AddMenuFolder(GlobalsConfig.Instance.CusPMFolderID, GlobalsConfig.Instance.CusPMFolderDesc, GlobalsConfig.Instance.ParentMenuID);
-
+            var dbName = ConfigurationManager.AppSettings["Schema"];
             bankConfig = new BankConfig();
-            bankConfig.LoadMenu(GlobalsConfig.Instance.CusPMFolderID, 0);
+            if (DIConnection.Instance.CompanyDB == dbName)
+            {
+                UIHelper.AddMenuFolder(GlobalsConfig.Instance.CusPMFolderID, GlobalsConfig.Instance.CusPMFolderDesc, GlobalsConfig.Instance.ParentMenuID);
+
+                bankConfig = new BankConfig();
+                bankConfig.LoadMenu(GlobalsConfig.Instance.CusPMFolderID, 0);
+            }
         }
 
         public void SBO_Application_MenuEvent(ref SAPbouiCOM.MenuEvent pVal, out bool BubbleEvent)
@@ -29,21 +36,25 @@ namespace STDApp
                 
                 if (pVal.BeforeAction)
                 {
-                    if (pVal.MenuUID == bankConfig.InquiryForm.MenuID)
+                    var dbName = ConfigurationManager.AppSettings["Schema"];
+                    if (DIConnection.Instance.CompanyDB == dbName)
                     {
-                        frmInquiry.ShowForm();
-                    }
-                    else if (pVal.MenuUID == bankConfig.PaymentForm.MenuID)
-                    {
-                        frmPayment.ShowForm();
-                    }
-                    else if (pVal.MenuUID == bankConfig.BatchForm.MenuID)
-                    {
-                        frmBatch.ShowForm();
-                    }
-                    else if (pVal.MenuUID == bankConfig.RateForm.MenuID)
-                    {
-                        frmRate.ShowForm();
+                        if (pVal.MenuUID == bankConfig.InquiryForm.MenuID)
+                        {
+                            frmInquiry.ShowForm();
+                        }
+                        else if (pVal.MenuUID == bankConfig.PaymentForm.MenuID)
+                        {
+                            frmPayment.ShowForm();
+                        }
+                        else if (pVal.MenuUID == bankConfig.BatchForm.MenuID)
+                        {
+                            frmBatch.ShowForm();
+                        }
+                        else if (pVal.MenuUID == bankConfig.RateForm.MenuID)
+                        {
+                            frmRate.ShowForm();
+                        }
                     }
                     //else if (pVal.MenuUID == GlobalsConfig.Instance.PaymentReviewFormInfo.MenuID)
                     //{

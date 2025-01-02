@@ -141,15 +141,17 @@ namespace STDApp.AccessSAP
                 var objectType = BoRcptInvTypes.it_Invoice;
                 double total = 0;
                 var docEntry = string.Empty;
+                var i = 0;
                 foreach (var item in invs)
                 {
                     oPayment.Invoices.Add();
-                    oPayment.Invoices.SetCurrentLine(0);
+                    oPayment.Invoices.SetCurrentLine(i);
                     oPayment.Invoices.DocEntry = int.Parse(item.DocEntry);
                     oPayment.Invoices.InvoiceType = objectType;
                     oPayment.Invoices.SumApplied = double.Parse(item.TransferAmount);
                     total += oPayment.Invoices.SumApplied;
                     docEntry += item + ";";
+                    i++;
                 }
                 oPayment.TransferSum = total;
                 oPayment.TransferAccount = "112101";

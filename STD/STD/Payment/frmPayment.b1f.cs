@@ -993,7 +993,7 @@ namespace STDApp.Payment
                 var record = new TransferRecord
                 {
                     transId = transId, //mã giao dịch
-                    approver = ConfigurationManager.AppSettings["USER_APPROVE"],
+                    approver = APIVietinBankConstrant.USER_APPROVE,// ConfigurationManager.AppSettings["USER_APPROVE"],
                     transType = type,
                     amount = amount.ToString(),
                     recvAcctId = receiverAccount,
@@ -1401,19 +1401,19 @@ namespace STDApp.Payment
                 {
                     model = "2",
                     requestId = "12345678" + DateTime.Now.ToString("yyyyMMddHHmmss"),
-                    providerId = ConfigurationManager.AppSettings["ProviderId"],
-                    merchantId = ConfigurationManager.AppSettings["MerchantId"],
+                    merchantId = APIVietinBankConstrant.MerchantId,// ConfigurationManager.AppSettings["MerchantId"],
+                    providerId = APIVietinBankConstrant.ProviderId,// ConfigurationManager.AppSettings["ProviderId"],
                     priority = "3",
                     version = "1",
                     softwareProviderId = "FPT",
                     language = "vi",
-                    appointedApprover = ConfigurationManager.AppSettings["USER_APPROVE"],
-                    feeAccount = ConfigurationManager.AppSettings["Account"],
+                    appointedApprover = APIVietinBankConstrant.USER_APPROVE,// ConfigurationManager.AppSettings["USER_APPROVE"],
+                    feeAccount = BankAccount,// ConfigurationManager.AppSettings["Account"],
                     feeType = _FeeType.GetDescription(),
                     scheduledDate = "",
                     approver = ConfigurationManager.AppSettings["USER_APPROVE"],
                     transTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                    clientIP = ConfigurationManager.AppSettings["ClientIP"],
+                    clientIP = APIVietinBankConstrant.USER_APPROVE,//APIVietinBankConstrant.ClientIP,//.AppSettings["ClientIP"],
                     channel = "MOBILE",
                     signature = "",
                     records = new List<TransferRecord>()
@@ -2126,9 +2126,9 @@ namespace STDApp.Payment
                 {
                     requestId = this.grData.DataTable.GetValue("requestId", index).ToString(), //field id mapping với api transfer
                     transId = this.grData.DataTable.GetValue("transId", index).ToString(), //field mã giao dịch mapping với api transfer
-                    providerId = ConfigurationManager.AppSettings["ProviderId"],
-                    merchantId = ConfigurationManager.AppSettings["MerchantId"],
-                    clientIP = ConfigurationManager.AppSettings["ClientIP"],
+                    merchantId = APIVietinBankConstrant.MerchantId,// ConfigurationManager.AppSettings["MerchantId"],
+                    providerId = APIVietinBankConstrant.ProviderId,// ConfigurationManager.AppSettings["ProviderId"],
+                    clientIP = APIVietinBankConstrant.ClientIP,//ConfigurationManager.AppSettings["ClientIP"],
                     transTime = DateTime.Now.ToString("yyyyMMddHHmmss"),
                     channel = "MOBILE",
                     version = "1.0",

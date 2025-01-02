@@ -451,8 +451,8 @@ namespace STDApp.Bank
                 var data = new InquiryRequest()
                 {
                     requestId = DateTime.Now.ToString("yyyyMMddHHmmss"),
-                    merchantId = ConfigurationManager.AppSettings["MerchantId"],
-                    providerId = ConfigurationManager.AppSettings["ProviderId"],
+                    merchantId = APIVietinBankConstrant.MerchantId,// ConfigurationManager.AppSettings["MerchantId"],
+                    providerId = APIVietinBankConstrant.ProviderId,// ConfigurationManager.AppSettings["ProviderId"],
                     model = "2",
                     account = cbbAcc.Value,
                     fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
