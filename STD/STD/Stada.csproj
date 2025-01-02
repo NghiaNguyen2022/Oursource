@@ -222,11 +222,9 @@
     <Content Include="DataReader\Scripts\tb_Bank_PaymentOnAccount.sql" />
     <Content Include="DataReader\Scripts\TransferRecord.sql" />
     <Content Include="DataReader\Scripts\InquiryHeader.sql" />
-    <Content Include="DataReader\Scripts\pn_vwCashFlow.sql" />
-    <Content Include="DataReader\Scripts\tb_Bank_Payment.sql" />
     <Content Include="DataReader\Scripts\usp_Bank_APInvoicesToPayment.sql" />
     <Content Include="DataReader\Scripts\usp_Bank_LoadBPInfor.sql" />
-    <Content Include="DataReader\Scripts\usp_PaymentListReport.sql" />
+    <Content Include="DataReader\Scripts\usp_Bank_PayooInvoiceNoPay.sql" />
     <Content Include="DataReader\Scripts\usp_PaymentListReportDetail.sql" />
     <Content Include="DataReader\Scripts\vw_Bank_BankAccount.sql" />
   </ItemGroup>
