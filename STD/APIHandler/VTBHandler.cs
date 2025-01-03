@@ -1,7 +1,7 @@
 ﻿using APIHandler.Models;
 using RestSharp;
+using STD.DataReader;
 using System;
-using System.Linq;
 using System.Text.Json;
 using static APIHandler.Constant;
 
@@ -9,7 +9,8 @@ namespace APIHandler
 {
     public class VTBHandler
     {
-        public static InquiryHeader CallVTBAPI(string account, string fromDate, string toDate, ref string message)
+
+        public static InquiryHeader CallVTBAPI(string account, string fromDate, string toDate, string fromTime, string toTime, ref string message)
         {
             try
             {
@@ -43,8 +44,8 @@ namespace APIHandler
                     clientIP = "",
                     language = "vi",
                     signature = "", // Giá trị rỗng
-                    fromTime = "00:00:00",
-                    toTime = DateTime.Now.ToString("HH:mm:ss")
+                    fromTime = fromTime,
+                    toTime = toTime
                 };
 
                 data.signature = (
@@ -82,6 +83,16 @@ namespace APIHandler
 
                 var inquiry = JsonSerializer.Deserialize<InquiryHeader>(result);
 
+                foreach (var item in inquiry.transactions)
+                {
+                    var sqlCheckExist = string.Format(QueryString.CheckInquiryExist, item.transactionNumber);
+                    var data1 = dbProvider.QuerySingle(sqlCheckExist);
+                    if (data1 != null && data1["Existed"].ToString() != "Existed")
+                    {
+                        item.InsertData(data.requestId, data.providerId, data.merchantId.ToString());
+                    }
+
+                }
                 message = "Hoàn tất gửi thông tin";
                 return inquiry;
             }

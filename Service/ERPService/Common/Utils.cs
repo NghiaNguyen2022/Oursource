@@ -1,4 +1,5 @@
-﻿using System;
+﻿using APIHandler;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
@@ -70,6 +71,8 @@ namespace ERPService.Common
                         fromTime = DateTime.Today.AddDays(-1).Add(timeRun2); // Yesterday's timeRun2
                         toTime = DateTime.Today.Add(timeRun1);              // Today's timeRun1
                         Console.WriteLine($"Matched timeRun1: From {fromTime} to {toTime}");
+
+                        //VTBHandler.CallVTBAPI()
 
                         GlobalConfig.InquiryRunner.Timer = 1;
                     }

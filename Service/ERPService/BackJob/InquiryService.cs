@@ -1,4 +1,5 @@
-﻿using ERPService.Common;
+﻿using APIHandler;
+using ERPService.Common;
 using ERPService.DataReader;
 using ERPService.Models;
 using RestSharp;
@@ -63,12 +64,74 @@ namespace ERPService.BackJob
 			}
 			else
 			{
-				timer.Elapsed += new ElapsedEventHandler(Utils.OnElapsedTime);
+				timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
 				timer.Interval = 60000;
 				timer.Enabled = true;
 				//timer.Start();
 			}
 		}
+
+        public void OnElapsedTime(object source, ElapsedEventArgs e)
+        {
+            try
+            {
+                var timeRun1String = ConfigurationManager.AppSettings["timeRun1"];
+                var timeRun2String = ConfigurationManager.AppSettings["timeRun2"];
+                var timeRun1 = TimeSpan.Parse(timeRun1String);
+                var timeRun2 = TimeSpan.Parse(timeRun2String);
+
+                DateTime now = DateTime.Now;
+                TimeSpan currentTime = now.TimeOfDay;
+                DateTime fromDate, toDate;
+
+                var message = string.Empty;
+                if (GlobalConfig.InquiryRunner != null)
+                {
+                    if (GlobalConfig.InquiryRunner.RunDate.Date != now.Date)
+                    {
+                        GlobalConfig.InquiryRunner.RunDate = now;
+                        GlobalConfig.InquiryRunner.Timer = 0;
+                    }
+
+                    // Match the current time to the configured times
+                    if (currentTime.Hours == timeRun1.Hours && currentTime.Minutes >= timeRun1.Minutes
+                        && GlobalConfig.InquiryRunner.Timer == 0)
+                    {
+                        // timeRun1 match: from = timeRun2 of yesterday, to = timeRun1 of today
+                        fromDate = DateTime.Today.AddDays(-1).Add(timeRun2); // Yesterday's timeRun2
+                        toDate = DateTime.Today.Add(timeRun1);              // Today's timeRun1
+                        Console.WriteLine($"Matched timeRun1: From {fromDate} to {toDate}");
+
+                        foreach(var data in VTBAccounts())
+                        {
+                            VTBHandler.CallVTBAPI(data, fromDate.ToString("yyMMdd"), toDate.ToString("yyMMdd"), timeRun1String, timeRun2String, ref message);
+                        }
+                        //VTBHandler.CallVTBAPI()
+
+                        GlobalConfig.InquiryRunner.Timer = 1;
+                    }
+                    else if (currentTime.Hours == timeRun2.Hours && currentTime.Minutes >= timeRun2.Minutes
+                        && GlobalConfig.InquiryRunner.Timer == 1)
+                    {
+                        // timeRun2 match: from = timeRun1 of today, to = timeRun2 of today
+                        fromDate = DateTime.Today.Add(timeRun1);            // Today's timeRun1
+                        toDate = DateTime.Today.Add(timeRun2);              // Today's timeRun2
+                        Console.WriteLine($"Matched timeRun2: From {fromDate} to {toDate}");
+
+                        foreach (var data in VTBAccounts())
+                        {
+                            VTBHandler.CallVTBAPI(data, fromDate.ToString("yyMMdd"), toDate.ToString("yyMMdd"), timeRun1String, timeRun2String, ref message);
+                        }
+                        GlobalConfig.InquiryRunner.Timer = 2;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Utils.WriteToFile($"Error catching runTime and generate fromDate toDate: {ex.Message}");
+                return;
+            }
+        }
 
         private void DisConnect()
         {
@@ -168,6 +231,20 @@ namespace ERPService.BackJob
 			}
 		}
 
+        private List<string> VTBAccounts()
+        {
+            var result = new List<string>();
+            var query = "SELECT * FROM  \"" + Constant.Schema + "\".\"vw_Bank_BankAccount\" WHERE \"Key\" = 'VT'";
+            var datas = dbProvider.QueryList(query);
+            if(datas != null && datas.Length > 0)
+            {
+                foreach(var data in datas)
+                {
+                    result.Add(data["Account"].ToString());
+                }
+            }
+            return result;
+        }
 		private HashSet<string> checkExistedInDb(ICollection<string> checkList)
         {
 			var list = new HashSet<string>();

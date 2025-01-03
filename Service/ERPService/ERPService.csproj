@@ -140,6 +140,10 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\STD\APIHandler\APIHandler.csproj">
+      <Project>{9D583350-E1EA-4D1D-8534-C09FF90CC41F}</Project>
+      <Name>APIHandler</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\STD\Common\PN.Libs\PN.SmartLib.csproj">
       <Project>{141d8614-7f15-4b5a-994f-a6f960d8a451}</Project>
       <Name>PN.SmartLib</Name>
