@@ -32,49 +32,25 @@ namespace ERPService.BackJob
 
 		protected override void OnStart(string[] args)
 		{
-			try
-			{
-                Utils.WriteToFile($"On Start");
-                if (GlobalConfig.InquiryRunner == null)
-                    GlobalConfig.InquiryRunner = new RunnerTime();
-
-				string timeRun1String = ConfigurationManager.AppSettings["timeRun1"];
-				string timeRun2String = ConfigurationManager.AppSettings["timeRun2"];
-				timeRun1 = TimeSpan.Parse(timeRun1String);
-				timeRun2 = TimeSpan.Parse(timeRun2String);
-                Utils.WriteToFile($"Success parse time from config: {timeRun1} - {timeRun2}");
-			}
-			catch (FormatException ex)
-			{
-                Utils.WriteToFile($"Error parsing time: {ex.Message}");
-				return;
-			}
-			bool isDebugMode = Boolean.Parse(ConfigurationManager.AppSettings["isDebugMode"]);
-            Utils.WriteToFile($"Is debug mode: {isDebugMode}");
-			run(isDebugMode);
+			run();
 		}
 
-		private void run(bool debugMode = false)
+		private void run()
 		{
-			if (debugMode)
-			{
-				DateTime fromDate = new DateTime(2024, 9, 1);
-				DateTime toDate = new DateTime(2024, 9, 30);
-				this.Process(fromDate, toDate);
-			}
-			else
-			{
-				timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-				timer.Interval = 60000;
-				timer.Enabled = true;
-				//timer.Start();
-			}
-		}
+            timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
+            timer.Interval = 60000;
+            timer.Enabled = true;
+            timer.Start();
+        }
 
         public void OnElapsedTime(object source, ElapsedEventArgs e)
         {
             try
             {
+
+                if (GlobalConfig.InquiryRunner == null)
+                    GlobalConfig.InquiryRunner = new RunnerTime();
+
                 var timeRun1String = ConfigurationManager.AppSettings["timeRun1"];
                 var timeRun2String = ConfigurationManager.AppSettings["timeRun2"];
                 var timeRun1 = TimeSpan.Parse(timeRun1String);
@@ -93,6 +69,7 @@ namespace ERPService.BackJob
                         GlobalConfig.InquiryRunner.Timer = 0;
                     }
 
+                    Utils.WriteToFile($"Currently {GlobalConfig.InquiryRunner.RunDate.Date } - {GlobalConfig.InquiryRunner.Timer}");
                     // Match the current time to the configured times
                     if (currentTime.Hours == timeRun1.Hours && currentTime.Minutes >= timeRun1.Minutes
                         && GlobalConfig.InquiryRunner.Timer == 0)
@@ -100,11 +77,13 @@ namespace ERPService.BackJob
                         // timeRun1 match: from = timeRun2 of yesterday, to = timeRun1 of today
                         fromDate = DateTime.Today.AddDays(-1).Add(timeRun2); // Yesterday's timeRun2
                         toDate = DateTime.Today.Add(timeRun1);              // Today's timeRun1
-                        Console.WriteLine($"Matched timeRun1: From {fromDate} to {toDate}");
+                        Utils.WriteToFile($"Matched timeRun1: From {fromDate} to {toDate}");
 
                         foreach(var data in VTBAccounts())
                         {
-                            VTBHandler.CallVTBAPI(data, fromDate.ToString("yyMMdd"), toDate.ToString("yyMMdd"), timeRun1String, timeRun2String, ref message);
+                            Utils.WriteToFile($"Call with {data}");
+                            VTBHandler.CallVTBAPI(data, fromDate.ToString("yyyyMMdd"), toDate.ToString("yyyyMMdd"), timeRun1String, timeRun2String, ref message);
+                            Utils.WriteToFile($"{message}");
                         }
                         //VTBHandler.CallVTBAPI()
 
@@ -116,11 +95,13 @@ namespace ERPService.BackJob
                         // timeRun2 match: from = timeRun1 of today, to = timeRun2 of today
                         fromDate = DateTime.Today.Add(timeRun1);            // Today's timeRun1
                         toDate = DateTime.Today.Add(timeRun2);              // Today's timeRun2
-                        Console.WriteLine($"Matched timeRun2: From {fromDate} to {toDate}");
+                        Utils.WriteToFile($"Matched timeRun2: From {fromDate} to {toDate}");
 
                         foreach (var data in VTBAccounts())
                         {
-                            VTBHandler.CallVTBAPI(data, fromDate.ToString("yyMMdd"), toDate.ToString("yyMMdd"), timeRun1String, timeRun2String, ref message);
+                            Utils.WriteToFile($"Call with {data}");
+                            VTBHandler.CallVTBAPI(data, fromDate.ToString("yyyyMMdd"), toDate.ToString("yyyyMMdd"), timeRun1String, timeRun2String, ref message);
+                            Utils.WriteToFile($"{message}");
                         }
                         GlobalConfig.InquiryRunner.Timer = 2;
                     }

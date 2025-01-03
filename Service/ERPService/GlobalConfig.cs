@@ -33,5 +33,10 @@ namespace ERPService
     {
         public DateTime RunDate { get; set; }
         public int Timer { get; set; }
+        public RunnerTime()
+        {
+            RunDate = new DateTime();
+            Timer = 0;
+        }
     }
 }

@@ -1,5 +1,4 @@
-﻿using STDLibs.Models;
-using System.Configuration;
+﻿using System.Configuration;
 
 namespace APIHandler
 {
@@ -120,6 +119,53 @@ namespace APIHandler
                     return Configs.AddonConfigurations["ClientIP"];
                 }
             }
+        }
+
+        public class APIPayooConstant
+        {
+            public static string APILink
+            {
+                get
+                {
+                    return Configs.AddonConfigurations["APILinkPY"];
+                }
+            }// = "https://bizsandbox.payoo.com.vn";
+            public static string SettlementTransactionsLink
+            {
+                get
+                {
+                    return Configs.AddonConfigurations["SettlementTransactionsLink"];
+                }
+            }// = "/BusinessRestAPI.svc/GetSettlementTransactions";
+            public static string APIUsername
+            {
+                get
+                {
+                    return Configs.AddonConfigurations["APIUsernamePY"];
+                }
+            }// = "SB_Stada_BizAPI";
+            public static string APIPassword
+            {
+                get
+                {
+                    return Configs.AddonConfigurations["APIPasswordPY"];
+                }
+            }// = "9qW0k9/5khmSqdOE";
+            public static string APISignature
+            {
+                get
+                {
+                    return Configs.AddonConfigurations["APISignaturePY"];
+                }
+            }// = "U5E0ykWrsQSqkjS6xR+Qnj3cbuNUi8YgSC2r6/BcXrpdcjOx6XYh7XNjQf806Yay";
+
+            public static string ChecksumKey
+            {
+                get
+                {
+                    return Configs.AddonConfigurations["ChecksumKeyPY"];
+                }
+            }// = "NzlkNTJmZDBhMjcyNDM0MjBkZWQ4NDI0ODNjYjY2YTI=";
         }
     }
 }

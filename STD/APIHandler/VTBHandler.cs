@@ -83,17 +83,24 @@ namespace APIHandler
 
                 var inquiry = JsonSerializer.Deserialize<InquiryHeader>(result);
 
-                foreach (var item in inquiry.transactions)
+                if (inquiry.transactions.Count > 0)
                 {
-                    var sqlCheckExist = string.Format(QueryString.CheckInquiryExist, item.transactionNumber);
-                    var data1 = dbProvider.QuerySingle(sqlCheckExist);
-                    if (data1 != null && data1["Existed"].ToString() != "Existed")
+                    foreach (var item in inquiry.transactions)
                     {
-                        item.InsertData(data.requestId, data.providerId, data.merchantId.ToString());
-                    }
+                        var sqlCheckExist = string.Format(QueryString.CheckInquiryExist, item.transactionNumber);
+                        var data1 = dbProvider.QuerySingle(sqlCheckExist);
+                        if (data1 != null && data1["Existed"].ToString() != "Existed")
+                        {
+                            item.InsertData(data.requestId, data.providerId, data.merchantId.ToString());
+                        }
 
+                    }
+                    message = "Hoàn tất gửi thông tin";
                 }
-                message = "Hoàn tất gửi thông tin";
+                else
+                {
+                    message = "Không có dữ liệu";
+                }
                 return inquiry;
             }
             catch (Exception ex)
