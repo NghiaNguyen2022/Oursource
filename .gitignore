@@ -45,3 +45,7 @@ STD/Common/PN-Libraries/DLLs/4.6/SAPCore.dll
 /API/PN.ApplicationAPI/PN.ApplicationAPI/Publish.rar
 /API/PN.ApplicationAPI/PN.ApplicationAPI/Publish
 /STD/APIHandler/obj
+/STD/APIHandler/bin/*.dll
+/STD/APIHandler/bin/*.xml
+/STD/APIHandler/bin/*.pdb
+/STD/APIHandler/bin/*.config
