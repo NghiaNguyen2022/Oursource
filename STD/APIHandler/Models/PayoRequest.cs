@@ -1,4 +1,7 @@
-﻿namespace APIHandler.Models
+﻿using System.Collections.Generic;
+using System.ComponentModel;
+
+namespace APIHandler.Models
 {
     public class PayoRequest
     {

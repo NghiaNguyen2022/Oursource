@@ -1,8 +1,8 @@
 ﻿using APIHandler.Models;
 using PN.SmartLib.Helper;
 using RestSharp;
+using STD.DataReader;
 using System;
-using System.Linq;
 using System.Text.Json;
 using System.Web.Script.Serialization;
 using static APIHandler.Constant;
@@ -76,6 +76,47 @@ namespace APIHandler
                 }
                 var rpDataTransaction = JsonSerializer.Deserialize<PayooResponseDataExt>(respDataStr);
 
+                if (rpDataTransaction != null)
+                {
+                    var sqlCheckExist = string.Format(QueryString.CheckBatchExists, rpDataTransaction.BatchNo);
+                    var data1 = dbProvider.QuerySingle(sqlCheckExist);
+                    if (data1 != null && data1["Existed"].ToString() != "Existed")
+                    {
+
+
+                        var insertHd = "INSERT INTO \"" + Constant.Schema + "\".\"tb_Payoo_BatchHeader\" VALUES ( ";
+                        insertHd += $"'{rpDataTransaction.BatchNo}',";
+                        insertHd += $"{rpDataTransaction.TotalSettlementAmount},";
+                        insertHd += $"{rpDataTransaction.TotalSettlementRowCount},";
+                        insertHd += $"{rpDataTransaction.PageSize}";
+                        insertHd += ")";
+                        var retHeader = dbProvider.ExecuteNonQuery(insertHd);
+
+                        foreach (var data in rpDataTransaction.TransactionList)
+                        {
+                            var insertdt = "INSERT INTO \"" + Constant.Schema + "\".\"tb_Payoo_BatchDetail\" VALUES ( ";
+                            insertdt += $"'{rpDataTransaction.BatchNo}',";
+                            insertdt += $"'{data.OrderNo}',";
+                            insertdt += $"'{data.ShopId}',";
+                            insertdt += $"'{data.SellerName}',";
+                            insertdt += $"{data.MoneyAmount},";
+                            insertdt += $"'{data.PurchaseDate}',";
+                            insertdt += $"'{data.Status}',";
+                            insertdt += $"'{DateTime.Now.ToString("yyyyMMdd")}',";
+                            insertdt += $"'{DateTime.Now.ToString("HHmmss")}',";
+                            insertdt += $"'N',";
+                            insertdt += $"'', ";
+                            insertdt += $"'', '', ''";
+                            insertdt += ")";
+                            var retDetail = dbProvider.ExecuteNonQuery(insertdt);
+                        }
+                        message = "Hoàn tất gửi thông tin";
+                    }
+                }
+                else
+                {
+
+                }
                 return rpDataTransaction;
 
 

@@ -105,6 +105,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Common\PN.Libs\PN.SmartLib.csproj">
+      <Project>{141D8614-7F15-4B5A-994F-A6F960D8A451}</Project>
+      <Name>PN.SmartLib</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Common\STD_Libs\STDLibs.csproj">
       <Project>{EC3EFFF1-96F7-4C61-AF02-BF2D79EA97B5}</Project>
       <Name>STDLibs</Name>

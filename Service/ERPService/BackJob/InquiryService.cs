@@ -17,8 +17,6 @@ namespace ERPService.BackJob
     public partial class InquiryService : ServiceBase
     {
         Timer timer = new Timer();
-		TimeSpan? timeRun1 = null;
-		TimeSpan? timeRun2 = null;
 
         public InquiryService()
         {
@@ -32,8 +30,17 @@ namespace ERPService.BackJob
 
 		protected override void OnStart(string[] args)
 		{
-			run();
-		}
+            try
+            {
+                Utils.WriteToFile($"On Start");
+                run();
+            }
+            catch (FormatException ex)
+            {
+                Utils.WriteToFile($"Error: {ex.Message}");
+                return;
+            }
+        }
 
 		private void run()
 		{
@@ -113,11 +120,7 @@ namespace ERPService.BackJob
                 return;
             }
         }
-
-        private void DisConnect()
-        {
-           //DIServiceConnection.Instance.DIDisconnect();
-        }
+        
         private void Process(DateTime fromDate, DateTime toDate)
         {
 			Utils.WriteToFile($"[Process] START from - to: {fromDate} - {toDate}");
