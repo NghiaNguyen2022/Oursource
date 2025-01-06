@@ -960,35 +960,35 @@ namespace STDApp.Payment
                     }
                 }
 
-                // code test 
-                var valueTxT = this.txtNote.Value;
-                if (valueTxT == "napas")
-                {
-                    receiverBank = "vietinbank";
-                    receiverName = "Nguyen van napas";
-                    receiverBankID = "970406";
-                    receiverBranch = "";
-                    receiverAccount = "0129837294";
-                    type = "np";
-                }
-                else if (valueTxT == "citad")
-                {
-                    receiverBank = "ngân hàng nông nghiệp viet nam";
-                    receiverName = "mat tran to quoc viet nam";
-                    receiverBankID = "01204001";
-                    receiverBranch = "01204001";
-                    receiverAccount = "1483201009159";
-                    type = "ou";
-                }
-                else if (valueTxT == "in")
-                {
-                    receiverBank = this.grData.GetValueCustom("ReceiveBankName", index);
-                    receiverName = this.grData.GetValueCustom("ReceiveAccountName", index);
-                    receiverBankID = this.grData.GetValueCustom("ReceiveBankCode", index);
-                    receiverBranch = "";
-                    receiverAccount = this.grData.GetValueCustom("ReceiveAccount", index);
-                    type = "in";
-                }
+                //// code test 
+                //var valueTxT = this.txtNote.Value;
+                //if (valueTxT == "napas")
+                //{
+                //    receiverBank = "vietinbank";
+                //    receiverName = "Nguyen van napas";
+                //    receiverBankID = "970406";
+                //    receiverBranch = "";
+                //    receiverAccount = "0129837294";
+                //    type = "np";
+                //}
+                //else if (valueTxT == "citad")
+                //{
+                //    receiverBank = "ngân hàng nông nghiệp viet nam";
+                //    receiverName = "mat tran to quoc viet nam";
+                //    receiverBankID = "01204001";
+                //    receiverBranch = "01204001";
+                //    receiverAccount = "1483201009159";
+                //    type = "ou";
+                //}
+                //else if (valueTxT == "in")
+                //{
+                //    receiverBank = this.grData.GetValueCustom("ReceiveBankName", index);
+                //    receiverName = this.grData.GetValueCustom("ReceiveAccountName", index);
+                //    receiverBankID = this.grData.GetValueCustom("ReceiveBankCode", index);
+                //    receiverBranch = "";
+                //    receiverAccount = this.grData.GetValueCustom("ReceiveAccount", index);
+                //    type = "in";
+                //}
 
                 var record = new TransferRecord
                 {
@@ -1003,7 +1003,7 @@ namespace STDApp.Payment
                     recvAcctName = receiverName,
                     recvAddr = "",
                     currencyCode = this.grData.GetValueCustom("DocCur", index),
-                    remark = "test",// this.grData.GetValueCustom("JrnlMemo", index),
+                    remark = txtNote.Value,// "test",// this.grData.GetValueCustom("JrnlMemo", index),
                     senderBankId = this.grData.GetValueCustom("SenderBankCode", index),
                     senderBranchId = this.grData.GetValueCustom("SenderBankCode", index),
                     senderAddr = "",
@@ -1468,8 +1468,8 @@ namespace STDApp.Payment
 
                 var client = new RestClient(options);
                 var request1 = new RestRequest(APIVietinBankConstrant.TransferVTB, Method.Post);
-                request1.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
-                request1.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
+                request1.AddHeader("x-ibm-client-id", APIVietinBankConstrant.ClientID);// ConfigurationManager.AppSettings["ClientID"]);
+                request1.AddHeader("x-ibm-client-secret", APIVietinBankConstrant.ClientSecret);// ConfigurationManager.AppSettings["ClientSecret"]);
                 request1.AddHeader("Content-Type", "application/json");
 
                 request1.AddParameter("application/json", json, ParameterType.RequestBody);
@@ -2133,8 +2133,8 @@ namespace STDApp.Payment
                     channel = "MOBILE",
                     version = "1.0",
                     language = "vi",
-                    fromDate = "01/01/2024",
-                    toDate = "31/12/2024",
+                    fromDate = "01/01/" + DateTime.Now.Year.ToString(),
+                    toDate = "31/12/" + DateTime.Now.Year.ToString(),
                     signature = ""
                 };
 
@@ -2162,8 +2162,8 @@ namespace STDApp.Payment
 
                 var client = new RestClient(options);
                 var request1 = new RestRequest(APIVietinBankConstrant.TransferInqVTB, Method.Post);
-                request1.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
-                request1.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
+                request1.AddHeader("x-ibm-client-id", APIVietinBankConstrant.ClientID);// ConfigurationManager.AppSettings["ClientID"]);
+                request1.AddHeader("x-ibm-client-secret", APIVietinBankConstrant.ClientSecret);// ConfigurationManager.AppSettings["ClientSecret"]);
                 request1.AddHeader("Content-Type", "application/json");
 
                 request1.AddParameter("application/json", json, ParameterType.RequestBody);

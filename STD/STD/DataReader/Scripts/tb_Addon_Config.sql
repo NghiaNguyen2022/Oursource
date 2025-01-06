@@ -6,7 +6,7 @@
 INSERT INTO "tb_Addon_Config" VALUES('Schema', 'PMP_QAS_SP2')
 INSERT INTO "tb_Addon_Config" VALUES('APIVTB', 'https://api-uat.vietinbank.vn')
 INSERT INTO "tb_Addon_Config" VALUES('InquiryVTB', '/vtb-api-uat/development/erp/v1/statement/inquiry')
-INSERT INTO "tb_Addon_Config" VALUES('RateVTB', 'vtb-api-uat/development/v1/fxrate/ForeignExchangeRate_Inq')
+INSERT INTO "tb_Addon_Config" VALUES('RateVTB', '/vtb-api-uat/development/v1/fxrate/ForeignExchangeRate_Inq')
 INSERT INTO "tb_Addon_Config" VALUES('TransferVTB', '/vtb-api-uat/development/erp/v1/payment/transfer')
 INSERT INTO "tb_Addon_Config" VALUES('TransferInqVTB', '/vtb-api-uat/development/erp/v1/payment/transferInq')
 INSERT INTO "tb_Addon_Config" VALUES('ClientIDVTB', 'fbbf1989a3ad0de68446317f5f104df0')

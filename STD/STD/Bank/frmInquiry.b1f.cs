@@ -444,8 +444,8 @@ namespace STDApp.Bank
 
                 var client = new RestClient(options);
                 var request = new RestRequest(APIVietinBankConstrant.InquiryVTB, Method.Post);
-                request.AddHeader("x-ibm-client-id", ConfigurationManager.AppSettings["ClientID"]);
-                request.AddHeader("x-ibm-client-secret", ConfigurationManager.AppSettings["ClientSecret"]);
+                request.AddHeader("x-ibm-client-id", APIVietinBankConstrant.ClientID);// ConfigurationManager.AppSettings["ClientID"]);
+                request.AddHeader("x-ibm-client-secret", APIVietinBankConstrant.ClientSecret);// ConfigurationManager.AppSettings["ClientSecret"]);
                 request.AddHeader("Content-Type", "application/json");
 
                 var data = new InquiryRequest()
@@ -454,7 +454,7 @@ namespace STDApp.Bank
                     merchantId = APIVietinBankConstrant.MerchantId,// ConfigurationManager.AppSettings["MerchantId"],
                     providerId = APIVietinBankConstrant.ProviderId,// ConfigurationManager.AppSettings["ProviderId"],
                     model = "2",
-                    account = Account,
+                    account = cbbAcc.Value,
                     fromDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
                     toDate = DateTime.ParseExact(ToDate, "yyyyMMdd", null).ToString("dd/MM/yyyy"), // Chuyển đổi từ chuỗi sang DateTime
                     accountType = "D",

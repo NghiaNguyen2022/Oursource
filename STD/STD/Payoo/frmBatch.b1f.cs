@@ -10,9 +10,6 @@ using STD.DataReader;
 using STDApp.Common;
 using STDApp.Models;
 using System;
-using System.Configuration;
-using System.IO;
-using System.Text;
 using System.Text.Json;
 using System.Web.Script.Serialization;
 
