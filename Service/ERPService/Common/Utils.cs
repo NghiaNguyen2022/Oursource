@@ -12,19 +12,14 @@ namespace ERPService.Common
 {
     internal class Utils
     {
-        public static void WriteToFile(string Message, bool isLog = true)
+        public static void WriteToFile(string Message, string file = "ServiceLog_")
         {
-            if (!isLog)
-            {
-                return;
-            }
-
             var path = AppDomain.CurrentDomain.BaseDirectory + "\\Logs";
             if (!Directory.Exists(path))
             {
                 Directory.CreateDirectory(path);
             }
-            var filepath = AppDomain.CurrentDomain.BaseDirectory + "\\Logs\\ServiceLog_" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
+            var filepath = AppDomain.CurrentDomain.BaseDirectory + $"\\Logs\\{file}" + DateTime.Now.Date.ToShortDateString().Replace('/', '_') + ".txt";
             if (!System.IO.File.Exists(filepath))
             {
                 // Create a file to write to.

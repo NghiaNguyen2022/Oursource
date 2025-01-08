@@ -66,7 +66,7 @@ namespace APIHandler
             if (!ReadConfigAndConnect(ref message))
                 return false;
             int lErrCode = -1;
-
+            var ret = false;
             foreach (var cardcode in invoices.Select(x => x.CardCode).Distinct())
             {
                 lErrCode = -1;
@@ -112,13 +112,14 @@ namespace APIHandler
                 var newId = string.Empty;
                 if (ret1 != 0)
                 {
-                    DIConnection.Instance.Company.GetLastError(out lErrCode, out message);
-
+                    DIServiceConnection.Instance.Company.GetLastError(out lErrCode, out message);
+                    ret = false;
                 }
                 else
                 {
-                    DIConnection.Instance.Company.GetNewObjectCode(out newId);
+                    DIServiceConnection.Instance.Company.GetNewObjectCode(out newId);
                     message = $"Tạo thành đơn id {newId}";
+                    ret = true;
                 }
                 //message, UIHelper.MsgType.StatusBar, ret1 != 0);
 
@@ -134,8 +135,8 @@ namespace APIHandler
                     var retupdate = dbProvider.ExecuteNonQuery(query);
                 }
             }
-            DIConnection.Instance.DIDisconnect();
-            return true;
+            DIServiceConnection.Instance.DIDisconnect();
+            return ret;
         }
         public static bool Clear(string BatchNo, ref string message)
         {
@@ -177,7 +178,7 @@ namespace APIHandler
         {
             try
             {
-                
+
                 var options = new RestClientOptions(APIVietinBankConstrant.APIVTB)
                 {
                     MaxTimeout = -1,
@@ -386,6 +387,42 @@ namespace APIHandler
             catch (Exception ex)
             { }
             return null;
+        }
+
+
+        public static bool Test(int DocEntry, ref string message)
+        {
+            if (!ReadConfigAndConnect(ref message))
+                return false;
+            int lErrCode = -1;
+            var ret1 = false;
+            try
+            {
+                SAPbobsCOM.Documents oInvoice = (SAPbobsCOM.Documents)DIServiceConnection.Instance.Company.GetBusinessObject(BoObjectTypes.oInvoices);
+
+                if (oInvoice.GetByKey(DocEntry))
+                {
+
+                    var ret = oInvoice.Cancel();
+                    if (ret == 0)
+                    {
+                        message = "Cancel success";
+                        ret1 = true;
+                    }
+                    else
+                    {
+                        message = DIServiceConnection.Instance.Company.GetLastErrorDescription();
+                        ret1 = false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                ret1 = false;
+            }
+            DIServiceConnection.Instance.DIDisconnect();
+            return ret1;
         }
     }
 }

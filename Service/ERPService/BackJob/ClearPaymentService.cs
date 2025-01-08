@@ -23,16 +23,19 @@ namespace ERPService.BackJob
             InitializeComponent();
         }
 
+       
+
         protected override void OnStop()
         {
 
+            Utils.WriteToFile($"On Stop Clear");
         }
 
         protected override void OnStart(string[] args)
         {
             try
             {
-                Utils.WriteToFile($"On Start");
+                Utils.WriteToFile($"On Start Clear");
                 run();
             }
             catch (FormatException ex)
@@ -45,7 +48,7 @@ namespace ERPService.BackJob
         private void run()
         {
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 60000;
+            timer.Interval = 10 * 60000;
             timer.Enabled = true;
             timer.Start();
         }
@@ -75,7 +78,7 @@ namespace ERPService.BackJob
                         GlobalConfig.ClearRunner.Timer = 0;
                     }
 
-                    Utils.WriteToFile($"Currently {GlobalConfig.InquiryRunner.RunDate.Date } - {GlobalConfig.InquiryRunner.Timer}");
+                    Utils.WriteToFile($"Clear {GlobalConfig.InquiryRunner.RunDate } - {GlobalConfig.InquiryRunner.Timer}");
                     // Match the current time to the configured times
                     if (currentTime.Hours == timeRun1.Hours && currentTime.Minutes >= timeRun1.Minutes
                         && GlobalConfig.ClearRunner.Timer == 0)

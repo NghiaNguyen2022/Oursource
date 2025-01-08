@@ -14,25 +14,25 @@ using System.Timers;
 
 namespace ERPService.BackJob
 {
-    public partial class InquiryService : ServiceBase
+    public partial class Test : ServiceBase
     {
         Timer timer = new Timer();
 
-        public InquiryService()
+        public Test()
         {
             InitializeComponent();
 		}
 
         protected override void OnStop()
         {
-            Utils.WriteToFile($"On Stop Inquiry");
+            Utils.WriteToFile($"On Stop Test");
         }
 
 		protected override void OnStart(string[] args)
 		{
             try
             {
-                Utils.WriteToFile($"On Start Inquiry");
+                Utils.WriteToFile($"On Start Test");
                 run();
             }
             catch (FormatException ex)
@@ -45,7 +45,7 @@ namespace ERPService.BackJob
 		private void run()
 		{
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 10 * 60000;
+            timer.Interval = 1000;
             timer.Enabled = true;
             timer.Start();
         }
@@ -54,65 +54,14 @@ namespace ERPService.BackJob
         {
             try
             {
+                var docentry = 1893;
+                Utils.WriteToFile($"Start Cancle {docentry}");
 
-                if (GlobalConfig.InquiryRunner == null)
-                    GlobalConfig.InquiryRunner = new RunnerTime();
-
-                var timeRun1String = ConfigurationManager.AppSettings["timeRun1"];
-                var timeRun2String = ConfigurationManager.AppSettings["timeRun2"];
-                var timeRun1 = TimeSpan.Parse(timeRun1String);
-                var timeRun2 = TimeSpan.Parse(timeRun2String);
-
-                DateTime now = DateTime.Now;
-                TimeSpan currentTime = now.TimeOfDay;
-                DateTime fromDate, toDate;
-
+                //if(DISe)
                 var message = string.Empty;
-                if (GlobalConfig.InquiryRunner != null)
-                {
-                    if (GlobalConfig.InquiryRunner.RunDate.Date != now.Date)
-                    {
-                        GlobalConfig.InquiryRunner.RunDate = now;
-                        GlobalConfig.InquiryRunner.Timer = 0;
-                    }
+                APIJobHandler.Test(docentry, ref message);
+                Utils.WriteToFile($"{message}");
 
-                    Utils.WriteToFile($"Inquiry {GlobalConfig.InquiryRunner.RunDate} - {GlobalConfig.InquiryRunner.Timer}");
-                    // Match the current time to the configured times
-                    if (currentTime.Hours == timeRun1.Hours && currentTime.Minutes >= timeRun1.Minutes
-                        && GlobalConfig.InquiryRunner.Timer == 0)
-                    {
-                        // timeRun1 match: from = timeRun2 of yesterday, to = timeRun1 of today
-                        fromDate = DateTime.Today.AddDays(-1).Add(timeRun2); // Yesterday's timeRun2
-                        toDate = DateTime.Today.Add(timeRun1);              // Today's timeRun1
-                        Utils.WriteToFile($"Matched timeRun1: From {fromDate} to {toDate}");
-
-                        foreach(var data in VTBAccounts())
-                        {
-                            Utils.WriteToFile($"Call with {data}");
-                            APIJobHandler.CallVTBAPI(data, fromDate.ToString("yyyyMMdd"), toDate.ToString("yyyyMMdd"), timeRun1String, timeRun2String, ref message);
-                            Utils.WriteToFile($"{message}");
-                        }
-                        //VTBHandler.CallVTBAPI()
-
-                        GlobalConfig.InquiryRunner.Timer = 1;
-                    }
-                    else if (currentTime.Hours == timeRun2.Hours && currentTime.Minutes >= timeRun2.Minutes
-                        && GlobalConfig.InquiryRunner.Timer == 1)
-                    {
-                        // timeRun2 match: from = timeRun1 of today, to = timeRun2 of today
-                        fromDate = DateTime.Today.Add(timeRun1);            // Today's timeRun1
-                        toDate = DateTime.Today.Add(timeRun2);              // Today's timeRun2
-                        Utils.WriteToFile($"Matched timeRun2: From {fromDate} to {toDate}");
-
-                        foreach (var data in VTBAccounts())
-                        {
-                            Utils.WriteToFile($"Call with {data}");
-                            APIJobHandler.CallVTBAPI(data, fromDate.ToString("yyyyMMdd"), toDate.ToString("yyyyMMdd"), timeRun1String, timeRun2String, ref message);
-                            Utils.WriteToFile($"{message}");
-                        }
-                        GlobalConfig.InquiryRunner.Timer = 2;
-                    }
-                }
             }
             catch (Exception ex)
             {

@@ -26,7 +26,7 @@ namespace ERPService.BackJob
         {
             try
             {
-                Utils.WriteToFile($"On Start");
+                Utils.WriteToFile($"On Start Settlement");
                 run();
             }
             catch (FormatException ex)
@@ -35,16 +35,17 @@ namespace ERPService.BackJob
                 return;
             }
         }
+        protected override void OnStop()
+        {
+            Utils.WriteToFile($"On Stop Settlement");
+            // TODO: Add code here to perform any tear-down necessary to stop your service.
+        }
         private void run()
         {
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
-            timer.Interval = 60000;
+            timer.Interval = 10 * 60000;
             timer.Enabled = true;
             timer.Start();
-        }
-        protected override void OnStop()
-        {
-            // TODO: Add code here to perform any tear-down necessary to stop your service.
         }
 
         public void OnElapsedTime(object source, ElapsedEventArgs e)
@@ -71,7 +72,7 @@ namespace ERPService.BackJob
                         GlobalConfig.PayooRunner.Timer = 0;
                     }
 
-                    Utils.WriteToFile($"Currently {GlobalConfig.InquiryRunner.RunDate.Date } - {GlobalConfig.InquiryRunner.Timer}");
+                    Utils.WriteToFile($"Settlement {GlobalConfig.InquiryRunner.RunDate } - {GlobalConfig.InquiryRunner.Timer}");
                     // Match the current time to the configured times
                     if (currentTime.Hours == timeRun1.Hours && currentTime.Minutes >= timeRun1.Minutes
                         && GlobalConfig.PayooRunner.Timer == 0)

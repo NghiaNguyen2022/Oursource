@@ -2,10 +2,6 @@
 using SAPbobsCOM;
 using SAPCore.SAP.DIAPI.Models;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace SAPCore.SAP.DIAPI
 {
@@ -45,13 +41,13 @@ namespace SAPCore.SAP.DIAPI
             }
             return true;
         }
-        
+
         public bool ConnectDI(ServiceConnection model, ref string message)
         {
 
             if (Company == null)
             {
-                message ="Không thể kết nối";
+                message = "Không thể kết nối";
                 return false;
             }
 
@@ -103,5 +99,36 @@ namespace SAPCore.SAP.DIAPI
             }
         }
 
+        public static bool CancelDocument(int docentry, ref string message)
+        {
+
+            try
+            {
+                SAPbobsCOM.Documents oInvoice = (SAPbobsCOM.Documents)Instance.Company.GetBusinessObject(BoObjectTypes.oInvoices);
+
+                if (oInvoice.GetByKey(docentry))
+                {
+
+                    var ret = oInvoice.Cancel();
+                    if (ret == 0)
+                    {
+                        message = "Cancel success";
+                        return true;
+                    }
+                    else
+                    {
+                        message = Instance.Company.GetLastErrorDescription();
+                        return false;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                message = ex.Message;
+                return false;
+            }
+            return false;
+        }
     }
 }
+
