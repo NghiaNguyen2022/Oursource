@@ -89,6 +89,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BackJob\ClearPaymentService.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="BackJob\ClearPaymentService.Designer.cs">
+      <DependentUpon>ClearPaymentService.cs</DependentUpon>
+    </Compile>
     <Compile Include="BackJob\InquiryService.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -129,6 +135,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="BackJob\ClearPaymentService.resx">
+      <DependentUpon>ClearPaymentService.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="BackJob\InquiryService.resx">
       <DependentUpon>InquiryService.cs</DependentUpon>
     </EmbeddedResource>

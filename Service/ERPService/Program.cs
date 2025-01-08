@@ -19,7 +19,8 @@ namespace ERPService
             ServicesToRun = new ServiceBase[]
             {
                 new InquiryService(),
-                new PayooSettlementService()
+                new PayooSettlementService(),
+                new ClearService()
             };
             ServiceBase.Run(ServicesToRun);
         }

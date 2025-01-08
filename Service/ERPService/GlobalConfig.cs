@@ -26,6 +26,8 @@ namespace ERPService
         public string POOAPISignature = "U5E0ykWrsQSqkjS6xR+Qnj3cbuNUi8YgSC2r6/BcXrpdcjOx6XYh7XNjQf806Yay";
 
         public static RunnerTime InquiryRunner;
+        public static RunnerTime PayooRunner;
+        public static RunnerTime ClearRunner;
 
     }
 

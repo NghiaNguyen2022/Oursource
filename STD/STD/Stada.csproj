@@ -228,6 +228,7 @@
     <Content Include="DataReader\Scripts\usp_Bank_LoadBPInfor.sql" />
     <Content Include="DataReader\Scripts\usp_PaymentListReport.sql" />
     <Content Include="DataReader\Scripts\usp_PaymentListReportDetail.sql" />
+    <Content Include="DataReader\Scripts\vwSapConnection.sql" />
     <Content Include="DataReader\Scripts\vw_Bank_BankAccount.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

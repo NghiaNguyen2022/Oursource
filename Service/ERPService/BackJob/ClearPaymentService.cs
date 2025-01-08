@@ -1,25 +1,31 @@
-﻿using System;
+﻿using APIHandler;
+using ERPService.Common;
+using ERPService.DataReader;
+using ERPService.Models;
+using RestSharp;
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Configuration;
-using System.Data;
-using System.Diagnostics;
 using System.Linq;
 using System.ServiceProcess;
-using System.Text;
-using System.Threading.Tasks;
+using System.Text.Json;
 using System.Timers;
-using APIHandler;
-using ERPService.Common;
 
 namespace ERPService.BackJob
 {
-    partial class PayooSettlementService : ServiceBase
+    public partial class ClearService : ServiceBase
     {
         Timer timer = new Timer();
-        public PayooSettlementService()
+
+        public ClearService()
         {
             InitializeComponent();
+        }
+
+        protected override void OnStop()
+        {
+
         }
 
         protected override void OnStart(string[] args)
@@ -35,6 +41,7 @@ namespace ERPService.BackJob
                 return;
             }
         }
+
         private void run()
         {
             timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
@@ -42,50 +49,54 @@ namespace ERPService.BackJob
             timer.Enabled = true;
             timer.Start();
         }
-        protected override void OnStop()
-        {
-            // TODO: Add code here to perform any tear-down necessary to stop your service.
-        }
 
         public void OnElapsedTime(object source, ElapsedEventArgs e)
         {
             try
             {
 
-                if (GlobalConfig.PayooRunner == null)
-                    GlobalConfig.PayooRunner = new RunnerTime();
+                if (GlobalConfig.ClearRunner == null)
+                    GlobalConfig.ClearRunner = new RunnerTime();
 
-                var timeRun1String = ConfigurationManager.AppSettings["timeRun1"];
-                var timeRun2String = ConfigurationManager.AppSettings["timeRun2"];
+                var timeRun1String = "12:40";
+                var timeRun2String = "17:40";
                 var timeRun1 = TimeSpan.Parse(timeRun1String);
                 var timeRun2 = TimeSpan.Parse(timeRun2String);
 
                 DateTime now = DateTime.Now;
                 TimeSpan currentTime = now.TimeOfDay;
+
                 var message = string.Empty;
-                if (GlobalConfig.PayooRunner != null)
+                if (GlobalConfig.ClearRunner != null)
                 {
-                    if (GlobalConfig.PayooRunner.RunDate.Date != now.Date)
+                    if (GlobalConfig.ClearRunner.RunDate.Date != now.Date)
                     {
-                        GlobalConfig.PayooRunner.RunDate = now;
-                        GlobalConfig.PayooRunner.Timer = 0;
+                        GlobalConfig.ClearRunner.RunDate = now;
+                        GlobalConfig.ClearRunner.Timer = 0;
                     }
 
                     Utils.WriteToFile($"Currently {GlobalConfig.InquiryRunner.RunDate.Date } - {GlobalConfig.InquiryRunner.Timer}");
                     // Match the current time to the configured times
                     if (currentTime.Hours == timeRun1.Hours && currentTime.Minutes >= timeRun1.Minutes
-                        && GlobalConfig.PayooRunner.Timer == 0)
-                    {
-                        APIJobHandler.CallPayooAPI(now.ToString("yyyyMMdd"), 1, ref message);
+                        && GlobalConfig.ClearRunner.Timer == 0)
+                    {          // Today's timeRun1
+                        var batch = $"SP{now.ToString("yyMMdd")}01";
+                        Utils.WriteToFile($"Run: {now} batch {batch}");
+
+                        APIJobHandler.Clear(batch, ref message);
                         Utils.WriteToFile($"{message}");
-                        GlobalConfig.PayooRunner.Timer = 1;
+                        GlobalConfig.ClearRunner.Timer = 1;
                     }
                     else if (currentTime.Hours == timeRun2.Hours && currentTime.Minutes >= timeRun2.Minutes
-                        && GlobalConfig.InquiryRunner.Timer == 1)
+                        && GlobalConfig.ClearRunner.Timer == 1)
                     {
-                        APIJobHandler.CallPayooAPI(now.ToString("yyyyMMdd"), 2, ref message);
+
+                        var batch = $"SP{now.ToString("yyMMdd")}02";
+                        Utils.WriteToFile($"Run: {now} batch {batch}");
+                        
+                        APIJobHandler.Clear(batch, ref message);
                         Utils.WriteToFile($"{message}");
-                        GlobalConfig.PayooRunner.Timer = 2;
+                        GlobalConfig.ClearRunner.Timer = 2;
                     }
                 }
             }
@@ -96,5 +107,20 @@ namespace ERPService.BackJob
             }
         }
 
+
+        private List<string> VTBAccounts()
+        {
+            var result = new List<string>();
+            var query = "SELECT * FROM  \"" + Constant.Schema + "\".\"vw_Bank_BankAccount\" WHERE \"Key\" = 'VT'";
+            var datas = dbProvider.QueryList(query);
+            if (datas != null && datas.Length > 0)
+            {
+                foreach (var data in datas)
+                {
+                    result.Add(data["Account"].ToString());
+                }
+            }
+            return result;
+        }
     }
 }
