@@ -32,7 +32,7 @@ namespace APIHandler
 
             if (!cont)
             {
-                message = "Không thể kết nối";
+                //message = "Không thể kết nối";
                 return false;
             }
 
@@ -402,8 +402,16 @@ namespace APIHandler
 
                 if (oInvoice.GetByKey(DocEntry))
                 {
+                    //Create an object which represent to a new cancellation document based on doc
+                    Documents cancelDoc = oInvoice.CreateCancellationDocument();
 
-                    var ret = oInvoice.Cancel();
+                    //We can modify some values in the cancellation document
+                    cancelDoc.DocDate = new DateTime(2012, 4, 8);
+
+                    //Then we can add this cancellation document, and at the same time the status of the base document will be changed into ‘canceled’
+                    cancelDoc.Add();
+
+                    var ret = cancelDoc.Add();
                     if (ret == 0)
                     {
                         message = "Cancel success";

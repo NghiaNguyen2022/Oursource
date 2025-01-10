@@ -40,6 +40,13 @@ namespace ERPService.BackJob
                 System.Threading.Thread thread1 = new System.Threading.Thread(new System.Threading.ThreadStart(runInQuiry));
                 System.Threading.Thread thread2 = new System.Threading.Thread(new System.Threading.ThreadStart(runSettlement));
                 System.Threading.Thread thread3 = new System.Threading.Thread(new System.Threading.ThreadStart(runClear));
+
+                //Test 
+                if (ConfigurationManager.AppSettings["Test"].ToString() == "Y")
+                {
+                    System.Threading.Thread thread4 = new System.Threading.Thread(new System.Threading.ThreadStart(run));
+                    thread4.Start();
+                }
                 thread1.Start();
                 thread2.Start();
                 thread3.Start();
@@ -286,5 +293,36 @@ namespace ERPService.BackJob
                 return;
             }
         }
+
+        #region Test
+        Timer timer = new Timer();
+        private void run()
+        {
+            timer.Elapsed += new ElapsedEventHandler(OnElapsedTime);
+            timer.Interval = 1000;
+            timer.Enabled = true;
+            timer.Start();
+        }
+
+        public void OnElapsedTime(object source, ElapsedEventArgs e)
+        {
+            try
+            {
+                var docentry = 1893;
+                Utils.WriteToFile($"Start Cancle {docentry}", "Cancle");
+
+                //if(DISe)
+                var message = string.Empty;
+                APIJobHandler.Test(docentry, ref message);
+                Utils.WriteToFile($"{message}", "Cancle");
+
+            }
+            catch (Exception ex)
+            {
+                Utils.WriteToFile($"Error catching runTime and generate fromDate toDate: {ex.Message}", "Cancle");
+                return;
+            }
+        }
+        #endregion
     }
 }

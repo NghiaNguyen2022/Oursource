@@ -53,7 +53,7 @@ namespace SAPCore.SAP.DIAPI
 
             if (model == null)
             {
-                message = "Không thể kết nối";
+                message = "Không thể kết nối 1";
                 return false;
             }
 
@@ -75,9 +75,11 @@ namespace SAPCore.SAP.DIAPI
                 Company.DbUserName = model.DBUser;
                 Company.DbPassword = StringUtils.DecryptString(model.DBPass);
 
-                Company.LicenseServer = model.SLDServer;
-                Company.SLDServer = model.SLDServer;
-                Company.language = BoSuppLangs.ln_English;
+                //Company.LicenseServer = model.SLDServer;
+               // Company.SLDServer = model.SLDServer;
+                //Company.language = BoSuppLangs.ln_English;
+
+                Company.UseTrusted = false;
 
                 var ret = Company.Connect();
                 if (ret != 0)
