@@ -20,18 +20,33 @@ CREATE TABLE "tb_Payoo_PaymentINT"
 	"VoucherTotalAmount" DECIMAL(19,2),
 	"VoucherID" NVARCHAR(50),
 	"IntDate" DATE,
-	"IntTime" NVARCHAR(6) -- 'HHmmss'
+	"IntTime" NVARCHAR(6), -- 'HHmmss',
+	"PaymentMethodSub"	INT
 )
+ALTER TABLE "tb_Payoo_PaymentINT"
+ADD ("PaymentMethodSub"	INT)
+
+CREATE TABLE "tb_Payoo_PaymentOrder"
+(
+	"OrderParentNo" NVARCHAR(50),
+	"Seller" NVARCHAR(50),
+	"Shop" NUMERIC,
+	"Description" NVARCHAR(250),
+	"Total" DECIMAL(19,2),
+	"OrderNo" NVARCHAR(50)
+)
+
 ALTER PROCEDURE "usp_Payoo_CheckOrderExists"
 (
-	IN v_OrderNo NVARCHAR(50)
+	IN v_OrderNo NVARCHAR(50),
+	IN v_SAPNo NVARCHAR(50)
 )
 LANGUAGE SQLSCRIPT
 AS
 BEGIN
 	IF EXISTS (SELECT 1
 				 FROM OINV 
-				WHERE CAST("DocNum" AS NVARCHAR(50)) = :v_OrderNo)
+				WHERE CAST("DocNum" AS NVARCHAR(50)) = :v_SAPNo)
 	THEN
 		IF EXISTS (SELECT 1
 					 FROM "tb_Payoo_PaymentINT" 

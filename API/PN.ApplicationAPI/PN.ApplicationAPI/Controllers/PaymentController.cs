@@ -33,19 +33,48 @@ namespace PN.ApplicationAPI.Controllers
             }
 
             var dbName = ConfigurationManager.AppSettings["Schema"];
-            var query = "CALL \"" + dbName + "\".\"usp_Payoo_CheckOrderExists\" ('" + objBody.OrderNo + "')";
-            var data = dbProvider.QuerySingle(query);
-            if (data != null)
+            if (objBody.ShopId.ToString() == ConfigurationManager.AppSettings["ShopID"].ToString())
             {
-                if (data["Existed"].ToString() == "Existed")
+                if(objBody.Orders == null)
                 {
-                    return Ok(ResponseFaild("Order No đã tồn tại"));
+                    return Ok(ResponseFaild("Shop ID 6629 cần phải có Orders con"));
                 }
-                else
+                foreach(var order in objBody.Orders)
                 {
-                    if (data["Existed"].ToString() == "-1")
+                    var query = "CALL \"" + dbName + "\".\"usp_Payoo_CheckOrderExists\" ('" + objBody.OrderNo + "', '" + order.OrderNo + "')";
+                    var data = dbProvider.QuerySingle(query);
+                    if (data != null)
                     {
-                        return Ok(ResponseFaild("Trên SAP không có invoice mapping với Order No đã tồn tại"));
+                        if (data["Existed"].ToString() == "Existed")
+                        {
+                            return Ok(ResponseFaild("Order No đã tồn tại"));
+                        }
+                        else
+                        {
+                            if (data["Existed"].ToString() == "-1")
+                            {
+                                return Ok(ResponseFaild($"Trên SAP không có invoice mapping với Order No {order.OrderNo } "));
+                            }
+                        }
+                    }
+                }
+            }
+            else
+            {
+                var query = "CALL \"" + dbName + "\".\"usp_Payoo_CheckOrderExists\" ('" + objBody.OrderNo + "', '" + objBody.OrderNo + "')";
+                var data = dbProvider.QuerySingle(query);
+                if (data != null)
+                {
+                    if (data["Existed"].ToString() == "Existed")
+                    {
+                        return Ok(ResponseFaild("Order No đã tồn tại"));
+                    }
+                    else
+                    {
+                        if (data["Existed"].ToString() == "-1")
+                        {
+                            return Ok(ResponseFaild($"Trên SAP không có invoice mapping với Order No đã tồn tại { objBody.OrderNo}"));
+                        }
                     }
                 }
             }

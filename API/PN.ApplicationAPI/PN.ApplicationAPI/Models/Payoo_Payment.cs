@@ -1,6 +1,7 @@
 ﻿using SAPCore.Config;
 using STD.DataReader;
 using System;
+using System.Collections.Generic;
 using System.Configuration;
 
 namespace PN.ApplicationAPI.Models
@@ -11,6 +12,53 @@ namespace PN.ApplicationAPI.Models
         public string SecureHash { get; set; }
     }
 
+    public class Payoo_Order
+    {
+        // public string OrderParentNo { get; set; }
+        public string Seller { get; set; }
+        public decimal Shop { get; set; }
+        public string Description { get; set; }
+        public decimal Total { get; set; }
+        public string OrderNo { get; set; }
+        public object ChildOrders { get; set; }
+
+        public bool InsertData(string parent, ref string message)
+        {
+            try
+            {
+                var dbName = ConfigurationManager.AppSettings["Schema"];
+                var query = "INSERT INTO \"" + dbName + "\".\"tb_Payoo_PaymentOrder\" VALUES ( ";
+                query += $"'{parent}',";
+                query += $"'{Seller}',";
+                query += $"{Shop},";
+                query += $"'{Description}',";
+                query += $"{Total},";
+                query += $"'{OrderNo}'";
+                query += ")";
+
+                var ret1 = dbProvider.ExecuteNonQuery(query);
+                if (ret1 == 1)
+                {
+                    message = "Lưu thành công";
+
+                    query = "UPDATE \"" + dbName + "\".OINV SET \"U_PayooMark\" = 'PAYOOQR' WHERE \"DocNum\" = " + OrderNo;
+                    var ret11 = dbProvider.ExecuteNonQuery(query);
+
+                    return true;
+                }
+                else
+                {
+                    message = "Lưu thất bại";
+                }
+                return false;
+            }
+            catch (Exception ex)
+            {
+
+            }
+            return false;
+        }
+    }
     public class Payoo_Payment
     {
         public int PaymentMethod { get; set; }
@@ -30,6 +78,8 @@ namespace PN.ApplicationAPI.Models
         public string PaymentSource { get; set; }
         public decimal VoucherTotalAmount { get; set; }
         public string VoucherID { get; set; }
+        public int PaymentMethodSub { get; set; }
+        public List<Payoo_Order> Orders { get; set; }
 
         public bool InsertData(ref string message)
         {
@@ -56,26 +106,72 @@ namespace PN.ApplicationAPI.Models
                 query += $"{VoucherTotalAmount},";
                 query += $"'{VoucherID}',";
                 query += $"'{DateTime.Now.ToString("yyyyMMdd")}',";
-                query += $"'{DateTime.Now.ToString("HHmmss")}'";
+                query += $"'{DateTime.Now.ToString("HHmmss")}',";
+                query += $"{PaymentMethodSub}";
                 query += ")";
 
-                var ret1 = dbProvider.ExecuteNonQuery(query);
-                if(ret1 == 1)
+                var ret = -1;
+
+                if (ShopId.ToString() == ConfigurationManager.AppSettings["ShopID"].ToString())
                 {
-                    message = "Lưu thành công";
-                    query = "UPDATE \"" + dbName + "\".OINV SET \"U_PayooMark\" = 'PAYOOQR' WHERE \"DocNum\" = " + OrderNo;
-                    ret1 = dbProvider.ExecuteNonQuery(query);
-                    return true;
+                    if (Orders != null)
+                    {
+                        //using (DBTransaction)
+                        var message1 = string.Empty;
+                        var subret = true;
+                        foreach (var order in Orders)
+                        {
+                            message1 = string.Empty;
+                            subret = order.InsertData(OrderNo, ref message1);
+                            if (!subret)
+                            {
+                                break;
+                            }
+                        }
+                        if (subret)
+                        {
+                            ret = dbProvider.ExecuteNonQuery(query);
+                            message = ret == 1 ? "Lưu thành công" : "Lưu thất bại";
+                        }
+                        else
+                        {
+                            message = message1;
+                        }
+                    }
                 }
                 else
                 {
-                    message = "Lưu thất bại";
+                    ret = dbProvider.ExecuteNonQuery(query);
+                    message = ret == 1 ? "Lưu thành công" : "Lưu thất bại";
+                    if (ret == 1)
+                    {
+                        query = "UPDATE \"" + dbName + "\".OINV SET \"U_PayooMark\" = 'PAYOOQR' WHERE \"DocNum\" = " + OrderNo;
+                        var ret1 = dbProvider.ExecuteNonQuery(query);
+                    }
                 }
+                //var ret1 = dbProvider.ExecuteNonQuery(query);
+                //if(ret1 == 1)
+                //{
+                //    message = "Lưu thành công";
+                //    query = "UPDATE \"" + dbName + "\".OINV SET \"U_PayooMark\" = 'PAYOOQR' WHERE \"DocNum\" = " + OrderNo;
+                //    ret1 = dbProvider.ExecuteNonQuery(query);
+
+                //    if(ShopId.ToString() == ConfigurationManager.AppSettings["ShopID"].ToString())
+                //    {
+
+                //    }
+
+                //    return true;
+                //}
+                //else
+                //{
+                //    message = "Lưu thất bại";
+                //}
                 return false;
             }
             catch (Exception ex)
             {
-               
+
             }
             return false;
         }
