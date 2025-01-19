@@ -3,6 +3,7 @@ using SAPCore.SAP.DIAPI;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement.TaskbarClock;
 using STD.DataReader;
 using STD.Models;
+using System.Collections;
 
 namespace STDApp.Models
 {
@@ -24,6 +25,19 @@ namespace STDApp.Models
         public string serviceBranchId { get; set; }
         public object serviceBankName { get; set; }
         public string channel { get; set; }
+
+        public InquiryDetail(Hashtable data) { 
+           // var query = "SELECT * FROM \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_InquiryDetail\" WHERE CAST(\"transDate\" AS DATE) BETWEEN '" + startDate + "' AND '" + endDate + "'";
+            //var data = dbProvider.QuerySingle(query);
+            if(data != null)
+            {
+                transactionDate = data["transDate"].ToString();
+                transactionContent = data["description"].ToString();
+                transactionNumber = data["transactionNumber"].ToString();
+                credit = data["credit"].ToString();
+            }
+
+        }
 
         public bool InsertData(string requestId, string providerId, string merchantId)
         {

@@ -23,7 +23,7 @@
     </DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <PlatformTarget>x64</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -62,10 +62,7 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\Libs\Sap.Data.Hana.v4.5.dll</HintPath>
     </Reference>
-    <Reference Include="SAPBusinessOneSDK, Version=1.1.0.1, Culture=neutral, PublicKeyToken=c7c3cb60e45d119f, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Libs\SAPBusinessOneSDK.dll</HintPath>
-    </Reference>
+    <Reference Include="SAPBusinessOneSDK, Version=1.1.0.1, Culture=neutral, PublicKeyToken=c7c3cb60e45d119f, processorArchitecture=MSIL" />
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -231,7 +228,6 @@
     <Content Include="DataReader\Scripts\usp_Bank_LoadBPInfor.sql" />
     <Content Include="DataReader\Scripts\usp_PaymentListReport.sql" />
     <Content Include="DataReader\Scripts\usp_PaymentListReportDetail.sql" />
-    <Content Include="DataReader\Scripts\vwSapConnection.sql" />
     <Content Include="DataReader\Scripts\vw_Bank_BankAccount.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

@@ -1,7 +1,6 @@
 ﻿using SAPCore.Config;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -14,7 +13,7 @@ namespace SAPCore.Helper
         {
             if (CoreSetting.System == SystemType.SAP_HANA)
             {
-                var schema = ConfigurationManager.AppSettings["Schema"];
+                //var schema = Globals.DBName; //ConfigurationManager.AppSettings["Schema"];
                 //var schema1 = Globals.DBName;
                 return "CALL \"" + dbname + "\".\"" + query + "\" (" + param + ")";
             }

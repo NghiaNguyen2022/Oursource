@@ -18,26 +18,26 @@ namespace STDLibs.Models
 
     public class Configs
     {
-        private static List<AddonConfig> addonConfigs;
+        //private static List<AddonConfig> addonConfigs;
 
-        public static List<AddonConfig> AddonConfigs
-        {
-            get
-            {
-                if (addonConfigs == null || addonConfigs.Count == 0)
-                {
-                    addonConfigs = new List<AddonConfig>();
-                    var query = "SELECT * FROM \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Addon_Config\"";
-                    var datas = dbProvider.QueryList(query);
-                    if (datas != null && datas.Length > 0)
-                    {
-                        foreach (var data in datas)
-                            addonConfigs.Add(new AddonConfig(data));
-                    }
-                }
-                return addonConfigs;
-            }
-        }
+        //public static List<AddonConfig> AddonConfigs
+        //{
+        //    get
+        //    {
+        //        if (addonConfigs == null || addonConfigs.Count == 0)
+        //        {
+        //            addonConfigs = new List<AddonConfig>();
+        //            var query = "SELECT * FROM \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Addon_Config\"";
+        //            var datas = dbProvider.QueryList(query);
+        //            if (datas != null && datas.Length > 0)
+        //            {
+        //                foreach (var data in datas)
+        //                    addonConfigs.Add(new AddonConfig(data));
+        //            }
+        //        }
+        //        return addonConfigs;
+        //    }
+        //}
 
         private static Dictionary<string, string > _addonConfigs;
 
@@ -53,7 +53,17 @@ namespace STDLibs.Models
                     if (datas != null && datas.Length > 0)
                     {
                         foreach (var data in datas)
-                            _addonConfigs.Add(data["ConfigKey"].ToString(), data["ConfigValue"].ToString());
+                        {
+                            var key = data["ConfigKey"].ToString();
+                            if (!_addonConfigs.ContainsKey(key))
+                            {
+                                var value = data["ConfigValue"];
+                                var valstri = value.ToString();
+                                //if (value != null)
+                                //    valstri = value.ToString();
+                                _addonConfigs.Add(data["ConfigKey"].ToString(), valstri);
+                            }
+                        }
                     }
                 }
                 return _addonConfigs;

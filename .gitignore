@@ -49,3 +49,4 @@ STD/Common/PN-Libraries/DLLs/4.6/SAPCore.dll
 /STD/APIHandler/bin/*.xml
 /STD/APIHandler/bin/*.pdb
 /STD/APIHandler/bin/*.config
+/Service/ERPService/bin.rar

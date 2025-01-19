@@ -1,5 +1,5 @@
 ﻿using SAPCore.Helper;
-using System.Configuration;
+using SAPCore.SAP.DIAPI;
 
 namespace STD.DataReader
 {
@@ -7,10 +7,7 @@ namespace STD.DataReader
     {
         public static string DBName
         {
-            get {
-                return
-                  ConfigurationManager.AppSettings["Schema"].ToString();// DIConnection.Instance.CompanyDB; 
-            }
+            get { return DIConnection.Instance.CompanyDB; }
         }
         private static string CallStoreBySystem(string query, string param = "")
         {
@@ -289,22 +286,6 @@ namespace STD.DataReader
             get
             {
                 return CallStoreBySystem("sp_Bank_PayooClear", "'{0}'");
-            }
-        }
-        public static string PaymentByBatchClear
-        {
-            get
-            {
-                return CallStoreBySystem("sp_Bank_PayooClearByBatch", "'{0}'");
-            }
-        }
-
-        public static string SAPConnection
-        {
-            get
-            {
-                var schema = DBName;
-                return "SELECT * FROM \"" + schema + "\".\"vw_bank_SapConnection\"";
             }
         }
     }

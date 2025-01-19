@@ -33,7 +33,7 @@ namespace STDApp
 
             try
             {
-                
+
                 if (pVal.BeforeAction)
                 {
                     var dbName = ConfigurationManager.AppSettings["Schema"];
@@ -61,7 +61,7 @@ namespace STDApp
                     //    frmPaymentReview.ShowForm();
                     //}
                 }
-                              
+
             }
             catch (Exception ex)
             {
@@ -84,53 +84,57 @@ namespace STDApp
             BubbleEvent = true; // Always set BubbleEvent to true
             try
             {
-                // select cardcode and fill card name
-                if (pVal.FormTypeEx == bankConfig.PaymentForm.FormType)
+                var dbName = ConfigurationManager.AppSettings["Schema"];
+                if (DIConnection.Instance.CompanyDB == dbName)
                 {
+                    // select cardcode and fill card name
+                    if (pVal.FormTypeEx == bankConfig.PaymentForm.FormType)
+                    {
 
-                    if (!pVal.BeforeAction
-                        && pVal.EventType == SAPbouiCOM.BoEventTypes.et_COMBO_SELECT
-                        && pVal.ItemUID == "grData")
-                    {
-                        
-                    }
-                    else
-                    {
-                    }
-                }
-                else if (pVal.FormTypeEx == bankConfig.PaymentDetailFormInfo.FormType)
-                {
-                    try
-                    {
-                        if (pVal.EventType == SAPbouiCOM.BoEventTypes.et_CHOOSE_FROM_LIST)
+                        if (!pVal.BeforeAction
+                            && pVal.EventType == SAPbouiCOM.BoEventTypes.et_COMBO_SELECT
+                            && pVal.ItemUID == "grData")
                         {
-                            var oCFLEvento = ((SAPbouiCOM.IChooseFromListEvent)(pVal));
-                            if (oCFLEvento.BeforeAction == false)
-                            {
-                                var oDataTable = oCFLEvento.SelectedObjects;
-                                var oForm = Application.SBO_Application.Forms.Item(FormUID);//.Item("Payment_F");
-                                oForm.Freeze(true);
-                                if (pVal.ItemUID == "txtBP")
-                                {
-                                    oForm.DataSources.UserDataSources.Item("UD_Cod").ValueEx = System.Convert.ToString(oDataTable.GetValue(0, 0));
-                                    oForm.DataSources.UserDataSources.Item("UD_Nam").ValueEx = System.Convert.ToString(oDataTable.GetValue(1, 0));
-                                }
-                                oForm.Freeze(false);
-                            }
+
+                        }
+                        else
+                        {
                         }
                     }
-                    catch (Exception ex)
+                    else if (pVal.FormTypeEx == bankConfig.PaymentDetailFormInfo.FormType)
                     {
+                        try
+                        {
+                            if (pVal.EventType == SAPbouiCOM.BoEventTypes.et_CHOOSE_FROM_LIST)
+                            {
+                                var oCFLEvento = ((SAPbouiCOM.IChooseFromListEvent)(pVal));
+                                if (oCFLEvento.BeforeAction == false)
+                                {
+                                    var oDataTable = oCFLEvento.SelectedObjects;
+                                    var oForm = Application.SBO_Application.Forms.Item(FormUID);//.Item("Payment_F");
+                                    oForm.Freeze(true);
+                                    if (pVal.ItemUID == "txtBP")
+                                    {
+                                        oForm.DataSources.UserDataSources.Item("UD_Cod").ValueEx = System.Convert.ToString(oDataTable.GetValue(0, 0));
+                                        oForm.DataSources.UserDataSources.Item("UD_Nam").ValueEx = System.Convert.ToString(oDataTable.GetValue(1, 0));
+                                    }
+                                    oForm.Freeze(false);
+                                }
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                        }
                     }
-                }
-                else if (pVal.FormTypeEx == bankConfig.BatchForm.FormType)
-                {
-
-                    if (pVal.BeforeAction
-                        && pVal.EventType == SAPbouiCOM.BoEventTypes.et_KEY_DOWN
-                        && pVal.ItemUID == "txtPag")
+                    else if (pVal.FormTypeEx == bankConfig.BatchForm.FormType)
                     {
-                        HandleKeyPress(pVal, ref BubbleEvent);
+
+                        if (pVal.BeforeAction
+                            && pVal.EventType == SAPbouiCOM.BoEventTypes.et_KEY_DOWN
+                            && pVal.ItemUID == "txtPag")
+                        {
+                            HandleKeyPress(pVal, ref BubbleEvent);
+                        }
                     }
                 }
             }

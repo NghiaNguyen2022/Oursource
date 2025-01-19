@@ -4,6 +4,7 @@ using SAPbouiCOM.Framework;
 using SAPCore;
 using SAPCore.Config;
 using SAPCore.Helper;
+using SAPCore.SAP.DIAPI;
 using STD.DataReader;
 using STDApp.AccessSAP;
 using STDApp.Common;
@@ -576,7 +577,45 @@ namespace STDApp.Bank
             BubbleEvent = true;
             this.Freeze(true);
             this.Clear();
-            this.btbClear.Item.Enabled = false;
+            //this.btbClear.Item.Enabled = false;
+            //var startDate = DateTime.ParseExact(FromDate, "yyyyMMdd", null).ToString("dd/MM/yyyy");
+            //var data = new InquiryDetail(FromDate, ToDate);
+
+            var query = "SELECT * FROM \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_InquiryDetail\" WHERE CAST(\"transDate\" AS DATE) BETWEEN '" + FromDate + "' AND '" + ToDate + "'";
+            var datas = dbProvider.QueryList(query);
+
+            if (this.grDt != null && this.grDt.DataTable != null)
+            {
+                this.grDt.DataTable.Rows.Clear();
+                foreach (var data in datas)
+                {
+                    var item = new InquiryDetail(data);
+                    this.grDt.DataTable.Rows.Add();
+                    var index = grDt.DataTable.Rows.Count - 1;
+                    this.grDt.DataTable.SetValue("TransDate", index, item.transactionDate);
+                    this.grDt.DataTable.SetValue("Description", index, item.transactionContent);
+                    this.grDt.DataTable.SetValue("Debit", index, item.debit ?? "0");
+                    this.grDt.DataTable.SetValue("Credit", index, item.credit ?? "0");
+                    this.grDt.DataTable.SetValue("AccountBal", index, item.accountBal ?? "0");
+                    this.grDt.DataTable.SetValue("TransNo", index, item.transactionNumber);
+                    this.grDt.DataTable.SetValue("SenderAccount", index, item.corresponsiveAccount ?? "");
+                    this.grDt.DataTable.SetValue("SenderName", index, item.corresponsiveAccountName ?? "");
+                    this.grDt.DataTable.SetValue("Agency", index, item.agency ?? "");
+                    this.grDt.DataTable.SetValue("VirtualAccount", index, item.virtualAccount ?? "");
+                    this.grDt.DataTable.SetValue("SenderBank", index, item.corresponsiveBankName ?? "");
+                    this.grDt.DataTable.SetValue("SenderBankId", index, item.corresponsiveBankId ?? "");
+                    this.grDt.DataTable.SetValue("Chanel", index, item.channel ?? "");
+
+                    //var sqlCheckExist = string.Format(QueryString.CheckInquiryExist, this.grDt.GetValueCustom("TransNo", index));
+                    //var data1 = dbProvider.QuerySingle(sqlCheckExist);
+                    //if (data1 != null && data1["Existed"].ToString() != "Existed")
+                    //{
+                    //    item.InsertData(data.requestId, data.providerId, data.merchantId.ToString());
+                    //}
+
+                }
+                this.grDt.AutoResizeColumns();
+            }
             this.Freeze(false);
         }
         private void Clear()
