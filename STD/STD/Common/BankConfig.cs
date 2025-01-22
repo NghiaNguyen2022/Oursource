@@ -11,6 +11,7 @@ namespace STDApp.Common
         public AddonUserForm RateForm { get; set; }
         public AddonUserForm BatchForm { get; set; }
         public AddonUserForm PaymentForm { get; set; }
+        public AddonUserForm ApprovalForm { get; set; }
         public AddonUserForm PaymentDetailFormInfo { get; set; }
 
 
@@ -58,7 +59,6 @@ namespace STDApp.Common
             };
             AddForms(BatchForm, 2);
 
-
             PaymentForm = new AddonUserForm()
             {
                 FormID = "Payment_F",
@@ -68,6 +68,16 @@ namespace STDApp.Common
                 FormType = "STDApp.Payment.frmPayment"
             };
             AddForms(PaymentForm, 3);
+
+            ApprovalForm = new AddonUserForm()
+            {
+                FormID = "Payment_AF",
+                MenuID = "PM_Payment_AM",
+                MenuName = "Duyệt thanh toán",
+                ParentID = FolderInfomation.MenuID,
+                FormType = "STDApp.Payment.frmPayment"
+            };
+            AddForms(ApprovalForm, 4);
 
             PaymentDetailFormInfo = new AddonUserForm()
             {

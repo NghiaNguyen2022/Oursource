@@ -11,3 +11,7 @@
 )
 
 
+ALTER TABLE "tb_Bank_TransferRecord"
+ADD ("ApprStatus" NVARCHAR(30));
+ALTER TABLE "tb_Bank_TransferRecord"
+ADD ("UserRequest" NVARCHAR(30))

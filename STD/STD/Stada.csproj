@@ -104,6 +104,7 @@
     <Compile Include="Bank\frmRate.b1f.cs">
       <DependentUpon>frmRate.b1f</DependentUpon>
     </Compile>
+    <Compile Include="Models\ApprovalInfo.cs" />
     <Compile Include="Models\BIDVTransferRequest.cs" />
     <Compile Include="Models\InvoicePayment.cs" />
     <Compile Include="Models\PayooGetSettlement.cs" />
@@ -215,6 +216,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <Content Include="DataReader\Scripts\SPLIT_STRING.sql" />
     <Content Include="DataReader\Scripts\tb_Addon_Config.sql" />
     <Content Include="DataReader\Scripts\tb_Bank_BIDVInquiryTran.sql" />
     <Content Include="DataReader\Scripts\InquiryDetail.sql" />
@@ -225,9 +227,12 @@
     <Content Include="DataReader\Scripts\pn_vwCashFlow.sql" />
     <Content Include="DataReader\Scripts\tb_Bank_Payment.sql" />
     <Content Include="DataReader\Scripts\usp_Bank_APInvoicesToPayment.sql" />
+    <Content Include="DataReader\Scripts\usp_Bank_ApprovalInfor.sql" />
     <Content Include="DataReader\Scripts\usp_Bank_LoadBPInfor.sql" />
+    <Content Include="DataReader\Scripts\usp_Bank_PayooInvoiceNoPay.sql" />
     <Content Include="DataReader\Scripts\usp_PaymentListReport.sql" />
     <Content Include="DataReader\Scripts\usp_PaymentListReportDetail.sql" />
+    <Content Include="DataReader\Scripts\vwSapConnection.sql" />
     <Content Include="DataReader\Scripts\vw_Bank_BankAccount.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

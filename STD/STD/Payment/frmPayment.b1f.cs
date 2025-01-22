@@ -15,7 +15,6 @@ using STDApp.Models;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
-using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 
@@ -24,12 +23,15 @@ namespace STDApp.Payment
     [FormAttribute("STDApp.Payment.frmPayment", "Payment/frmPayment.b1f")]
     class frmPayment : UserFormBase
     {
-        private static frmPayment instance;
+        private static frmPayment requestInstance;
+        private static frmPayment appovalInstance;
+       //public static bool IsFormOpen = false;
+
         public bool IsGroup = false;
         private List<int> SelectedDataIndexs = new List<int>();
-        public static bool IsFormOpen = false;
         private SAPbouiCOM.DataTable DataTableCbb;
         private List<ManualPaymentDetail> ManualList;
+        private bool ApproveMode;
         private string FromDate
         {
             get
@@ -404,17 +406,46 @@ namespace STDApp.Payment
         private ComboBox cbbBank;
         private StaticText lblCFlow;
         private ComboBox cbbCFlow;
+        private ApprovalInfo Approval;
 
-        public static void ShowForm()
+        public static void ShowFormRequest()
         {
-            if (instance == null)
+            if (requestInstance == null)
             {
                 try
                 {
-                    instance = new frmPayment();
-                    instance.InitControl();
-                    instance.Show();
-                    IsFormOpen = true;
+                    requestInstance = new frmPayment();
+
+                    //var query = string.Format(QueryString.GetApprovalInfor, requestInstance.GetUserID());
+                    //var datas = dbProvider.QueryList(query);
+                    //if (datas != null && datas.Length > 0)
+                    //{
+                    //    requestInstance.Approval = new ApprovalInfo(datas[0]);
+                    //}
+
+                    requestInstance.InitControl();
+                    requestInstance.Show();
+                    //IsFormOpen = true;
+                    requestInstance.ApproveMode = false;
+                }
+                catch (Exception wex)
+                {
+
+                }
+            }
+        }
+        public static void ShowFormApprove()
+        {
+            if (appovalInstance == null)
+            {
+                try
+                {
+                    appovalInstance = new frmPayment();
+                    
+                    appovalInstance.InitControl();
+                    appovalInstance.Show();
+                    //IsFormOpen = true;
+                    appovalInstance.ApproveMode = true;
                 }
                 catch (Exception wex)
                 {
@@ -440,6 +471,11 @@ namespace STDApp.Payment
                 this.grData.Columns.Item("ReceiveAccount").ColumnConfig("Mã TK thụ hưởng", false, true);
                 this.grData.Columns.Item("ReceiveBankName").ColumnConfig("Tài khoản thụ hưởng", false, true);
                 this.grData.Columns.Item("ReceiveAccountName").ColumnConfig("Tên tài khoản  thụ hưởng", false, true);
+            }
+
+            if(ApproveMode)
+            {
+                this.folderList.Item.Visible = false;
             }
         }
 
@@ -657,6 +693,15 @@ namespace STDApp.Payment
                 this.grData.Columns.Item("Manual").Visible = false;
                 this.grData.Columns.Item("requestId").ColumnConfig(string.Empty, false, false);
                 this.grData.Columns.Item("transId").ColumnConfig(string.Empty, false, false);
+
+                this.grData.Columns.Item("UserRequest").ColumnConfig("", false, false);
+                this.grData.Columns.Item("AuthorName").ColumnConfig("Tên người đề xuất", false, true);
+                this.grData.Columns.Item("Approval1").ColumnConfig("", false, false);
+                this.grData.Columns.Item("Approval1Name").ColumnConfig("Người duyệt 1", false, true);
+                this.grData.Columns.Item("Approval2").ColumnConfig("", false, false);
+                this.grData.Columns.Item("ApprStatus").ColumnConfig("", false, false);
+                this.grData.Columns.Item("Approval2Name").ColumnConfig("Người duyệt 2", false, true);
+                this.grData.Columns.Item("ApprNameStatus").ColumnConfig("Trạng thái phê duyệt", false, true);
 
                 SAPbouiCOM.EditTextColumn oCol2 = null;
                 oCol2 = (SAPbouiCOM.EditTextColumn)this.grData.Columns.Item("CardCode");
@@ -891,52 +936,17 @@ namespace STDApp.Payment
         {
             try
             {
-                var docnum = string.Empty;
-                var source = this.grData.GetValueCustom("Manual", index);
-
-                if (source == "Data")
-                {
-                    docnum = this.grData.GetValueCustom("DocNum", index);
-                }
-                else
-                {
-                    if (ManualList != null)
-                    {
-                        var paymentDetail = ManualList.Where(x => x.SourceID == source).FirstOrDefault();
-                        paymentDetail.Check = "Y";
-                        var queryManualPayemnt = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_PaymentOnAccount\" VALUES ( ";
-                        queryManualPayemnt += $"'{requestID}',";
-                        queryManualPayemnt += $"'{paymentDetail.SourceID}',";
-                        queryManualPayemnt += $"'{paymentDetail.CardCode}',";
-                        queryManualPayemnt += $"'{paymentDetail.Currency}',";
-                        queryManualPayemnt += $"{paymentDetail.Amount}";
-                        queryManualPayemnt += ")";
-
-                        var retManualPayemnt = dbProvider.ExecuteNonQuery(queryManualPayemnt);
-                    }
-                }
-
-                var cardCode = this.grData.GetValueCustom("CardCode", index);
-
-                var transId = DateTime.Now.ToString("yyyyMMddHHmmss");
-                decimal amount = 0;
+                string transId = DateTime.Now.ToString("yyyyMMddHHmmss");
+                decimal amount;
+                amount = 0;
                 decimal mustpay = 0;
                 if (CustomConverter.ConvertStringToDecimal(this.grData.GetValueCustom("MustPay", index), ref mustpay))
                 {
                     amount = mustpay;
                 }
 
-                var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_TransferRecord\" VALUES ( ";
-                query += $"'{cardCode}',";
-                query += $"'{docnum}',";
-                query += $"'{requestID}',";
-                query += $"'{transId}',";
-                query += $"{amount},";
-                query += $"'N',";
-                query += $"'', '', 'VT'";
-                query += ")";
+                InsertData(index, requestID, transId, amount);
 
-                var ret1 = dbProvider.ExecuteNonQuery(query);
                 var receiverBank = this.grData.GetValueCustom("ReceiveBankName", index);
                 var receiverName = this.grData.GetValueCustom("ReceiveAccountName", index);
                 var receiverBankID = this.grData.GetValueCustom("ReceiveBankCode", index);
@@ -1018,6 +1028,61 @@ namespace STDApp.Payment
                 return null;
             }
         }
+
+        private void InsertData(int index, string requestID, string transId, decimal amount)
+        {
+            var docnum = string.Empty;
+            var source = this.grData.GetValueCustom("Manual", index);
+
+            if (source == "Data")
+            {
+                docnum = this.grData.GetValueCustom("DocNum", index);
+            }
+            else
+            {
+                if (ManualList != null)
+                {
+                    var paymentDetail = ManualList.Where(x => x.SourceID == source).FirstOrDefault();
+                    paymentDetail.Check = "Y";
+                    var queryManualPayemnt = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_PaymentOnAccount\" VALUES ( ";
+                    queryManualPayemnt += $"'{requestID}',";
+                    queryManualPayemnt += $"'{paymentDetail.SourceID}',";
+                    queryManualPayemnt += $"'{paymentDetail.CardCode}',";
+                    queryManualPayemnt += $"'{paymentDetail.Currency}',";
+                    queryManualPayemnt += $"{paymentDetail.Amount}";
+                    queryManualPayemnt += ")";
+
+                    var retManualPayemnt = dbProvider.ExecuteNonQuery(queryManualPayemnt);
+                }
+            }
+
+            var cardCode = this.grData.GetValueCustom("CardCode", index);            
+
+            var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_TransferRecord\" VALUES ( ";
+            query += $"'{cardCode}',";
+            query += $"'{docnum}',";
+            query += $"'{requestID}',";
+            query += $"'{transId}',";
+            query += $"{amount},";
+            query += $"'N',";
+            query += $"'', '', 'VT',";
+            query += $"'R',";
+            query += $"'{GetUserID()}'";
+            query += ")";
+
+            var ret1 = dbProvider.ExecuteNonQuery(query);
+        }
+
+        private string GetUserID()
+        {
+            var query = $"SELECT USERID FROM OUSR WHERE USER_CODE = '{DIConnection.Instance.SBO_Application.Company.UserName}' ";
+            var data = dbProvider.QuerySingle(query);
+            var userId = "-1";
+            if (data != null)
+                userId = data["USERID"].ToString();
+            return userId;
+        }
+
         private PaymentDetail DataInRow(int index, ref bool isReturn, ref string message)
         {
             try
@@ -1610,8 +1675,15 @@ namespace STDApp.Payment
         }
         private void Form_CloseAfter(SAPbouiCOM.SBOItemEventArg pVal)
         {
-            instance = null;
-            IsFormOpen = false;
+            if (!ApproveMode)
+            {
+                requestInstance = null;
+                //IsFormOpen = false;
+            }
+            else
+            {
+                appovalInstance = null;
+            }
         }
 
         private void btnFind_ClickBefore(object sboObject, SAPbouiCOM.SBOItemEventArg pVal, out bool BubbleEvent)
@@ -1692,6 +1764,11 @@ namespace STDApp.Payment
                 this.Freeze(false);
                 return;
             }
+
+            //if(Approval != null)
+            //{
+            //    var apprStatus = this.grData.GetValueCustom("ApprStatus", index1);
+            //}
 
             UIHelper.CheckInGrid(this.grData, pVal.Row, SelectedDataIndexs, "CardCode");
 

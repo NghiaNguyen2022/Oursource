@@ -45,7 +45,11 @@ namespace STDApp
                         }
                         else if (pVal.MenuUID == bankConfig.PaymentForm.MenuID)
                         {
-                            frmPayment.ShowForm();
+                            frmPayment.ShowFormRequest();
+                        }
+                        else if (pVal.MenuUID == bankConfig.ApprovalForm.MenuID)
+                        {
+                            frmPayment.ShowFormApprove();
                         }
                         else if (pVal.MenuUID == bankConfig.BatchForm.MenuID)
                         {

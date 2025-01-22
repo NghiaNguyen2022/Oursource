@@ -167,7 +167,7 @@ namespace PN.ApplicationAPI.Models
                 //{
                 //    message = "Lưu thất bại";
                 //}
-                return false;
+                return ret == 1;
             }
             catch (Exception ex)
             {
