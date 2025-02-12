@@ -104,6 +104,7 @@
     <Compile Include="Bank\frmRate.b1f.cs">
       <DependentUpon>frmRate.b1f</DependentUpon>
     </Compile>
+    <Compile Include="ConfigMenu\BankConfig.cs" />
     <Compile Include="Models\ApprovalInfo.cs" />
     <Compile Include="Models\BIDVTransferRequest.cs" />
     <Compile Include="Models\InvoicePayment.cs" />

@@ -25,13 +25,14 @@ namespace STDApp.Payment
     {
         private static frmPayment requestInstance;
         private static frmPayment appovalInstance;
-       //public static bool IsFormOpen = false;
+        //public static bool IsFormOpen = false;
 
         public bool IsGroup = false;
         private List<int> SelectedDataIndexs = new List<int>();
         private SAPbouiCOM.DataTable DataTableCbb;
         private List<ManualPaymentDetail> ManualList;
         private bool ApproveMode;
+
         private string FromDate
         {
             get
@@ -441,7 +442,7 @@ namespace STDApp.Payment
                 try
                 {
                     appovalInstance = new frmPayment();
-                    
+
                     appovalInstance.InitControl();
                     appovalInstance.Show();
                     //IsFormOpen = true;
@@ -459,7 +460,6 @@ namespace STDApp.Payment
 
             UIHelper.ComboboxSelectDefault(this.cbbFeeType);
             UIHelper.ComboboxSelectDefault(this.cbbAccount);
-
             UIHelper.ComboboxSelectDefault(this.cbbBank);
             LoadBankAccountCombobox();
             LoadCashflowCombobox();
@@ -472,10 +472,16 @@ namespace STDApp.Payment
                 this.grData.Columns.Item("ReceiveBankName").ColumnConfig("Tài khoản thụ hưởng", false, true);
                 this.grData.Columns.Item("ReceiveAccountName").ColumnConfig("Tên tài khoản  thụ hưởng", false, true);
             }
+            if (this.cbbPaymentType.ValidValues.Count > 0)
+            {
+                this.cbbPaymentType.Select(0, SAPbouiCOM.BoSearchKey.psk_Index);
+            }
+            this.cbbPaymentType.Item.Enabled = false;
 
-            if(ApproveMode)
+            if (ApproveMode)
             {
                 this.folderList.Item.Visible = false;
+                this.btnCreate.Caption = "Duyệt";
             }
         }
 
@@ -483,25 +489,13 @@ namespace STDApp.Payment
         private void LoadBankAccountCombobox()
         {
             UIHelper.LoadAccount(cbbAccount, Bank);
-            //this.cbbAccount.ValidValues.Add(STRING_CONTRANTS.AllOption, STRING_CONTRANTS.AllOptionDesc);
-
-            //var datas = DataProvider.QueryList(CoreSetting.DataConnection, string.Format(QueryString.BankLoad, Bank));
-            //if (datas != null && datas.Count() > 0)
-            //{
-            //    foreach (var data in datas)
-            //    {
-            //        this.cbbAccount.ValidValues.Add(data["Account"].ToString(), data["Account"].ToString());
-            //    }
-            //    UIHelper.ComboboxSelectDefault(cbbAccount);
-            //}
-
         }
 
         private void LoadCashflowCombobox()
         {
             UIHelper.ClearSelectValidValues(cbbCFlow);
             var values = DataHelper.ListCashFlows;
-            this.cbbCFlow.ValidValues.Add("-", STRING_CONTRANTS.NoChooseCashFlow);
+            // this.cbbCFlow.ValidValues.Add("-", STRING_CONTRANTS.NoChooseCashFlow);
             if (values != null && values.Count() > 0)
             {
                 foreach (var data in values)
@@ -510,30 +504,9 @@ namespace STDApp.Payment
                 }
                 UIHelper.ComboboxSelectDefault(cbbCFlow);
             }
+            cbbCFlow.Item.Enabled = false;
         }
 
-        private void LoadPaymentTypeCombobox()
-        {
-            //UIHelper.ClearSelectValidValues(cbbPmTyp);
-            //if (_PaymentType == PaymentType.T)
-            //{
-            //    cbbPmTyp.ValidValues.Add("PT", STRING_CONTRANTS.PaymentType_PT);
-            //    SelectType("C");
-            //}
-            //else
-            //{
-            //    cbbPmTyp.ValidValues.Add("PC", STRING_CONTRANTS.PaymentType_PC);
-            //    cbbPmTyp.ValidValues.Add("UC", STRING_CONTRANTS.PaymentType_UC);
-            //    SelectType("V");
-            //}
-            //UIHelper.ComboboxSelectDefault(cbbPmTyp);
-
-            //UIHelper.ClearSelectValidValues(cbbPmTyL);
-            //cbbPmTyL.ValidValues.Add("PT", STRING_CONTRANTS.PaymentType_PT);
-            //cbbPmTyL.ValidValues.Add("PC", STRING_CONTRANTS.PaymentType_PC);
-            //cbbPmTyL.ValidValues.Add("UC", STRING_CONTRANTS.PaymentType_UC);
-            //UIHelper.ComboboxSelectDefault(cbbPmTyL);
-        }
 
         private void LoadDataGridReportDetail(string docnum)
         {
@@ -1056,8 +1029,9 @@ namespace STDApp.Payment
                 }
             }
 
-            var cardCode = this.grData.GetValueCustom("CardCode", index);            
+            var cardCode = this.grData.GetValueCustom("CardCode", index);
 
+            var bank = Bank == Banks.ViettinBank.GetDescription() ? "VT" : "BI";
             var query = "INSERT INTO \"" + DIConnection.Instance.CompanyDB + "\".\"tb_Bank_TransferRecord\" VALUES ( ";
             query += $"'{cardCode}',";
             query += $"'{docnum}',";
@@ -1065,7 +1039,7 @@ namespace STDApp.Payment
             query += $"'{transId}',";
             query += $"{amount},";
             query += $"'N',";
-            query += $"'', '', 'VT',";
+            query += $"'', '', '{bank}',";
             query += $"'R',";
             query += $"'{GetUserID()}'";
             query += ")";
@@ -1436,10 +1410,9 @@ namespace STDApp.Payment
             }
             catch (Exception ex)
             { }
-
         }
 
-        private void CreatePaymentVTB(int index)
+        private void RequestPaymentVTB(int index)
         {
             var message = string.Empty;
             var currency = string.Empty;
@@ -1448,6 +1421,8 @@ namespace STDApp.Payment
             var cardcode = this.grData.GetValueCustom("CardCode", index);
             var messageNotice = string.Empty;
             var docnum = string.Empty;
+            var amount = this.grData.GetValueCustom("MustPay", index);
+
             if (source == "Data")
             {
                 docnum = this.grData.GetValueCustom("DocNum", index);
@@ -1455,17 +1430,24 @@ namespace STDApp.Payment
             }
             else
             {
-                var amount = this.grData.GetValueCustom("MustPay", index);
                 messageNotice = $"Bạn có muốn thanh toán số tiền {amount} cho {cardcode}";
             }
+
+            var requestID = $"12345678{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+            var transId = DateTime.Now.ToString("yyyyMMddHHmmss");
+            decimal mustpay = 0;
+            CustomConverter.ConvertStringToDecimal(amount, ref mustpay);
+
             var ret1 = UIHelper.LogMessage(messageNotice, UIHelper.MsgType.Msgbox, false, 1, "No", "Yes");
             if (ret1 == 2)
             {
+                InsertData(index, requestID, transId, mustpay);
+
                 UIHelper.LogMessage("Bắt đầu lấy dữ liệu", UIHelper.MsgType.StatusBar, false);
                 var request = new TransferRequest
                 {
                     model = "2",
-                    requestId = "12345678" + DateTime.Now.ToString("yyyyMMddHHmmss"),
+                    requestId = requestID,
                     merchantId = APIVietinBankConstrant.MerchantId,// ConfigurationManager.AppSettings["MerchantId"],
                     providerId = APIVietinBankConstrant.ProviderId,// ConfigurationManager.AppSettings["ProviderId"],
                     priority = "3",
@@ -1485,7 +1467,7 @@ namespace STDApp.Payment
                 };
 
 
-                request.records.Add(DataToRecordApi(index, request.requestId)); // DataInRow(index, ref isReturn, ref message);
+                request.records.Add(DataToRecordApi(index, requestID)); // DataInRow(index, ref isReturn, ref message);
 
                 request.signature = (
                     request.requestId +
@@ -1586,9 +1568,57 @@ namespace STDApp.Payment
             }
 
         }
+
+        private void RequestPaymentVTBs()
+        {
+            for (var i = 0; i < SelectedDataIndexs.Count; i++)
+            {
+                var index = SelectedDataIndexs[i];
+
+                if (this.grData.GetValueCustom("Check", index) != "Y")
+                {
+                    continue;
+                }
+
+                var message = string.Empty;
+                var currency = string.Empty;
+                var source = this.grData.GetValueCustom("Manual", index);
+
+                var cardcode = this.grData.GetValueCustom("CardCode", index);
+                var messageNotice = string.Empty;
+                var docnum = string.Empty;
+                var amount = this.grData.GetValueCustom("MustPay", index);
+
+                if (source == "Data")
+                {
+                    docnum = this.grData.GetValueCustom("DocNum", index);
+                    messageNotice = $"Bạn có muốn thanh toán hóa đơn {docnum} cho {cardcode}";
+                }
+                else
+                {
+                    messageNotice = $"Bạn có muốn thanh toán số tiền {amount} cho {cardcode}";
+                }
+
+                var requestID = $"12345678{DateTime.Now.ToString("yyyyMMddHHmmss")}";
+                var transId = DateTime.Now.ToString("yyyyMMddHHmmss");
+                decimal mustpay = 0;
+                CustomConverter.ConvertStringToDecimal(amount, ref mustpay);
+
+                var ret1 = UIHelper.LogMessage(messageNotice, UIHelper.MsgType.Msgbox, false, 1, "No", "Yes");
+                if (ret1 == 2)
+                {
+                    InsertData(index, requestID, transId, mustpay);
+                    UIHelper.LogMessage($"Đã gửi yêu cầu thanh toán", UIHelper.MsgType.StatusBar, true);
+                    return;
+                }
+            }           
+
+        }
+
         private void CreatePayments()
         {
             UIHelper.LogMessage("Bắt đầu quá trình gửi yêu cầu lên ngân hàng", UIHelper.MsgType.StatusBar, false);
+
 
             if (Bank == Banks.ViettinBank.GetDescription())
             {
@@ -1601,7 +1631,7 @@ namespace STDApp.Payment
                         continue;
                     }
 
-                    this.CreatePaymentVTB(index);
+                    this.RequestPaymentVTB(index);
                 }
             }
             else
@@ -1613,66 +1643,8 @@ namespace STDApp.Payment
             LoadDataGridCreate();
 
         }
-        private void AutoFillData(int selectedIndex = -1)
-        {
-            this.Freeze(true);
-            try
-            {
-                if (selectedIndex == -1)
-                {
-                    foreach (var index in SelectedDataIndexs)
-                    {
-                        //    var mustpay = this.grData.DataTable.GetValue("MustPay", index);
-                        //    if (_PaymentMethod == PaymentMethod.CashBank)
-                        //    {
-                        //        this.grData.DataTable.SetValue("MustPayAsCash", index, mustpay);
-                        //        this.grData.DataTable.SetValue("MustPayAsBank", index, 0);
-                        //    }
-                        //    else if (_PaymentMethod == PaymentMethod.Cash)
-                        //    {
 
-                        //        this.grData.DataTable.SetValue("MustPayAsCash", index, mustpay);
-                        //        this.grData.DataTable.SetValue("MustPayAsBank", index, 0);
-                        //    }
-                        //    else
-                        //    {
 
-                        //        this.grData.DataTable.SetValue("MustPayAsCash", index, 0);
-                        //        this.grData.DataTable.SetValue("MustPayAsBank", index, mustpay);
-                        //    }
-
-                        //var bank = this.grData.DataTable.GetValue("Bank", index);
-                        //var cashflow = this.grData.DataTable.GetValue("CFlow", index);
-                    }
-                }
-                else
-                {
-                    //var mustpay = this.grData.DataTable.GetValue("MustPay", selectedIndex);
-                    //if (_PaymentMethod == PaymentMethod.CashBank)
-                    //{
-                    //    this.grData.DataTable.SetValue("MustPayAsCash", selectedIndex, mustpay);
-                    //    this.grData.DataTable.SetValue("MustPayAsBank", selectedIndex, 0);
-                    //}
-                    //else if (_PaymentMethod == PaymentMethod.Cash)
-                    //{
-
-                    //    this.grData.DataTable.SetValue("MustPayAsCash", selectedIndex, mustpay);
-                    //    this.grData.DataTable.SetValue("MustPayAsBank", selectedIndex, 0);
-                    //}
-                    //else
-                    //{
-
-                    //    this.grData.DataTable.SetValue("MustPayAsCash", selectedIndex, 0);
-                    //    this.grData.DataTable.SetValue("MustPayAsBank", selectedIndex, mustpay);
-                    //}
-                }
-            }
-            catch (Exception ex)
-            {
-
-            }
-            this.Freeze(false);
-        }
         private void Form_CloseAfter(SAPbouiCOM.SBOItemEventArg pVal)
         {
             if (!ApproveMode)
@@ -1756,6 +1728,8 @@ namespace STDApp.Payment
             }
 
             var index1 = this.grData.GetDataTableRowIndex(pVal.Row);
+            var appStatus = this.grData.GetValueCustom("ApprStatus", index1);
+            var author = this.grData.GetValueCustom("UserRequest", index1);
             var sapstatus = this.grData.GetValueCustom("SAPStatus", index1);
             if (sapstatus == "02")
             {
@@ -1765,22 +1739,64 @@ namespace STDApp.Payment
                 return;
             }
 
-            //if(Approval != null)
-            //{
-            //    var apprStatus = this.grData.GetValueCustom("ApprStatus", index1);
-            //}
+            if (!ApproveMode)
+            {
 
+                if (appStatus == "R" || appStatus == "A1")
+                {
+                    UIHelper.LogMessage("Phiếu này đã được gửi yêu cầu chờ duyệt", UIHelper.MsgType.StatusBar);
+                    this.grData.DataTable.SetValue("Check", index1, "N");
+                    this.Freeze(false);
+                    return;
+                }
+
+                if (appStatus == "A2")
+                {
+                    UIHelper.LogMessage("Phiếu này đã được gửi yêu cầu và đã duyệt", UIHelper.MsgType.StatusBar);
+                    this.grData.DataTable.SetValue("Check", index1, "N");
+                    this.Freeze(false);
+                    return;
+                }
+
+            }
+            else
+            {
+                if (appStatus != "R" && appStatus != "A1")
+                {
+                    UIHelper.LogMessage("Phiếu này chưa được tạo yêu cầu hoặc đã gửi thành công", UIHelper.MsgType.StatusBar);
+                    this.grData.DataTable.SetValue("Check", index1, "N");
+                    this.Freeze(false);
+                    return;
+                }
+
+                if (appStatus == "R")
+                {
+                    var appr1 = this.grData.GetValueCustom("Approval1", index1);
+                    if (GetUserID() != appr1)
+                    {
+                        UIHelper.LogMessage("Người dùng không có quyền duyệt phiếu này", UIHelper.MsgType.StatusBar);
+                        this.grData.DataTable.SetValue("Check", index1, "N");
+                        this.Freeze(false);
+                        return;
+                    }
+                }
+                if (appStatus == "A1")
+                {
+                    var appr2 = this.grData.GetValueCustom("Approval2", index1);
+                    if (GetUserID() != appr2)
+                    {
+                        UIHelper.LogMessage("Người dùng không có quyền duyệt phiếu này", UIHelper.MsgType.StatusBar);
+                        this.grData.DataTable.SetValue("Check", index1, "N");
+                        this.Freeze(false);
+                        return;
+                    }
+                }
+
+                // duyệt
+            }
             UIHelper.CheckInGrid(this.grData, pVal.Row, SelectedDataIndexs, "CardCode");
 
-            foreach (var index in SelectedDataIndexs)
-            {
-                AutoFillData(index);
-            }
-
             EnableButton();
-
-            //this.grData.Rows.se
-            ViewHelper.ColorGridRows(this.grData, 0, true);
             this.Freeze(false);
         }
 
@@ -1790,6 +1806,9 @@ namespace STDApp.Payment
             {
                 this.btnCreate.Item.Enabled = true;
                 this.btnUnck.Item.Enabled = true;
+
+                if (ApproveMode)
+                    this.btnCreate.Caption = "Duyệt";
             }
             else
             {

@@ -1,10 +1,8 @@
-
-SET QUOTED_IDENTIFIER ON
-GO
-
-CREATE VIEW [dbo]."vw_Bank_vwCashFlow"
+ALTER VIEW "vw_Bank_vwCashFlow"
 AS
-SELECT "CFWId", "CFWName" FROM "OCFW" WHERE "Postable" = 'Y'
-GO
+SELECT "CFWId", "CFWName" FROM "OCFW" 
+ WHERE "Postable" = 'Y'
+   AND "CFWId" = 7
+
 
 

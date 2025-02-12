@@ -57,11 +57,11 @@ BEGIN
 		   T1."Approval1Name",
 		   T1."Approval2",
 		   T1."Approval2Name",
-		   T."ApprStatus",
+		   COALESCE(T."ApprStatus", 'N') "ApprStatus",
 		   CASE WHEN T."ApprStatus" = 'R' THEN 'Gửi yêu cầu'
 				WHEN T."ApprStatus" = 'A1' THEN 'Cấp 1 đã duyệt'			
 				WHEN T."ApprStatus" = 'A2' THEN 'Cấp 2 đã duyệt'
-				ELSE 'Request'
+				ELSE 'Chưa tạo TT'
 			END AS "ApprNameStatus"
 	  FROM (SELECT T0."CardCode",
 					T2."CardName",
@@ -83,7 +83,7 @@ BEGIN
 					T2."DflAccount",
 					T4."AcctName",
 					t2."HouseBank",
-					'Thanh toan' || t2."CardName" ||T1."DueDate" AS "Content", 
+					'Thanh toan ' || t2."CardName" ||T1."DueDate" AS "Content", 
 		   			CASE WHEN t5."bank" = 'VT' AND COALESCE(T5."status", 'N') = '1' THEN '02'
 		   				 WHEN t5."bank" = 'BI' AND COALESCE(T5."status", 'N') = '11' THEN '02'
 		   				 ELSE '01'
@@ -93,16 +93,15 @@ BEGIN
 					'Data' AS "Manual", 
 					COALESCE(t5."requestId", '') AS "requestId",
 					COALESCE(t5."transId", '')AS "transId",
-				    COALESCE(t5."UserRequest", '') "UserRequest",
-					COALESCE(t5."ApprStatus", '') "ApprStatus"
+				    COALESCE(t5."UserRequest", '-1') "UserRequest",
+					COALESCE(t5."ApprStatus", 'N') "ApprStatus"
 			   FROM OPCH T0
 				LEFT JOIN PCH6 T1 ON T0."DocEntry" = T1."DocEntry"
 				LEFT JOIN OCRD T2 ON T0."CardCode" = T2."CardCode"	
 				LEFT JOIN ODSC T3 ON T2."BankCode" = T3."BankCode"
 				LEFT JOIN OCRB T4 ON T4."CardCode" = t2."CardCode"
 								 AND T4."BankCode" = T2."BankCode"
-								 AND T4."Account" = T2."DflAccount"
-								
+								 AND T4."Account" = T2."DflAccount"								
 				LEFT JOIN (					  	
 							SELECT T0.* 
 							  FROM "tb_Bank_TransferRecord" T0
@@ -121,8 +120,8 @@ BEGIN
 							  AND T0."DocEntry" = t5."DocEntry"
 				WHERE T1."DueDate" BETWEEN :v_FromDate AND :v_ToDate
 				  AND T1."InsTotal" - T1."PaidToDate" > 0		
-				  AND (:v_Account = 'All' OR t2."HousBnkAct" = :v_Account)
-				  AND T2."BankCode" = :_BankCode
+				  AND t2."HousBnkAct" = :v_Account
+				  AND T2."DflSwift" = :_BankCode
 			UNION ALL
 			SELECT T1."CardCode",
 					T2."CardName",
@@ -142,7 +141,7 @@ BEGIN
 					T2."DflAccount",
 					T4."AcctName",
 					t2."HouseBank",
-					'Thanh toan' || t2."CardName" --||T1."DueDate"
+					'Thanh toan ' || t2."CardName" --||T1."DueDate"
 						 AS "Content",
 				    CASE WHEN t1."bank" = 'VT' AND COALESCE(T1."status", 'N') = '1' THEN '02'
 		   				 WHEN t1."bank" = 'BI' AND COALESCE(T1."status", 'N') = '11' THEN '02'
@@ -153,8 +152,8 @@ BEGIN
 					t0."SourceID" AS "Manual",
 					COALESCE(t1."requestId", '') AS "requestId",
 					COALESCE(t1."transId", '')AS "transId",
-				    COALESCE(t1."UserRequest", '') "UserRequest",
-					COALESCE(t1."ApprStatus", '') "ApprStatus"
+				    COALESCE(t1."UserRequest", '-1') "UserRequest",
+					COALESCE(t1."ApprStatus", 'N') "ApprStatus"
 			    FROM "tb_Bank_TransferRecord" T1 
 				LEFT JOIN "tb_Bank_PaymentOnAccount" T0 ON T1."CardCode" = T0."CardCode"
 													 AND T1."requestId" = t0."RequestID"
@@ -164,8 +163,8 @@ BEGIN
 								 AND T4."BankCode" = T2."BankCode"
 								 AND T4."Account" = T2."DflAccount"
 				WHERE  COALESCE(T1."DocEntry", '') = ''
-				 AND  (:v_Account = 'All' OR t2."HousBnkAct" = :v_Account)		 
-				 AND T2."BankCode" = :_BankCode
+				 AND  t2."HousBnkAct" = :v_Account 
+				 AND T2."DflSwift" = :_BankCode
 			) T
 		LEFT JOIN (
 					SELECT TOP 1 T0."U_Author" AS "Author",
