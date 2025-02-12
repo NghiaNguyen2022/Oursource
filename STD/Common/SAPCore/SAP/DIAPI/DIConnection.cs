@@ -25,16 +25,6 @@ namespace SAPCore.SAP.DIAPI
         }
         public bool IsConnected = false;
 
-        //public static string UserID
-        //{
-        //    get
-        //    {
-        //        if (DIConnection.Instance.SBO_Application != null &&
-        //            DIConnection.Instance.SBO_Application.Company != null)
-        //            return DIConnection.Instance.SBO_Application.Company.UserName;
-        //        return string.Empty;
-        //    }
-        //}
 
         public string CompanyDB
         {

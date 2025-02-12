@@ -130,15 +130,6 @@ namespace STD.DataReader
                 return "SELECT * FROM  \"" + schema + "\".\"vw_Bank_vwCashFlow\"";
             }
         }
-
-
-        public static string GetApprovalInfor
-        {
-            get
-            {
-                return CallStoreBySystem("usp_Bank_ApprovalInfor", "'{0}'");
-            }
-        }
         public static string AccountsLoad
         {
             get
