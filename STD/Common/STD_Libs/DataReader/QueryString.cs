@@ -63,7 +63,7 @@ namespace STD.DataReader
         {
             get
             {
-                return CallStoreBySystem("usp_Bank_APInvoicesToPayment", "'{0}', '{1}', '{2}', '{3}', '{4}', '{5}'");
+                return CallStoreBySystem("usp_Bank_APInvoicesToPayment1", "'{0}', '{1}', '{2}', '{3}', '{4}', '{5}'");
             }
         }
 
