@@ -55,3 +55,19 @@ BEGIN
 	   AND T0."transactionNumber" = :v_transno
 	 GROUP BY t1."BatchNo", T0."credit";
 END
+
+Create PROCEDURE "sp_Bank_PayooClearByBatch"
+(
+	IN v_batchno NVARCHAR(40)
+)
+LANGUAGE SQLSCRIPT
+AS
+BEGIN
+	SELECT top 1 t1."BatchNo", T0."credit", SUM(T1."TransferAmount") AS "Amount", T0."credit" - SUM(T1."TransferAmount") AS "Diff"
+	  FROM "tb_Bank_InquiryDetail" T0
+	  JOIN "tb_Payoo_BatchDetail" T1 ON T0."description" LIKE '%' || t1."BatchNo" || '%'
+	 WHERE T0."credit" > 0 
+	   AND T1."BankRecStatus" = 'N'
+	   AND  t1."BatchNo"  = :v_batchno
+	 GROUP BY t1."BatchNo", T0."credit";
+END

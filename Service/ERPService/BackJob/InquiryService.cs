@@ -229,6 +229,7 @@ namespace ERPService.BackJob
             }
             return result;
         }
+
 		//private HashSet<string> checkExistedInDb(ICollection<string> checkList)
   //      {
 		//	var list = new HashSet<string>();

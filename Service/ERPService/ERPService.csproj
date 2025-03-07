@@ -178,6 +178,7 @@
     <Content Include="Libs\FPT.dll" />
     <Content Include="Scripts\InquiryDetail.sql" />
     <Content Include="Scripts\InquiryHeader.sql" />
+    <Content Include="Scripts\vwSapConnection.sql" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

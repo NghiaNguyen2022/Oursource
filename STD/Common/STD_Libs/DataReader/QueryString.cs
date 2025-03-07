@@ -63,7 +63,7 @@ namespace STD.DataReader
         {
             get
             {
-                return CallStoreBySystem("usp_Bank_APInvoicesToPayment1", "'{0}', '{1}', '{2}', '{3}', '{4}', '{5}'");
+                return CallStoreBySystem("usp_Bank_APInvoicesToPayment", "'{0}', '{1}', '{2}', '{3}', '{4}', '{5}'");
             }
         }
 
@@ -128,6 +128,15 @@ namespace STD.DataReader
             {
                 var schema = DBName; //ConfigurationManager.AppSettings["Schema"];
                 return "SELECT * FROM  \"" + schema + "\".\"vw_Bank_vwCashFlow\"";
+            }
+        }
+
+
+        public static string GetApprovalInfor
+        {
+            get
+            {
+                return CallStoreBySystem("usp_Bank_ApprovalInfor", "'{0}'");
             }
         }
         public static string AccountsLoad
@@ -288,5 +297,6 @@ namespace STD.DataReader
                 return CallStoreBySystem("sp_Bank_PayooClear", "'{0}'");
             }
         }
+
     }
 }

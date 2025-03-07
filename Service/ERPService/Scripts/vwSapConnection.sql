@@ -1,10 +1,15 @@
-ALTER VIEW vwSapConnection
-AS
-
-SELECT 'B1i' AS SapUser,
-	   'J7iQk8ID1c1nLSyr3qlRaQ==' AS SapPassword,
-	   'HCM-LT336\GTVPaulNguyen' AS ServerName,
-	   'Suntex_TestScenario' AS CompanyDB,
-	   'hcm-lt336.gt.local:40000' AS SLDServer,
-	   'sa' AS DBUser,
-	   'nnolF6cXZhXmOlrl1DES7Q==' AS DBPass
+CREATE VIEW "vw_bank_SapConnection" ( "SapUser",
+	 "SapPassword",
+	 "ServerName",
+	 "CompanyDB",
+	 "SLDServer",
+	 "DBUser",
+	 "DBPass" ) AS SELECT
+	 'fpt.phinh17' AS "SapUser",
+	 'Pd8DsFYMHA/hDgMrbaxjIw==' AS "SapPassword",
+	 'HSQ@AZSTVNTSTSAPB1DB:30013' AS "ServerName",
+	 'PMP_QAS_SP2' AS "CompanyDB",
+	 'azstvntstsapb1db:40000' AS "SLDServer",
+	 'SYSTEM' AS "DBUser",
+	 '9i+rFQcelZKpJ5Ex3uy5sQ==' AS "DBPass" 
+FROM DUMMY

@@ -5,7 +5,7 @@ using SAPCore.SAP.DIAPI;
 
 namespace ERPService.DataReader
 {
-    public class QueryString
+    public class ServiceQueryString
     {
         public static string DBName
         {
