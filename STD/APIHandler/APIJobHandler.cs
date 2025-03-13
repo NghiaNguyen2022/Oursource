@@ -8,6 +8,7 @@ using STD.DataReader;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Globalization;
 using System.Linq;
 using System.Text.Json;
 using System.Web.Script.Serialization;
@@ -81,7 +82,9 @@ namespace APIHandler
 
                 oPayment.CardCode = cardCode;
                 oPayment.DocCurrency = currency;
-                oPayment.DocDate = DateTime.Now;
+
+                var date = BatchNo.Replace("SP", "20").Remove(BatchNo.Length - 2, 2);
+                oPayment.DocDate = DateTime.ParseExact(date, "yyyyMMdd", CultureInfo.InvariantCulture);
                 var objectType = BoRcptInvTypes.it_Invoice;
                 double total = 0;
                 var docEntry = string.Empty;

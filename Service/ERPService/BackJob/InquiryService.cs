@@ -92,7 +92,6 @@ namespace ERPService.BackJob
                             APIJobHandler.CallVTBAPI(data, fromDate.ToString("yyyyMMdd"), toDate.ToString("yyyyMMdd"), timeRun1String, timeRun2String, ref message);
                             Utils.WriteToFile($"{message}");
                         }
-                        //VTBHandler.CallVTBAPI()
 
                         GlobalConfig.InquiryRunner.Timer = 1;
                     }
